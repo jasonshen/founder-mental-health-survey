@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Founder Mental Health Survey — Design Playground</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Source+Serif+4:wght@400;600;700&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  /* ================================================================
+     THEME 1: Clinical Clean
+     ================================================================ */
+  [data-theme="clinical"] {
+    --bg-page: #f8fafc;
+    --bg-card: #ffffff;
+    --bg-card-hover: #f1f5f9;
+    --bg-input: #ffffff;
+    --bg-selected: #eff6ff;
+    --bg-progress-track: #e2e8f0;
+    --bg-badge: #dbeafe;
+    --bg-section-intro: #f0f9ff;
+
+    --border-card: #cbd5e1;
+    --border-input: #94a3b8;
+    --border-selected: #3b82f6;
+    --border-section: #e2e8f0;
+
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+    --text-accent: #1d4ed8;
+    --text-on-accent: #ffffff;
+    --text-badge: #1e40af;
+
+    --accent: #2563eb;
+    --accent-hover: #1d4ed8;
+    --accent-soft: #dbeafe;
+
+    --severity-none-bg: #dcfce7; --severity-none-text: #166534;
+    --severity-mild-bg: #fef9c3; --severity-mild-text: #854d0e;
+    --severity-moderate-bg: #ffedd5; --severity-moderate-text: #9a3412;
+    --severity-severe-bg: #fee2e2; --severity-severe-text: #991b1b;
+
+    --font-body: 'Inter', -apple-system, sans-serif;
+    --font-heading: 'Inter', -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    --font-size-base: 15px;
+    --font-weight-heading: 700;
+    --heading-transform: none;
+    --heading-spacing: -0.01em;
+    --line-height: 1.6;
+
+    --radius-card: 8px;
+    --radius-button: 8px;
+    --radius-pill: 8px;
+    --radius-badge: 4px;
+    --radius-input: 8px;
+    --radius-progress: 4px;
+
+    --shadow-card: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-button: none;
+    --progress-height: 4px;
+    --border-width: 1px;
+
+    --btn-primary-bg: var(--accent);
+    --btn-primary-text: #ffffff;
+    --btn-primary-hover: var(--accent-hover);
+    --btn-primary-shadow: none;
+    --btn-primary-border: none;
+    --btn-outline-bg: transparent;
+    --btn-outline-text: var(--text-secondary);
+    --btn-outline-border: 1px solid #cbd5e1;
+    --btn-outline-hover-bg: #f8fafc;
+
+    --card-border-left: none;
+    --card-padding: 20px;
+    --section-gap: 12px;
+    --panel-gap: 48px;
+
+    --likert-style: pill;
+  }
+
+  /* ================================================================
+     THEME 2: Warm & Approachable
+     ================================================================ */
+  [data-theme="warm"] {
+    --bg-page: #fdf8f4;
+    --bg-card: #ffffff;
+    --bg-card-hover: #fef7f0;
+    --bg-input: #ffffff;
+    --bg-selected: #fef3eb;
+    --bg-progress-track: #e7e0d8;
+    --bg-badge: #fef3eb;
+    --bg-section-intro: #f5f0eb;
+
+    --border-card: #e0d5c8;
+    --border-input: #c4b5a5;
+    --border-selected: #c2703e;
+    --border-section: #e0d5c8;
+
+    --text-primary: #3d2e1f;
+    --text-secondary: #6b5744;
+    --text-muted: #a08c78;
+    --text-accent: #b05e2a;
+    --text-on-accent: #ffffff;
+    --text-badge: #9a4f20;
+
+    --accent: #c2703e;
+    --accent-hover: #a85d30;
+    --accent-soft: #fef3eb;
+
+    --severity-none-bg: #e8f5e0; --severity-none-text: #2d5f1e;
+    --severity-mild-bg: #fef9c3; --severity-mild-text: #854d0e;
+    --severity-moderate-bg: #ffedd5; --severity-moderate-text: #9a3412;
+    --severity-severe-bg: #fee2e2; --severity-severe-text: #991b1b;
+
+    --font-body: 'Inter', -apple-system, sans-serif;
+    --font-heading: 'Source Serif 4', Georgia, serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    --font-size-base: 15px;
+    --font-weight-heading: 700;
+    --heading-transform: none;
+    --heading-spacing: -0.01em;
+    --line-height: 1.7;
+
+    --radius-card: 16px;
+    --radius-button: 12px;
+    --radius-pill: 24px;
+    --radius-badge: 12px;
+    --radius-input: 12px;
+    --radius-progress: 12px;
+
+    --shadow-card: 0 2px 8px rgba(160,120,80,0.08);
+    --shadow-button: 0 1px 3px rgba(160,120,80,0.12);
+    --progress-height: 8px;
+    --border-width: 1px;
+
+    --btn-primary-bg: linear-gradient(135deg, #c2703e 0%, #a85d30 100%);
+    --btn-primary-text: #ffffff;
+    --btn-primary-hover: linear-gradient(135deg, #a85d30 0%, #8f4e25 100%);
+    --btn-primary-shadow: 0 2px 6px rgba(194,112,62,0.3);
+    --btn-primary-border: none;
+    --btn-outline-bg: transparent;
+    --btn-outline-text: var(--text-secondary);
+    --btn-outline-border: 1px solid #d4c4b4;
+    --btn-outline-hover-bg: #fdf8f4;
+
+    --card-border-left: none;
+    --card-padding: 24px;
+    --section-gap: 14px;
+    --panel-gap: 56px;
+
+    --likert-style: pill;
+  }
+
+  /* ================================================================
+     THEME 3: Dark Executive
+     ================================================================ */
+  [data-theme="dark"] {
+    --bg-page: #0a0a0f;
+    --bg-card: #141419;
+    --bg-card-hover: #1a1a22;
+    --bg-input: #1a1a22;
+    --bg-selected: #1e1b4b;
+    --bg-progress-track: #27272a;
+    --bg-badge: transparent;
+    --bg-section-intro: #141419;
+
+    --border-card: #2a2a35;
+    --border-input: #3a3a48;
+    --border-selected: #6366f1;
+    --border-section: #2a2a35;
+
+    --text-primary: #e4e4e7;
+    --text-secondary: #a1a1aa;
+    --text-muted: #52525b;
+    --text-accent: #818cf8;
+    --text-on-accent: #ffffff;
+    --text-badge: #a5b4fc;
+
+    --accent: #6366f1;
+    --accent-hover: #818cf8;
+    --accent-soft: #1e1b4b;
+
+    --severity-none-bg: transparent; --severity-none-text: #4ade80;
+    --severity-mild-bg: transparent; --severity-mild-text: #facc15;
+    --severity-moderate-bg: transparent; --severity-moderate-text: #fb923c;
+    --severity-severe-bg: transparent; --severity-severe-text: #f87171;
+
+    --font-body: 'Inter', -apple-system, sans-serif;
+    --font-heading: 'Inter', -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    --font-size-base: 14px;
+    --font-weight-heading: 600;
+    --heading-transform: none;
+    --heading-spacing: -0.02em;
+    --line-height: 1.6;
+
+    --radius-card: 6px;
+    --radius-button: 6px;
+    --radius-pill: 6px;
+    --radius-badge: 4px;
+    --radius-input: 6px;
+    --radius-progress: 3px;
+
+    --shadow-card: none;
+    --shadow-button: none;
+    --progress-height: 3px;
+    --border-width: 1px;
+
+    --btn-primary-bg: transparent;
+    --btn-primary-text: #818cf8;
+    --btn-primary-hover: #1e1b4b;
+    --btn-primary-shadow: none;
+    --btn-primary-border: 1px solid #6366f1;
+    --btn-outline-bg: transparent;
+    --btn-outline-text: #a1a1aa;
+    --btn-outline-border: 1px solid #3a3a48;
+    --btn-outline-hover-bg: #1a1a22;
+
+    --card-border-left: none;
+    --card-padding: 20px;
+    --section-gap: 12px;
+    --panel-gap: 48px;
+
+    --likert-style: pill;
+  }
+
+  /* ================================================================
+     THEME 4: Minimalist Zen
+     ================================================================ */
+  [data-theme="zen"] {
+    --bg-page: #fafaf9;
+    --bg-card: transparent;
+    --bg-card-hover: transparent;
+    --bg-input: #ffffff;
+    --bg-selected: transparent;
+    --bg-progress-track: #e7e5e4;
+    --bg-badge: transparent;
+    --bg-section-intro: transparent;
+
+    --border-card: #e7e5e4;
+    --border-input: #d6d3d1;
+    --border-selected: #78716c;
+    --border-section: #e7e5e4;
+
+    --text-primary: #292524;
+    --text-secondary: #78716c;
+    --text-muted: #a8a29e;
+    --text-accent: #57534e;
+    --text-on-accent: #ffffff;
+    --text-badge: #57534e;
+
+    --accent: #57534e;
+    --accent-hover: #44403c;
+    --accent-soft: #f5f5f4;
+
+    --severity-none-bg: transparent; --severity-none-text: #57534e;
+    --severity-mild-bg: transparent; --severity-mild-text: #78716c;
+    --severity-moderate-bg: transparent; --severity-moderate-text: #a8a29e;
+    --severity-severe-bg: transparent; --severity-severe-text: #292524;
+
+    --font-body: 'Inter', -apple-system, sans-serif;
+    --font-heading: 'Inter', -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    --font-size-base: 15px;
+    --font-weight-heading: 500;
+    --heading-transform: none;
+    --heading-spacing: -0.01em;
+    --line-height: 1.85;
+
+    --radius-card: 0;
+    --radius-button: 0;
+    --radius-pill: 0;
+    --radius-badge: 0;
+    --radius-input: 0;
+    --radius-progress: 0;
+
+    --shadow-card: none;
+    --shadow-button: none;
+    --progress-height: 2px;
+    --border-width: 1px;
+
+    --btn-primary-bg: transparent;
+    --btn-primary-text: var(--text-primary);
+    --btn-primary-hover: transparent;
+    --btn-primary-shadow: none;
+    --btn-primary-border: none;
+    --btn-outline-bg: transparent;
+    --btn-outline-text: var(--text-secondary);
+    --btn-outline-border: none;
+    --btn-outline-hover-bg: transparent;
+
+    --card-border-left: none;
+    --card-padding: 24px 0;
+    --section-gap: 16px;
+    --panel-gap: 64px;
+
+    --likert-style: text;
+  }
+
+  /* ================================================================
+     THEME 5: Bold & Honest
+     ================================================================ */
+  [data-theme="bold"] {
+    --bg-page: #ffffff;
+    --bg-card: #fafafa;
+    --bg-card-hover: #f5f5f5;
+    --bg-input: #ffffff;
+    --bg-selected: #facc15;
+    --bg-progress-track: #e5e5e5;
+    --bg-badge: #000000;
+    --bg-section-intro: #fafafa;
+
+    --border-card: #000000;
+    --border-input: #000000;
+    --border-selected: #000000;
+    --border-section: #000000;
+
+    --text-primary: #000000;
+    --text-secondary: #404040;
+    --text-muted: #737373;
+    --text-accent: #000000;
+    --text-on-accent: #000000;
+    --text-badge: #ffffff;
+
+    --accent: #facc15;
+    --accent-hover: #eab308;
+    --accent-soft: #fef9c3;
+
+    --severity-none-bg: #000; --severity-none-text: #fff;
+    --severity-mild-bg: #404040; --severity-mild-text: #fff;
+    --severity-moderate-bg: #facc15; --severity-moderate-text: #000;
+    --severity-severe-bg: #dc2626; --severity-severe-text: #fff;
+
+    --font-body: 'Inter', -apple-system, sans-serif;
+    --font-heading: 'Space Grotesk', -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    --font-size-base: 15px;
+    --font-weight-heading: 700;
+    --heading-transform: uppercase;
+    --heading-spacing: 0.04em;
+    --line-height: 1.6;
+
+    --radius-card: 0;
+    --radius-button: 0;
+    --radius-pill: 0;
+    --radius-badge: 0;
+    --radius-input: 0;
+    --radius-progress: 0;
+
+    --shadow-card: 4px 4px 0 #000000;
+    --shadow-button: 3px 3px 0 #000000;
+    --progress-height: 8px;
+    --border-width: 2px;
+
+    --btn-primary-bg: #000000;
+    --btn-primary-text: #facc15;
+    --btn-primary-hover: #1a1a1a;
+    --btn-primary-shadow: 3px 3px 0 #facc15;
+    --btn-primary-border: 2px solid #000000;
+    --btn-outline-bg: transparent;
+    --btn-outline-text: #000000;
+    --btn-outline-border: 2px solid #000000;
+    --btn-outline-hover-bg: #f5f5f5;
+
+    --card-border-left: none;
+    --card-padding: 20px;
+    --section-gap: 12px;
+    --panel-gap: 48px;
+
+    --likert-style: pill;
+  }
+
+  /* ================================================================
+     SHARED COMPONENT STYLES
+     ================================================================ */
+
+  body {
+    font-family: var(--font-body);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height);
+    background: var(--bg-page);
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.4s ease, color 0.3s ease;
+  }
+
+  /* --- Nav Bar --- */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    background: #18181b; color: #a1a1aa;
+    padding: 8px 16px;
+    display: flex; align-items: center; justify-content: space-between;
+    z-index: 100; font-size: 13px;
+    font-family: 'Inter', sans-serif;
+  }
+  .nav-left { display: flex; align-items: center; gap: 12px; }
+  .nav-label { color: #fafafa; font-weight: 600; }
+  .nav-badge { background: #8b5cf6; color: #fff; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+  .nav-screens { display: flex; gap: 4px; flex-wrap: wrap; }
+  .nav-btn {
+    background: none; border: 1px solid #3f3f46; color: #a1a1aa;
+    padding: 4px 12px; border-radius: 6px; cursor: pointer;
+    font-size: 12px; transition: all 0.15s; font-family: 'Inter', sans-serif;
+  }
+  .nav-btn:hover { border-color: #71717a; color: #e4e4e7; }
+  .nav-btn.active { background: #8b5cf6; border-color: #8b5cf6; color: #fff; }
+
+  /* --- Theme Info Strip --- */
+  .theme-info {
+    position: fixed; top: 40px; left: 0; right: 0;
+    background: #27272a; color: #d4d4d8;
+    padding: 6px 16px; font-size: 12px;
+    z-index: 99; font-family: 'Inter', sans-serif;
+    display: flex; align-items: center; gap: 8px;
+    border-top: 1px solid #3f3f46;
+  }
+  .theme-info-name { color: #fafafa; font-weight: 600; }
+  .theme-info-sep { color: #52525b; }
+  .theme-info-desc { color: #a1a1aa; font-style: italic; }
+
+  /* --- Layout --- */
+  .main-content {
+    padding-top: 76px;
+    max-width: 640px;
+    margin: 0 auto;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 80px;
+  }
+
+  /* --- Panel --- */
+  .panel {
+    margin-bottom: var(--panel-gap);
+  }
+  .panel-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #8b5cf6;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  [data-theme="dark"] .panel-label { border-color: #2a2a35; }
+  [data-theme="bold"] .panel-label { border-color: #000; border-bottom-width: 2px; }
+
+  /* --- Headings --- */
+  .heading-xl {
+    font-family: var(--font-heading);
+    font-size: 32px;
+    font-weight: var(--font-weight-heading);
+    color: var(--text-primary);
+    text-transform: var(--heading-transform);
+    letter-spacing: var(--heading-spacing);
+    margin-bottom: 8px;
+    line-height: 1.2;
+  }
+  .heading-lg {
+    font-family: var(--font-heading);
+    font-size: 20px;
+    font-weight: var(--font-weight-heading);
+    color: var(--text-primary);
+    text-transform: var(--heading-transform);
+    letter-spacing: var(--heading-spacing);
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: var(--border-width) solid var(--border-section);
+    line-height: 1.3;
+  }
+  .heading-md {
+    font-family: var(--font-heading);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+  }
+  .subtitle {
+    font-size: 17px;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+  }
+  .body-text {
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+    line-height: var(--line-height);
+  }
+
+  /* --- Buttons --- */
+  .btn {
+    display: inline-block;
+    padding: 12px 32px;
+    border-radius: var(--radius-button);
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    font-family: var(--font-body);
+  }
+  .btn-primary {
+    background: var(--btn-primary-bg);
+    color: var(--btn-primary-text);
+    border: var(--btn-primary-border);
+    box-shadow: var(--btn-primary-shadow);
+  }
+  .btn-primary:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+  .btn-outline {
+    background: var(--btn-outline-bg);
+    color: var(--btn-outline-text);
+    border: var(--btn-outline-border);
+    padding: 10px 24px;
+  }
+  .btn-outline:hover { background: var(--btn-outline-hover-bg); }
+
+  /* Zen: button as underlined text link */
+  [data-theme="zen"] .btn-primary {
+    padding: 0;
+    font-size: 16px;
+    font-weight: 500;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    color: var(--text-primary);
+  }
+  [data-theme="zen"] .btn-primary:hover {
+    transform: none;
+    opacity: 0.7;
+  }
+  [data-theme="zen"] .btn-outline {
+    padding: 0;
+    font-size: 14px;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    color: var(--text-secondary);
+  }
+
+  /* --- Progress Bar --- */
+  .progress { margin-bottom: 28px; }
+  .progress-labels {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 6px;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+  .progress-labels span:first-child { font-weight: 500; color: var(--text-secondary); }
+  .progress-track {
+    height: var(--progress-height);
+    background: var(--bg-progress-track);
+    border-radius: var(--radius-progress);
+    overflow: hidden;
+    position: relative;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: var(--radius-progress);
+    transition: width 0.4s ease;
+  }
+  /* Clinical: solid blue */
+  [data-theme="clinical"] .progress-fill { background: var(--accent); }
+  /* Warm: gradient */
+  [data-theme="warm"] .progress-fill { background: linear-gradient(90deg, #6b8f71, #c2703e); }
+  /* Dark: indigo glow */
+  [data-theme="dark"] .progress-fill { background: var(--accent); box-shadow: 0 0 8px rgba(99,102,241,0.5); }
+  /* Zen: stone line */
+  [data-theme="zen"] .progress-fill { background: #78716c; }
+  /* Bold: yellow on black track */
+  [data-theme="bold"] .progress-fill { background: #facc15; }
+  [data-theme="bold"] .progress-track { background: #000; }
+
+  /* --- Section Intro --- */
+  .section-intro {
+    font-size: 14px;
+    color: var(--text-secondary);
+    background: var(--bg-section-intro);
+    padding: 12px 16px;
+    border-radius: var(--radius-card);
+    margin-bottom: 24px;
+    border: var(--border-width) solid var(--border-card);
+  }
+  [data-theme="zen"] .section-intro {
+    border: none;
+    padding: 0;
+    background: transparent;
+    border-bottom: 1px solid var(--border-card);
+    border-radius: 0;
+    padding-bottom: 16px;
+  }
+  [data-theme="dark"] .section-intro {
+    border-color: var(--border-card);
+  }
+
+  /* --- Question --- */
+  .question { margin-bottom: 28px; }
+  .question-text {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+    line-height: 1.5;
+  }
+  .required { color: #ef4444; margin-left: 2px; font-weight: 400; }
+  [data-theme="dark"] .required { color: #f87171; }
+
+  /* --- Likert Pills --- */
+  .likert-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .likert-pill {
+    padding: 8px 16px;
+    border: var(--border-width) solid var(--border-input);
+    border-radius: var(--radius-pill);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+    color: var(--text-secondary);
+    background: var(--bg-input);
+  }
+  .likert-pill:hover {
+    border-color: var(--border-selected);
+    color: var(--text-accent);
+  }
+  .likert-pill.selected {
+    background: var(--bg-selected);
+    border-color: var(--border-selected);
+    color: var(--text-accent);
+    font-weight: 500;
+  }
+
+  /* Dark theme severity badges are outlined */
+  [data-theme="dark"] .likert-pill {
+    background: transparent;
+  }
+  [data-theme="dark"] .likert-pill.selected {
+    background: var(--accent-soft);
+    box-shadow: 0 0 6px rgba(99,102,241,0.2);
+  }
+
+  /* Bold: thick borders, yellow selected */
+  [data-theme="bold"] .likert-pill.selected {
+    background: #facc15;
+    border-color: #000;
+    color: #000;
+    font-weight: 600;
+    box-shadow: 2px 2px 0 #000;
+  }
+
+  /* Zen: text-only options */
+  [data-theme="zen"] .likert-pill {
+    border: none;
+    background: transparent;
+    padding: 6px 0;
+    border-bottom: 1px solid transparent;
+    border-radius: 0;
+    font-weight: 300;
+    font-size: 14px;
+  }
+  [data-theme="zen"] .likert-pill:hover {
+    border-bottom-color: var(--text-muted);
+  }
+  [data-theme="zen"] .likert-pill.selected {
+    background: transparent;
+    border-bottom-color: var(--text-primary);
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+  [data-theme="zen"] .likert-group {
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  /* --- Nav Footer (Back/Next) --- */
+  .nav-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 32px;
+    padding-top: 20px;
+    border-top: var(--border-width) solid var(--border-section);
+  }
+
+  /* --- Results Card --- */
+  .results-card {
+    border: var(--border-width) solid var(--border-card);
+    border-radius: var(--radius-card);
+    padding: var(--card-padding);
+    margin-bottom: var(--section-gap);
+    background: var(--bg-card);
+    box-shadow: var(--shadow-card);
+    transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
+  }
+  .results-card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .results-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+    font-size: 14px;
+  }
+  .results-score {
+    font-weight: 600;
+    font-family: var(--font-mono);
+    color: var(--text-primary);
+  }
+  .results-sep { color: var(--text-muted); }
+  .results-percentile {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  /* Zen: no card, just bottom border */
+  [data-theme="zen"] .results-card {
+    border: none;
+    border-bottom: 1px solid var(--border-card);
+    border-radius: 0;
+    box-shadow: none;
+    padding: 24px 0;
+  }
+
+  /* Bold: hard shadow */
+  [data-theme="bold"] .results-card {
+    border-width: 2px;
+  }
+
+  /* --- Badge --- */
+  .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: var(--radius-badge);
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .badge-none { background: var(--severity-none-bg); color: var(--severity-none-text); }
+  .badge-mild { background: var(--severity-mild-bg); color: var(--severity-mild-text); }
+  .badge-moderate { background: var(--severity-moderate-bg); color: var(--severity-moderate-text); }
+  .badge-severe { background: var(--severity-severe-bg); color: var(--severity-severe-text); }
+
+  /* Clinical: left-border bar style */
+  [data-theme="clinical"] .badge-moderate {
+    border-left: 3px solid #ea580c;
+    border-radius: 0 4px 4px 0;
+  }
+  [data-theme="clinical"] .badge-none {
+    border-left: 3px solid #16a34a;
+    border-radius: 0 4px 4px 0;
+  }
+
+  /* Dark: outlined chips */
+  [data-theme="dark"] .badge {
+    background: transparent;
+    border: 1px solid currentColor;
+    padding: 1px 8px;
+  }
+
+  /* Bold: filled solid */
+  [data-theme="bold"] .badge { font-weight: 600; }
+
+  /* Zen: just text, no pill */
+  [data-theme="zen"] .badge {
+    background: transparent;
+    padding: 0;
+    font-weight: 400;
+    font-style: italic;
+  }
+
+  /* --- Form Elements --- */
+  .input-field {
+    width: 100%;
+    padding: 10px 14px;
+    border: var(--border-width) solid var(--border-input);
+    border-radius: var(--radius-input);
+    font-size: 15px;
+    font-family: var(--font-body);
+    background: var(--bg-input);
+    color: var(--text-primary);
+    transition: border-color 0.2s;
+    outline: none;
+  }
+  .input-field:focus {
+    border-color: var(--border-selected);
+  }
+  .input-field::placeholder {
+    color: var(--text-muted);
+  }
+  [data-theme="dark"] .input-field {
+    background: var(--bg-input);
+  }
+
+  .checkbox-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--text-secondary);
+    user-select: none;
+  }
+  .checkbox-box {
+    width: 18px; height: 18px;
+    border: var(--border-width) solid var(--border-input);
+    border-radius: 3px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+    font-size: 12px;
+    color: transparent;
+  }
+  .checkbox-box.checked {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  [data-theme="dark"] .checkbox-box.checked {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  [data-theme="bold"] .checkbox-box {
+    border-width: 2px;
+    border-radius: 0;
+  }
+  [data-theme="bold"] .checkbox-box.checked {
+    background: #000;
+    border-color: #000;
+  }
+  [data-theme="zen"] .checkbox-box {
+    border-radius: 0;
+  }
+
+  /* --- Divider --- */
+  .divider {
+    border: none;
+    border-top: var(--border-width) solid var(--border-section);
+    margin: 32px 0;
+  }
+
+  /* --- Mobile --- */
+  @media (max-width: 640px) {
+    .likert-group:not([data-theme="zen"] .likert-group) {
+      flex-direction: column;
+    }
+    .likert-pill {
+      width: 100%;
+      text-align: center;
+    }
+    .nav-screens { gap: 3px; }
+    .nav-btn { padding: 3px 8px; font-size: 11px; }
+    .heading-xl { font-size: 26px; }
+  }
+</style>
+</head>
+<body data-theme="clinical">
+
+<!-- ============ NAV BAR ============ -->
+<div class="nav">
+  <div class="nav-left">
+    <span class="nav-label">Design Playground</span>
+    <span class="nav-badge">5 themes</span>
+  </div>
+  <div class="nav-screens">
+    <button class="nav-btn active" onclick="switchTheme('clinical')">Clinical</button>
+    <button class="nav-btn" onclick="switchTheme('warm')">Warm</button>
+    <button class="nav-btn" onclick="switchTheme('dark')">Dark</button>
+    <button class="nav-btn" onclick="switchTheme('zen')">Zen</button>
+    <button class="nav-btn" onclick="switchTheme('bold')">Bold</button>
+  </div>
+</div>
+
+<!-- ============ THEME INFO ============ -->
+<div class="theme-info">
+  <span class="theme-info-name" id="themeInfoName">Clinical Clean</span>
+  <span class="theme-info-sep">/</span>
+  <span class="theme-info-desc" id="themeInfoDesc">Medical precision meets modern web design</span>
+</div>
+
+<!-- ============ MAIN CONTENT ============ -->
+<div class="main-content">
+
+  <!-- ======== PANEL A: Landing Page ======== -->
+  <div class="panel">
+    <div class="panel-label">Panel A / Landing Page</div>
+
+    <div style="text-align: center; margin-bottom: 32px;">
+      <h1 class="heading-xl">Founder Mental Health Survey</h1>
+      <p class="subtitle">A confidential screening tool for startup founders</p>
+    </div>
+
+    <p class="body-text">
+      Starting and running a company is one of the most psychologically demanding things
+      a person can do. Yet founders rarely have the time or space to check in on their own mental health.
+    </p>
+    <p class="body-text">
+      This survey uses validated clinical instruments to screen for depression, anxiety,
+      ADHD, autism traits, and personality factors. It also asks about founder-specific
+      stressors and your current treatment landscape.
+    </p>
+    <p class="body-text" style="margin-bottom: 32px;">
+      <strong>10-15 minutes</strong> &middot; Completely anonymous &middot; Immediate results
+    </p>
+
+    <div style="text-align: center;">
+      <a class="btn btn-primary" href="#">Take the Survey &rarr;</a>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ======== PANEL B: Survey Question ======== -->
+  <div class="panel">
+    <div class="panel-label">Panel B / Survey Question</div>
+
+    <!-- Progress Bar -->
+    <div class="progress">
+      <div class="progress-labels">
+        <span>Section 5 of 8</span>
+        <span>63% complete</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" style="width: 63%;"></div>
+      </div>
+    </div>
+
+    <!-- Section Header -->
+    <h2 class="heading-lg">Depression Screening</h2>
+    <div class="section-intro">
+      The following questions are from the PHQ-9, a validated screening tool for depression.
+      Please answer based on how you've felt over the <strong>last 2 weeks</strong>.
+    </div>
+
+    <!-- Question 1: Likert -->
+    <div class="question">
+      <div class="question-text">
+        Over the last 2 weeks, how often have you been bothered by feeling down, depressed, or hopeless?<span class="required">*</span>
+      </div>
+      <div class="likert-group" id="likert1">
+        <div class="likert-pill" onclick="selectLikert(this)">Not at all</div>
+        <div class="likert-pill" onclick="selectLikert(this)">Several days</div>
+        <div class="likert-pill selected" onclick="selectLikert(this)">More than half the days</div>
+        <div class="likert-pill" onclick="selectLikert(this)">Nearly every day</div>
+      </div>
+    </div>
+
+    <!-- Question 2: Likert -->
+    <div class="question">
+      <div class="question-text">
+        Over the last 2 weeks, how often have you been bothered by little interest or pleasure in doing things?<span class="required">*</span>
+      </div>
+      <div class="likert-group" id="likert2">
+        <div class="likert-pill" onclick="selectLikert(this)">Not at all</div>
+        <div class="likert-pill" onclick="selectLikert(this)">Several days</div>
+        <div class="likert-pill" onclick="selectLikert(this)">More than half the days</div>
+        <div class="likert-pill" onclick="selectLikert(this)">Nearly every day</div>
+      </div>
+    </div>
+
+    <!-- Question 3: Likert -->
+    <div class="question">
+      <div class="question-text">
+        Over the last 2 weeks, how often have you been bothered by trouble falling or staying asleep, or sleeping too much?<span class="required">*</span>
+      </div>
+      <div class="likert-group" id="likert3">
+        <div class="likert-pill" onclick="selectLikert(this)">Not at all</div>
+        <div class="likert-pill selected" onclick="selectLikert(this)">Several days</div>
+        <div class="likert-pill" onclick="selectLikert(this)">More than half the days</div>
+        <div class="likert-pill" onclick="selectLikert(this)">Nearly every day</div>
+      </div>
+    </div>
+
+    <!-- Nav Footer -->
+    <div class="nav-footer">
+      <a class="btn btn-outline" href="#">&larr; Back</a>
+      <a class="btn btn-primary" href="#">Next &rarr;</a>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ======== PANEL C: Results Cards ======== -->
+  <div class="panel">
+    <div class="panel-label">Panel C / Results Display</div>
+
+    <h2 class="heading-lg">Your Current State</h2>
+
+    <div class="results-card">
+      <div class="results-card-title">Depression (PHQ-9)</div>
+      <div class="results-row">
+        <span>Score:</span>
+        <span class="results-score">14/27</span>
+        <span class="results-sep">&mdash;</span>
+        <span class="badge badge-moderate">Moderate</span>
+      </div>
+      <div class="results-percentile">Percentile (general population): 72%</div>
+    </div>
+
+    <div class="results-card">
+      <div class="results-card-title">Anxiety (GAD-7)</div>
+      <div class="results-row">
+        <span>Score:</span>
+        <span class="results-score">8/21</span>
+        <span class="results-sep">&mdash;</span>
+        <span class="badge badge-mild">Mild</span>
+      </div>
+      <div class="results-percentile">Percentile (general population): 58%</div>
+    </div>
+
+    <div class="results-card">
+      <div class="results-card-title">ADHD Screening (ASRS)</div>
+      <div class="results-row">
+        <span>Items flagged:</span>
+        <span class="results-score">4 of 6</span>
+        <span class="results-sep">&mdash;</span>
+        <span>Threshold:</span>
+        <span class="badge badge-moderate">Above</span>
+      </div>
+      <div class="results-percentile">Percentile (general population): 85%</div>
+    </div>
+
+    <div class="results-card">
+      <div class="results-card-title">Top Founder Stressors</div>
+      <div style="font-size: 14px; color: var(--text-secondary);">
+        <div style="margin-bottom: 4px;">1. Runway anxiety <span style="color: var(--text-muted);">(4.5/5)</span></div>
+        <div style="margin-bottom: 4px;">2. Decision fatigue <span style="color: var(--text-muted);">(4.0/5)</span></div>
+        <div>3. Work-life balance <span style="color: var(--text-muted);">(3.5/5)</span></div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ======== PANEL D: Email Capture ======== -->
+  <div class="panel">
+    <div class="panel-label">Panel D / Email Capture</div>
+
+    <div style="text-align: center; margin-bottom: 24px;">
+      <h2 class="heading-lg" style="border: none; text-align: center;">Get Your Full Report</h2>
+      <p class="body-text">Enter your email to receive a detailed report with recommendations and resources.</p>
+    </div>
+
+    <div style="margin-bottom: 20px;">
+      <input class="input-field" type="email" placeholder="you@example.com">
+    </div>
+
+    <div style="margin-bottom: 24px;">
+      <div class="checkbox-row" onclick="toggleCheck(this)">
+        <div class="checkbox-box checked">&#10003;</div>
+        <span>Send me a detailed report with my results</span>
+      </div>
+      <div class="checkbox-row" onclick="toggleCheck(this)">
+        <div class="checkbox-box">&#10003;</div>
+        <span>Keep me updated on founder mental health research</span>
+      </div>
+    </div>
+
+    <div style="text-align: center;">
+      <a class="btn btn-primary" href="#">Send My Report</a>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============ JAVASCRIPT ============ -->
+<script>
+const themeInfo = {
+  clinical: { name: 'Clinical Clean', desc: 'Medical precision meets modern web design' },
+  warm:     { name: 'Warm & Approachable', desc: 'Safe, inviting, like a therapy waiting room' },
+  dark:     { name: 'Dark Executive', desc: 'Premium confidentiality, Bloomberg meets wellness' },
+  zen:      { name: 'Minimalist Zen', desc: 'Extreme calm, whitespace as design element' },
+  bold:     { name: 'Bold & Honest', desc: 'Unflinching editorial directness, no soft edges' },
+};
+
+function switchTheme(theme) {
+  document.body.dataset.theme = theme;
+
+  // Update nav buttons
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.textContent.trim().toLowerCase() === theme ||
+      (theme === 'clinical' && btn.textContent.trim() === 'Clinical') ||
+      (theme === 'warm' && btn.textContent.trim() === 'Warm') ||
+      (theme === 'dark' && btn.textContent.trim() === 'Dark') ||
+      (theme === 'zen' && btn.textContent.trim() === 'Zen') ||
+      (theme === 'bold' && btn.textContent.trim() === 'Bold'));
+  });
+
+  // Update info strip
+  const info = themeInfo[theme];
+  document.getElementById('themeInfoName').textContent = info.name;
+  document.getElementById('themeInfoDesc').textContent = info.desc;
+}
+
+function selectLikert(pill) {
+  const group = pill.parentElement;
+  group.querySelectorAll('.likert-pill').forEach(p => p.classList.remove('selected'));
+  pill.classList.add('selected');
+}
+
+function toggleCheck(row) {
+  const box = row.querySelector('.checkbox-box');
+  box.classList.toggle('checked');
+}
+
+// Set initial theme
+switchTheme('clinical');
+</script>
+
+</body>
+</html>

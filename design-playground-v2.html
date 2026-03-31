@@ -1,0 +1,2637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Founder Mental Health Survey — Radical Redesign Playground</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ================================================================
+   RESET & GLOBAL
+   ================================================================ */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #000;
+  color: #fff;
+}
+
+/* ================================================================
+   NAV BAR
+   ================================================================ */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  background: #18181b; color: #a1a1aa;
+  padding: 8px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+  z-index: 1000; font-size: 13px;
+  font-family: 'Inter', sans-serif;
+  border-bottom: 1px solid #27272a;
+}
+.nav-left { display: flex; align-items: center; gap: 12px; }
+.nav-label { color: #fafafa; font-weight: 600; }
+.nav-badge { background: #ef4444; color: #fff; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+.nav-screens { display: flex; gap: 4px; flex-wrap: wrap; }
+.nav-btn {
+  background: none; border: 1px solid #3f3f46; color: #a1a1aa;
+  padding: 4px 12px; border-radius: 6px; cursor: pointer;
+  font-size: 12px; transition: all 0.15s; font-family: 'Inter', sans-serif;
+}
+.nav-btn:hover { border-color: #71717a; color: #e4e4e7; }
+.nav-btn.active { background: #ef4444; border-color: #ef4444; color: #fff; }
+
+/* Section visibility */
+.design-section { display: none; }
+.design-section.active { display: block; }
+
+/* ================================================================
+   1. CINEMATIC REVEAL
+   ================================================================ */
+.cin-landing {
+  min-height: 100vh;
+  background: #050507;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  padding: 80px 24px 60px;
+  position: relative;
+  overflow: hidden;
+}
+.cin-landing::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.cin-headline {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(36px, 6vw, 72px);
+  font-weight: 400;
+  line-height: 1.2;
+  color: #f0f0f0;
+  max-width: 700px;
+  margin-bottom: 48px;
+  position: relative;
+}
+.cin-headline em {
+  font-style: italic;
+  color: #a5b4fc;
+}
+.cin-word {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: cinReveal 0.6s ease forwards;
+}
+@keyframes cinReveal {
+  to { opacity: 1; transform: translateY(0); }
+}
+.cin-subtitle {
+  font-size: 16px;
+  color: #6b7280;
+  max-width: 440px;
+  line-height: 1.7;
+  margin-bottom: 48px;
+  opacity: 0;
+  animation: cinFade 0.8s ease 2.4s forwards;
+}
+.cin-cta {
+  display: inline-block;
+  padding: 16px 48px;
+  border: 1px solid rgba(165,180,252,0.3);
+  color: #a5b4fc;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: all 0.3s;
+  opacity: 0;
+  animation: cinFade 0.8s ease 3s forwards;
+  cursor: pointer;
+}
+.cin-cta:hover {
+  background: rgba(165,180,252,0.1);
+  border-color: rgba(165,180,252,0.5);
+}
+@keyframes cinFade {
+  to { opacity: 1; }
+}
+.cin-footer-note {
+  position: absolute;
+  bottom: 32px;
+  font-size: 12px;
+  color: #3f3f46;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0;
+  animation: cinFade 0.6s ease 3.5s forwards;
+}
+
+/* Cinematic Survey */
+.cin-survey {
+  background: #0a0a0f;
+  padding: 80px 24px;
+}
+.cin-survey-inner {
+  max-width: 560px;
+  margin: 0 auto;
+}
+.cin-progress-line {
+  height: 1px;
+  background: #1a1a2e;
+  margin-bottom: 64px;
+  position: relative;
+}
+.cin-progress-glow {
+  height: 2px;
+  width: 63%;
+  background: linear-gradient(90deg, #6366f1, #a5b4fc);
+  box-shadow: 0 0 12px rgba(99,102,241,0.4);
+  position: absolute;
+  top: -0.5px;
+}
+.cin-progress-label {
+  font-size: 11px;
+  color: #4b5563;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-bottom: 8px;
+}
+.cin-section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  font-weight: 400;
+  color: #e5e7eb;
+  margin-bottom: 12px;
+}
+.cin-section-note {
+  font-size: 14px;
+  color: #4b5563;
+  margin-bottom: 48px;
+  line-height: 1.6;
+}
+.cin-question-text {
+  font-size: 17px;
+  color: #d1d5db;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  font-weight: 300;
+}
+.cin-likert {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 48px;
+}
+.cin-likert-opt {
+  padding: 14px 20px;
+  border: 1px solid #1f1f2e;
+  color: #9ca3af;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.25s;
+  border-radius: 2px;
+  background: transparent;
+  text-align: left;
+}
+.cin-likert-opt:hover {
+  border-color: #4338ca;
+  color: #c7d2fe;
+}
+.cin-likert-opt.selected {
+  border-color: #6366f1;
+  background: rgba(99,102,241,0.08);
+  color: #a5b4fc;
+  box-shadow: 0 0 8px rgba(99,102,241,0.15);
+}
+.cin-nav-row {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 32px;
+  border-top: 1px solid #1a1a2e;
+}
+.cin-btn-back, .cin-btn-next {
+  padding: 10px 28px;
+  font-size: 13px;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.2s;
+  font-family: 'Inter', sans-serif;
+  text-decoration: none;
+}
+.cin-btn-back {
+  background: none;
+  border: 1px solid #27272a;
+  color: #6b7280;
+}
+.cin-btn-next {
+  background: none;
+  border: 1px solid rgba(165,180,252,0.3);
+  color: #a5b4fc;
+}
+
+/* Cinematic Results */
+.cin-results {
+  background: #050507;
+  padding: 80px 24px;
+}
+.cin-results-inner {
+  max-width: 560px;
+  margin: 0 auto;
+}
+.cin-results-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  font-weight: 400;
+  color: #e5e7eb;
+  margin-bottom: 48px;
+}
+.cin-result-card {
+  margin-bottom: 32px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid #1a1a2e;
+}
+.cin-result-label {
+  font-size: 11px;
+  color: #4b5563;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-bottom: 12px;
+}
+.cin-result-score {
+  font-family: 'Playfair Display', serif;
+  font-size: 48px;
+  font-weight: 400;
+  color: #e5e7eb;
+  margin-bottom: 8px;
+}
+.cin-result-score span {
+  font-size: 20px;
+  color: #4b5563;
+}
+.cin-spectrum {
+  height: 4px;
+  background: linear-gradient(90deg, #22c55e 0%, #facc15 33%, #f97316 66%, #ef4444 100%);
+  border-radius: 2px;
+  position: relative;
+  margin: 16px 0 8px;
+}
+.cin-spectrum-marker {
+  position: absolute;
+  top: -6px;
+  width: 16px; height: 16px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(255,255,255,0.3);
+  transform: translateX(-50%);
+}
+.cin-result-note {
+  font-size: 13px;
+  color: #4b5563;
+}
+
+/* ================================================================
+   2. CONFESSION BOOTH
+   ================================================================ */
+.conf-landing {
+  min-height: 100vh;
+  background: #f5f0eb;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 80px 24px 60px;
+  position: relative;
+}
+.conf-quote-block {
+  max-width: 580px;
+  margin-bottom: 48px;
+}
+.conf-quote {
+  font-family: 'Space Mono', monospace;
+  font-size: clamp(16px, 2.5vw, 22px);
+  line-height: 1.8;
+  color: #1a1a1a;
+  position: relative;
+  padding-left: 24px;
+  border-left: 3px solid #dc2626;
+}
+.conf-strikethrough {
+  text-decoration: line-through;
+  color: #a0a0a0;
+}
+.conf-redacted {
+  background: #1a1a1a;
+  color: #1a1a1a;
+  padding: 0 4px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.3s;
+  user-select: none;
+}
+.conf-redacted.revealed,
+.conf-redacted:hover {
+  background: #fef2f2;
+  color: #dc2626;
+}
+.conf-attribution {
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  color: #9ca3af;
+  margin-top: 20px;
+  padding-left: 24px;
+}
+.conf-counter {
+  font-family: 'Space Mono', monospace;
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 32px;
+  text-align: center;
+}
+.conf-counter strong {
+  color: #1a1a1a;
+  font-weight: 700;
+}
+.conf-cta {
+  display: inline-block;
+  font-family: 'Space Mono', monospace;
+  font-size: 14px;
+  padding: 14px 36px;
+  background: #1a1a1a;
+  color: #f5f0eb;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+.conf-cta:hover {
+  background: #dc2626;
+}
+
+/* Confession Survey */
+.conf-survey {
+  background: #f5f0eb;
+  padding: 60px 24px;
+  background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+}
+.conf-survey-inner {
+  max-width: 520px;
+  margin: 0 auto;
+}
+.conf-section-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: #dc2626;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-bottom: 8px;
+}
+.conf-section-title {
+  font-family: 'Space Mono', monospace;
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 8px;
+}
+.conf-section-note {
+  font-family: 'Space Mono', monospace;
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 40px;
+  line-height: 1.7;
+}
+.conf-progress-text {
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  color: #9ca3af;
+  margin-bottom: 32px;
+}
+.conf-progress-text strong { color: #1a1a1a; }
+.conf-question-text {
+  font-family: 'Space Mono', monospace;
+  font-size: 15px;
+  color: #1a1a1a;
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+.conf-likert {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 40px;
+}
+.conf-likert-opt {
+  font-family: 'Space Mono', monospace;
+  padding: 10px 16px;
+  border: none;
+  border-bottom: 1px solid #d6d0c8;
+  background: transparent;
+  color: #6b7280;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: left;
+}
+.conf-likert-opt:hover {
+  background: rgba(220,38,38,0.04);
+  color: #1a1a1a;
+}
+.conf-likert-opt.selected {
+  background: rgba(220,38,38,0.06);
+  color: #dc2626;
+  border-bottom-color: #dc2626;
+  font-weight: 700;
+}
+
+/* Confession Results */
+.conf-results {
+  background: #f5f0eb;
+  padding: 60px 24px;
+}
+.conf-results-inner {
+  max-width: 520px;
+  margin: 0 auto;
+}
+.conf-letter-greeting {
+  font-family: 'Space Mono', monospace;
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 24px;
+  font-style: italic;
+}
+.conf-letter-body {
+  font-family: 'Space Mono', monospace;
+  font-size: 14px;
+  color: #1a1a1a;
+  line-height: 2;
+  margin-bottom: 16px;
+}
+.conf-letter-body .highlight {
+  background: #fef2f2;
+  color: #dc2626;
+  padding: 1px 4px;
+  font-weight: 700;
+}
+
+/* ================================================================
+   3. THE SPLIT
+   ================================================================ */
+.split-landing {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding-top: 44px;
+  position: relative;
+}
+.split-left {
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 60px 48px;
+  color: #0a0a0a;
+  position: relative;
+  transition: flex 0.4s ease;
+}
+.split-right {
+  background: #0a0a0a;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 60px 48px;
+  color: #e5e7eb;
+  position: relative;
+  transition: flex 0.4s ease;
+}
+.split-silhouette {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  margin-bottom: 32px;
+}
+.split-left .split-silhouette {
+  background: linear-gradient(135deg, #e5e7eb, #d1d5db);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+.split-right .split-silhouette {
+  background: linear-gradient(135deg, #27272a, #1f1f23);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  opacity: 0.6;
+}
+.split-stats {
+  font-family: 'Space Grotesk', sans-serif;
+  margin-bottom: 24px;
+}
+.split-stat-line {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+.split-left .split-stat-line { color: #111827; }
+.split-right .split-stat-line {
+  color: #9ca3af;
+  font-weight: 400;
+}
+.split-tagline {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-top: 24px;
+}
+.split-left .split-tagline { color: #9ca3af; }
+.split-right .split-tagline { color: #4b5563; }
+.split-cta-bar {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  background: #18181b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 10;
+}
+.split-cta {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  background: none;
+  border: 1px solid #3f3f46;
+  padding: 12px 40px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+.split-cta:hover {
+  border-color: #fff;
+}
+.split-divider {
+  position: absolute;
+  top: 44px; bottom: 60px;
+  left: 50%;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, #6b7280, transparent);
+  z-index: 5;
+  transform: translateX(-50%);
+}
+
+/* Split Survey */
+.split-survey {
+  padding: 80px 24px;
+  background: linear-gradient(135deg, #fafafa 0%, #f0f0f0 50%, #1a1a1a 50%, #0a0a0a 100%);
+  background-size: 400% 400%;
+  animation: splitBgShift 8s ease infinite alternate;
+}
+@keyframes splitBgShift {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+.split-survey-inner {
+  max-width: 520px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 12px;
+  padding: 40px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+}
+.split-survey-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 8px;
+}
+.split-survey-note {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 32px;
+  line-height: 1.6;
+}
+.split-question-text {
+  font-size: 15px;
+  color: #111;
+  font-weight: 500;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+.split-likert {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+}
+.split-likert-opt {
+  padding: 8px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  background: #fff;
+  color: #374151;
+  transition: all 0.15s;
+}
+.split-likert-opt:hover { border-color: #111; }
+.split-likert-opt.selected {
+  background: #111;
+  border-color: #111;
+  color: #fff;
+}
+
+/* Split Results */
+.split-results {
+  padding: 60px 24px;
+  background: #f9fafb;
+}
+.split-results-inner {
+  max-width: 640px;
+  margin: 0 auto;
+}
+.split-results-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 32px;
+}
+.split-result-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  margin-bottom: 2px;
+}
+.split-result-cell {
+  padding: 20px 24px;
+}
+.split-result-cell.yours {
+  background: #fff;
+}
+.split-result-cell.research {
+  background: #111;
+  color: #e5e7eb;
+}
+.split-result-cell-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 8px;
+  opacity: 0.5;
+}
+.split-result-cell-value {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+}
+.split-result-cell-desc {
+  font-size: 13px;
+  margin-top: 4px;
+  opacity: 0.6;
+}
+
+/* ================================================================
+   4. DATA PROVOCATION
+   ================================================================ */
+.data-landing {
+  min-height: 100vh;
+  background: #0f1117;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 24px 60px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.data-dot-grid {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  display: grid;
+  grid-template-columns: repeat(10, 28px);
+  gap: 10px;
+  opacity: 0.15;
+}
+.data-dot {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: #374151;
+  transition: all 0.3s;
+}
+.data-dot.lit {
+  background: #06b6d4;
+  box-shadow: 0 0 6px rgba(6,182,212,0.4);
+}
+.data-big-number {
+  font-family: 'DM Sans', sans-serif;
+  font-size: clamp(100px, 20vw, 200px);
+  font-weight: 700;
+  color: #06b6d4;
+  line-height: 1;
+  position: relative;
+  z-index: 2;
+  margin-bottom: 16px;
+}
+.data-big-unit {
+  font-size: 0.4em;
+  color: #06b6d4;
+  opacity: 0.7;
+  vertical-align: super;
+}
+.data-stat-text {
+  font-size: clamp(16px, 2vw, 20px);
+  color: #9ca3af;
+  max-width: 480px;
+  line-height: 1.6;
+  position: relative;
+  z-index: 2;
+  margin-bottom: 48px;
+}
+.data-stat-text strong { color: #e5e7eb; font-weight: 600; }
+.data-hook {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 32px;
+  position: relative;
+  z-index: 2;
+}
+.data-cta {
+  display: inline-block;
+  padding: 14px 40px;
+  background: #06b6d4;
+  color: #0f1117;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+  position: relative;
+  z-index: 2;
+  transition: all 0.2s;
+}
+.data-cta:hover {
+  background: #22d3ee;
+  box-shadow: 0 0 20px rgba(6,182,212,0.3);
+}
+
+/* Data Survey */
+.data-survey {
+  background: #0f1117;
+  padding: 80px 24px;
+}
+.data-survey-inner {
+  max-width: 560px;
+  margin: 0 auto;
+}
+.data-section-title {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #e5e7eb;
+  margin-bottom: 8px;
+}
+.data-section-note {
+  font-size: 14px;
+  color: #4b5563;
+  margin-bottom: 32px;
+}
+.data-question-text {
+  font-size: 15px;
+  color: #d1d5db;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+.data-likert {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 40px;
+}
+.data-likert-opt {
+  flex: 1;
+  padding: 12px 8px;
+  border: 1px solid #1e293b;
+  border-radius: 4px;
+  font-size: 12px;
+  text-align: center;
+  cursor: pointer;
+  background: transparent;
+  color: #6b7280;
+  transition: all 0.15s;
+}
+.data-likert-opt:hover { border-color: #06b6d4; color: #06b6d4; }
+.data-likert-opt.selected {
+  border-color: #06b6d4;
+  background: rgba(6,182,212,0.1);
+  color: #06b6d4;
+  font-weight: 600;
+}
+.data-distribution {
+  margin: 24px 0 40px;
+  padding: 20px;
+  border: 1px solid #1e293b;
+  border-radius: 8px;
+}
+.data-dist-label {
+  font-size: 11px;
+  color: #4b5563;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 12px;
+}
+.data-dist-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 60px;
+}
+.data-dist-bar {
+  flex: 1;
+  background: #1e293b;
+  border-radius: 2px 2px 0 0;
+  transition: all 0.3s;
+}
+.data-dist-bar.you {
+  background: #06b6d4;
+  box-shadow: 0 0 6px rgba(6,182,212,0.4);
+  position: relative;
+}
+.data-dist-bar.you::after {
+  content: 'YOU';
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 9px;
+  font-weight: 700;
+  color: #06b6d4;
+  letter-spacing: 0.1em;
+}
+
+/* Data Results */
+.data-results {
+  background: #0f1117;
+  padding: 60px 24px;
+}
+.data-results-inner {
+  max-width: 560px;
+  margin: 0 auto;
+}
+.data-results-title {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #e5e7eb;
+  margin-bottom: 32px;
+}
+.data-result-card {
+  border: 1px solid #1e293b;
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 16px;
+  background: rgba(255,255,255,0.02);
+}
+.data-result-card-label {
+  font-size: 11px;
+  color: #4b5563;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 12px;
+}
+.data-result-big {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 36px;
+  font-weight: 700;
+  color: #06b6d4;
+  margin-bottom: 4px;
+}
+.data-result-context {
+  font-size: 13px;
+  color: #6b7280;
+}
+.data-result-bar-track {
+  height: 6px;
+  background: #1e293b;
+  border-radius: 3px;
+  margin-top: 12px;
+  position: relative;
+  overflow: hidden;
+}
+.data-result-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #06b6d4, #22d3ee);
+  border-radius: 3px;
+}
+
+/* ================================================================
+   5. ONE QUESTION
+   ================================================================ */
+.oq-landing {
+  min-height: 100vh;
+  background: #fafafa;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 24px 60px;
+  text-align: center;
+}
+.oq-question {
+  font-family: 'DM Sans', sans-serif;
+  font-size: clamp(28px, 5vw, 48px);
+  font-weight: 500;
+  color: #111;
+  margin-bottom: 48px;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+.oq-scale {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 48px;
+}
+.oq-scale-opt {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  border: 2px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: #9ca3af;
+  cursor: pointer;
+  transition: all 0.25s;
+  background: #fff;
+}
+.oq-scale-opt:hover {
+  border-color: #111;
+  color: #111;
+  transform: scale(1.1);
+}
+.oq-scale-opt.selected {
+  background: #111;
+  border-color: #111;
+  color: #fff;
+  transform: scale(1.15);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+.oq-scale-labels {
+  display: flex;
+  justify-content: space-between;
+  width: 300px;
+  font-size: 12px;
+  color: #9ca3af;
+  margin-bottom: 64px;
+}
+.oq-context {
+  max-width: 400px;
+  font-size: 14px;
+  color: #9ca3af;
+  line-height: 1.7;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.6s ease;
+}
+.oq-context.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.oq-context a {
+  color: #111;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* One Question Survey */
+.oq-survey {
+  background: #fafafa;
+  padding: 60px 24px;
+}
+.oq-survey-inner {
+  max-width: 480px;
+  margin: 0 auto;
+  text-align: center;
+}
+.oq-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 48px;
+}
+.oq-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #e5e7eb;
+}
+.oq-dot.active { background: #111; }
+.oq-dot.done { background: #9ca3af; }
+.oq-survey-question {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 22px;
+  font-weight: 500;
+  color: #111;
+  margin-bottom: 32px;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+}
+.oq-survey-likert {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 360px;
+  margin: 0 auto 40px;
+}
+.oq-survey-opt {
+  padding: 14px 20px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 15px;
+  cursor: pointer;
+  color: #374151;
+  background: #fff;
+  transition: all 0.2s;
+  text-align: center;
+}
+.oq-survey-opt:hover {
+  border-color: #111;
+}
+.oq-survey-opt.selected {
+  border-color: #111;
+  background: #111;
+  color: #fff;
+}
+
+/* One Question Results */
+.oq-results {
+  background: #fafafa;
+  padding: 60px 24px;
+}
+.oq-results-inner {
+  max-width: 400px;
+  margin: 0 auto;
+  text-align: center;
+}
+.oq-results-title {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 28px;
+  font-weight: 500;
+  color: #111;
+  margin-bottom: 40px;
+  letter-spacing: -0.02em;
+}
+.oq-flip-card {
+  perspective: 800px;
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+.oq-flip-inner {
+  position: relative;
+  width: 100%;
+  height: 140px;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+.oq-flip-card.flipped .oq-flip-inner {
+  transform: rotateY(180deg);
+}
+.oq-flip-front, .oq-flip-back {
+  position: absolute;
+  width: 100%; height: 100%;
+  backface-visibility: hidden;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.oq-flip-front {
+  background: #111;
+  color: #fff;
+}
+.oq-flip-front-label {
+  font-size: 13px;
+  color: #9ca3af;
+  margin-bottom: 8px;
+}
+.oq-flip-front-text {
+  font-size: 15px;
+  font-weight: 500;
+}
+.oq-flip-front-hint {
+  font-size: 11px;
+  color: #6b7280;
+  margin-top: 12px;
+}
+.oq-flip-back {
+  background: #fff;
+  border: 2px solid #111;
+  transform: rotateY(180deg);
+}
+.oq-flip-back-score {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 36px;
+  font-weight: 700;
+  color: #111;
+}
+.oq-flip-back-label {
+  font-size: 13px;
+  color: #6b7280;
+  margin-top: 4px;
+}
+
+/* ================================================================
+   6. CONFESSIONAL DATA (Mashup: Confession + Data)
+   Raw honesty meets hard numbers. Monospace confessions with
+   embedded inline data visualizations.
+   ================================================================ */
+.cd-landing {
+  min-height: 100vh;
+  background: #111;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 24px 60px;
+  position: relative;
+}
+.cd-ticker {
+  position: absolute;
+  top: 44px; left: 0; right: 0;
+  background: #0a0a0a;
+  border-bottom: 1px solid #222;
+  padding: 8px 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.cd-ticker-inner {
+  display: inline-block;
+  animation: cdScroll 30s linear infinite;
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  color: #444;
+}
+@keyframes cdScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.cd-ticker-stat {
+  display: inline-block;
+  margin-right: 48px;
+}
+.cd-ticker-stat strong { color: #06b6d4; }
+.cd-main-quote {
+  max-width: 560px;
+  font-family: 'Space Mono', monospace;
+  font-size: clamp(15px, 2vw, 18px);
+  line-height: 2;
+  color: #999;
+  margin-bottom: 48px;
+  position: relative;
+  z-index: 2;
+}
+.cd-main-quote .cd-inline-stat {
+  display: inline-block;
+  background: rgba(6,182,212,0.1);
+  border: 1px solid rgba(6,182,212,0.3);
+  color: #06b6d4;
+  padding: 0 6px;
+  border-radius: 3px;
+  font-weight: 700;
+  font-size: 0.9em;
+  cursor: default;
+  position: relative;
+}
+.cd-main-quote .cd-inline-stat::after {
+  content: attr(data-context);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #06b6d4;
+  color: #0a0a0a;
+  padding: 4px 8px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+.cd-main-quote .cd-inline-stat:hover::after { opacity: 1; }
+.cd-main-quote .cd-redacted {
+  background: #333;
+  color: #333;
+  padding: 0 3px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.cd-main-quote .cd-redacted:hover {
+  background: rgba(220,38,38,0.15);
+  color: #f87171;
+}
+.cd-micro-chart {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 1px;
+  height: 16px;
+  vertical-align: middle;
+  margin: 0 4px;
+}
+.cd-micro-bar {
+  width: 3px;
+  background: #06b6d4;
+  border-radius: 1px 1px 0 0;
+  opacity: 0.6;
+}
+.cd-cta-area {
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+.cd-landing-count {
+  font-family: 'Space Mono', monospace;
+  font-size: 13px;
+  color: #555;
+  margin-bottom: 20px;
+}
+.cd-landing-count strong { color: #06b6d4; }
+.cd-cta {
+  display: inline-block;
+  font-family: 'Space Mono', monospace;
+  font-size: 13px;
+  padding: 12px 32px;
+  background: transparent;
+  color: #06b6d4;
+  border: 1px solid rgba(6,182,212,0.4);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+.cd-cta:hover {
+  background: rgba(6,182,212,0.1);
+  border-color: #06b6d4;
+}
+
+/* CD Survey */
+.cd-survey {
+  background: #111;
+  padding: 80px 24px;
+}
+.cd-survey-inner {
+  max-width: 520px;
+  margin: 0 auto;
+}
+.cd-survey-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: #06b6d4;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 8px;
+}
+.cd-survey-title {
+  font-family: 'Space Mono', monospace;
+  font-size: 18px;
+  font-weight: 700;
+  color: #e5e7eb;
+  margin-bottom: 8px;
+}
+.cd-survey-note {
+  font-family: 'Space Mono', monospace;
+  font-size: 13px;
+  color: #555;
+  margin-bottom: 32px;
+  line-height: 1.6;
+}
+.cd-question-text {
+  font-family: 'Space Mono', monospace;
+  font-size: 14px;
+  color: #ccc;
+  margin-bottom: 16px;
+  line-height: 1.7;
+}
+.cd-likert {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 32px;
+}
+.cd-likert-opt {
+  font-family: 'Space Mono', monospace;
+  padding: 10px 16px;
+  border: none;
+  border-left: 2px solid #222;
+  background: transparent;
+  color: #666;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: left;
+  display: flex;
+  justify-content: space-between;
+}
+.cd-likert-opt:hover {
+  border-left-color: #06b6d4;
+  color: #aaa;
+}
+.cd-likert-opt.selected {
+  border-left-color: #06b6d4;
+  color: #06b6d4;
+  background: rgba(6,182,212,0.05);
+}
+.cd-likert-pct {
+  font-size: 11px;
+  color: #333;
+}
+.cd-likert-opt:hover .cd-likert-pct,
+.cd-likert-opt.selected .cd-likert-pct { color: #06b6d4; opacity: 0.6; }
+
+/* CD Results */
+.cd-results {
+  background: #111;
+  padding: 60px 24px;
+}
+.cd-results-inner {
+  max-width: 520px;
+  margin: 0 auto;
+}
+.cd-results-greeting {
+  font-family: 'Space Mono', monospace;
+  font-size: 13px;
+  color: #555;
+  font-style: italic;
+  margin-bottom: 24px;
+}
+.cd-results-body {
+  font-family: 'Space Mono', monospace;
+  font-size: 13px;
+  color: #999;
+  line-height: 2;
+  margin-bottom: 16px;
+}
+.cd-results-body .cd-inline-stat {
+  display: inline-block;
+  background: rgba(6,182,212,0.1);
+  border: 1px solid rgba(6,182,212,0.3);
+  color: #06b6d4;
+  padding: 0 6px;
+  border-radius: 3px;
+  font-weight: 700;
+}
+
+/* ================================================================
+   7. THE MIRROR (Confession v2: Second-person confrontation)
+   Speaks directly to YOU. Not clinical distance — it's personal.
+   ================================================================ */
+.mir-landing {
+  min-height: 100vh;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 24px 60px;
+  text-align: center;
+  position: relative;
+}
+.mir-landing::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+}
+.mir-you {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(60px, 12vw, 120px);
+  font-weight: 400;
+  color: #222;
+  margin-bottom: 40px;
+  position: relative;
+  z-index: 2;
+  letter-spacing: -0.03em;
+  user-select: none;
+  transition: color 1s ease;
+}
+.mir-you.revealed { color: #f0f0f0; }
+.mir-statements {
+  max-width: 480px;
+  text-align: left;
+  margin-bottom: 48px;
+  position: relative;
+  z-index: 2;
+}
+.mir-stmt {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  color: #555;
+  line-height: 1.8;
+  margin-bottom: 12px;
+  padding-left: 20px;
+  border-left: 2px solid #222;
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: all 0.5s ease;
+}
+.mir-stmt.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+.mir-stmt strong {
+  color: #e5e7eb;
+  font-weight: 600;
+}
+.mir-stmt em {
+  font-style: italic;
+  color: #6b7280;
+}
+.mir-punchline {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(20px, 3vw, 28px);
+  font-weight: 400;
+  font-style: italic;
+  color: #e5e7eb;
+  margin-bottom: 40px;
+  position: relative;
+  z-index: 2;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+.mir-punchline.visible { opacity: 1; }
+.mir-cta {
+  display: inline-block;
+  font-size: 15px;
+  color: #e5e7eb;
+  text-decoration: none;
+  border-bottom: 1px solid #444;
+  padding-bottom: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  opacity: 0;
+  transition: opacity 0.6s ease, border-color 0.2s;
+  position: relative;
+  z-index: 2;
+}
+.mir-cta.visible { opacity: 1; }
+.mir-cta:hover { border-color: #e5e7eb; }
+
+/* Mirror Survey */
+.mir-survey {
+  background: #000;
+  padding: 80px 24px;
+}
+.mir-survey-inner {
+  max-width: 500px;
+  margin: 0 auto;
+}
+.mir-survey-prompt {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  color: #444;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 32px;
+}
+.mir-survey-question {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-weight: 400;
+  color: #d1d5db;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+.mir-likert {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 40px;
+}
+.mir-likert-opt {
+  padding: 16px 20px;
+  border: 1px solid #1a1a1a;
+  background: transparent;
+  color: #6b7280;
+  font-size: 15px;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-align: left;
+  border-radius: 2px;
+  position: relative;
+  overflow: hidden;
+}
+.mir-likert-opt::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 0;
+  background: rgba(255,255,255,0.03);
+  transition: width 0.3s;
+}
+.mir-likert-opt:hover::before { width: 100%; }
+.mir-likert-opt:hover {
+  border-color: #333;
+  color: #d1d5db;
+}
+.mir-likert-opt.selected {
+  border-color: #e5e7eb;
+  color: #e5e7eb;
+}
+.mir-likert-opt.selected::before {
+  width: 100%;
+  background: rgba(255,255,255,0.05);
+}
+
+/* Mirror Results */
+.mir-results {
+  background: #000;
+  padding: 60px 24px;
+}
+.mir-results-inner {
+  max-width: 500px;
+  margin: 0 auto;
+}
+.mir-result-block {
+  margin-bottom: 40px;
+}
+.mir-result-you {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  color: #444;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 12px;
+}
+.mir-result-value {
+  font-family: 'Playfair Display', serif;
+  font-size: 56px;
+  font-weight: 400;
+  color: #e5e7eb;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.mir-result-value span {
+  font-size: 24px;
+  color: #333;
+}
+.mir-result-meaning {
+  font-size: 15px;
+  color: #6b7280;
+  line-height: 1.6;
+}
+.mir-result-meaning strong {
+  color: #e5e7eb;
+}
+.mir-result-line {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #333, transparent);
+  margin: 40px 0;
+}
+
+/* ================================================================
+   8. THE WAITING ROOM (Warm confession in a different register)
+   Feels like sitting in a therapist's office before your session.
+   Quiet, grounded, almost literary. A pause before the hard stuff.
+   ================================================================ */
+.wr-landing {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #f7f3ee 0%, #ece5db 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 24px 60px;
+}
+.wr-landing-inner {
+  max-width: 520px;
+}
+.wr-time {
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  color: #b8a99a;
+  letter-spacing: 0.1em;
+  margin-bottom: 40px;
+}
+.wr-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 400;
+  color: #2c2418;
+  line-height: 1.3;
+  margin-bottom: 32px;
+  letter-spacing: -0.01em;
+}
+.wr-body {
+  font-size: 15px;
+  color: #7a6b5d;
+  line-height: 1.9;
+  margin-bottom: 16px;
+  font-family: 'Inter', sans-serif;
+}
+.wr-body:last-of-type { margin-bottom: 40px; }
+.wr-detail {
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  color: #b8a99a;
+  margin-bottom: 32px;
+  line-height: 1.8;
+}
+.wr-detail span {
+  display: inline-block;
+  margin-right: 24px;
+}
+.wr-cta {
+  display: inline-block;
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  color: #2c2418;
+  text-decoration: none;
+  border-bottom: 1px solid #c4b5a2;
+  padding-bottom: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.wr-cta:hover {
+  border-color: #2c2418;
+}
+.wr-plant {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  font-size: 11px;
+  color: #c4b5a2;
+  font-family: 'Space Mono', monospace;
+  writing-mode: vertical-rl;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+/* WR Survey */
+.wr-survey {
+  background: #f7f3ee;
+  padding: 80px 24px;
+}
+.wr-survey-inner {
+  max-width: 480px;
+  margin: 0 auto;
+}
+.wr-survey-progress {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: #b8a99a;
+  margin-bottom: 32px;
+  display: flex;
+  gap: 6px;
+}
+.wr-prog-dot {
+  width: 24px; height: 3px;
+  background: #d6ccbf;
+  border-radius: 1px;
+}
+.wr-prog-dot.done { background: #8b7b6a; }
+.wr-prog-dot.active { background: #2c2418; }
+.wr-survey-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-weight: 400;
+  color: #2c2418;
+  margin-bottom: 8px;
+}
+.wr-survey-note {
+  font-size: 14px;
+  color: #a0917f;
+  margin-bottom: 40px;
+  line-height: 1.6;
+}
+.wr-question-text {
+  font-size: 16px;
+  color: #3d3225;
+  margin-bottom: 20px;
+  line-height: 1.6;
+  font-weight: 400;
+}
+.wr-likert {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 40px;
+}
+.wr-likert-opt {
+  padding: 14px 20px;
+  border: 1px solid #d6ccbf;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.5);
+  color: #7a6b5d;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+  font-family: 'Inter', sans-serif;
+}
+.wr-likert-opt:hover {
+  border-color: #8b7b6a;
+  background: rgba(255,255,255,0.8);
+}
+.wr-likert-opt.selected {
+  border-color: #2c2418;
+  background: #fff;
+  color: #2c2418;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(44,36,24,0.08);
+}
+
+/* WR Results */
+.wr-results {
+  background: linear-gradient(180deg, #f7f3ee 0%, #ece5db 100%);
+  padding: 60px 24px;
+}
+.wr-results-inner {
+  max-width: 480px;
+  margin: 0 auto;
+}
+.wr-results-note {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: #b8a99a;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 32px;
+}
+.wr-result-card {
+  padding: 24px;
+  background: rgba(255,255,255,0.6);
+  border-radius: 12px;
+  margin-bottom: 12px;
+  backdrop-filter: blur(4px);
+}
+.wr-result-label {
+  font-size: 12px;
+  color: #a0917f;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+}
+.wr-result-score {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  color: #2c2418;
+  margin-bottom: 4px;
+}
+.wr-result-score span {
+  font-size: 16px;
+  color: #b8a99a;
+}
+.wr-result-desc {
+  font-size: 14px;
+  color: #7a6b5d;
+}
+.wr-result-bar-track {
+  height: 4px;
+  background: #d6ccbf;
+  border-radius: 2px;
+  margin-top: 12px;
+  overflow: hidden;
+}
+.wr-result-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #8b7b6a, #c2703e);
+  border-radius: 2px;
+}
+
+/* ================================================================
+   RESPONSIVE
+   ================================================================ */
+@media (max-width: 768px) {
+  .split-landing {
+    grid-template-columns: 1fr;
+  }
+  .split-left, .split-right {
+    padding: 40px 24px;
+    min-height: 50vh;
+  }
+  .split-divider { display: none; }
+  .split-cta-bar { position: relative; }
+  .data-likert { flex-direction: column; }
+  .oq-scale-opt { width: 48px; height: 48px; font-size: 16px; }
+  .oq-scale { gap: 8px; }
+  .nav-screens { gap: 3px; }
+  .nav-btn { padding: 3px 8px; font-size: 11px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============ NAV BAR ============ -->
+<div class="nav">
+  <div class="nav-left">
+    <span class="nav-label">Radical Redesign</span>
+    <span class="nav-badge">v2</span>
+  </div>
+  <div class="nav-screens">
+    <button class="nav-btn active" onclick="switchDesign('cinematic')">Cinematic</button>
+    <button class="nav-btn" onclick="switchDesign('confession')">Confession</button>
+    <button class="nav-btn" onclick="switchDesign('split')">Split</button>
+    <button class="nav-btn" onclick="switchDesign('data')">Data</button>
+    <button class="nav-btn" onclick="switchDesign('onequestion')">One Question</button>
+    <span style="color:#333; margin: 0 4px;">|</span>
+    <button class="nav-btn" onclick="switchDesign('confdata')">Conf+Data</button>
+    <button class="nav-btn" onclick="switchDesign('mirror')">Mirror</button>
+    <button class="nav-btn" onclick="switchDesign('waitingroom')">Waiting Room</button>
+  </div>
+</div>
+
+<!-- ============================================================
+     1. CINEMATIC REVEAL
+     ============================================================ -->
+<section class="design-section active" data-design="cinematic">
+
+  <!-- Landing -->
+  <div class="cin-landing" id="cinLanding">
+    <h1 class="cin-headline" id="cinHeadline"></h1>
+    <p class="cin-subtitle">A 10-minute confidential screening. Validated instruments. Immediate results. No judgment.</p>
+    <a class="cin-cta" href="#">Begin &rarr;</a>
+    <div class="cin-footer-note">Anonymous &middot; Research-backed &middot; For founders only</div>
+  </div>
+
+  <!-- Survey -->
+  <div class="cin-survey">
+    <div class="cin-survey-inner">
+      <div class="cin-progress-label">Section 5 of 8</div>
+      <div class="cin-progress-line">
+        <div class="cin-progress-glow"></div>
+      </div>
+      <h2 class="cin-section-title">Depression Screening</h2>
+      <p class="cin-section-note">Based on the PHQ-9. Think about the last two weeks.</p>
+      <div class="cin-question-text">How often have you been bothered by feeling down, depressed, or hopeless?</div>
+      <div class="cin-likert">
+        <button class="cin-likert-opt" onclick="selectInGroup(this)">Not at all</button>
+        <button class="cin-likert-opt" onclick="selectInGroup(this)">Several days</button>
+        <button class="cin-likert-opt selected" onclick="selectInGroup(this)">More than half the days</button>
+        <button class="cin-likert-opt" onclick="selectInGroup(this)">Nearly every day</button>
+      </div>
+      <div class="cin-nav-row">
+        <a class="cin-btn-back" href="#">&larr; Back</a>
+        <a class="cin-btn-next" href="#">Next &rarr;</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div class="cin-results">
+    <div class="cin-results-inner">
+      <h2 class="cin-results-title">Your Results</h2>
+      <div class="cin-result-card">
+        <div class="cin-result-label">Depression (PHQ-9)</div>
+        <div class="cin-result-score">14 <span>/ 27</span></div>
+        <div class="cin-spectrum">
+          <div class="cin-spectrum-marker" style="left: 52%;"></div>
+        </div>
+        <div class="cin-result-note">Moderate &middot; 72nd percentile</div>
+      </div>
+      <div class="cin-result-card">
+        <div class="cin-result-label">Anxiety (GAD-7)</div>
+        <div class="cin-result-score">8 <span>/ 21</span></div>
+        <div class="cin-spectrum">
+          <div class="cin-spectrum-marker" style="left: 38%;"></div>
+        </div>
+        <div class="cin-result-note">Mild &middot; 58th percentile</div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============================================================
+     2. CONFESSION BOOTH
+     ============================================================ -->
+<section class="design-section" data-design="confession">
+
+  <!-- Landing -->
+  <div class="conf-landing">
+    <div class="conf-quote-block">
+      <blockquote class="conf-quote">
+        I tell my investors <span class="conf-strikethrough">I'm fine</span> everything's on track.
+        I tell my team we're in a great position.
+        I tell my <span class="conf-redacted">wife</span> I'll be home soon.
+        I tell my therapist &mdash; actually, I stopped going
+        <span class="conf-redacted">three months ago</span>.
+        <br><br>
+        The truth is I haven't slept more than 4 hours in weeks and I
+        <span class="conf-redacted">don't know how much longer</span> I can keep this up.
+      </blockquote>
+      <div class="conf-attribution">&mdash; Anonymous founder, Series B, 2024</div>
+    </div>
+    <p class="conf-counter">You're not the only one. <strong>847 founders</strong> have taken this survey.</p>
+    <a class="conf-cta" href="#">Check in on yourself</a>
+  </div>
+
+  <!-- Survey -->
+  <div class="conf-survey">
+    <div class="conf-survey-inner">
+      <div class="conf-section-tag">Part 2 / Section 5</div>
+      <h2 class="conf-section-title">Let's talk about how you've been feeling.</h2>
+      <p class="conf-section-note">No right answers. No wrong ones. Just honest ones.</p>
+      <div class="conf-progress-text"><strong>5</strong> / 8 sections complete</div>
+      <div class="conf-question-text">Over the last 2 weeks, how often have you felt down, depressed, or hopeless?</div>
+      <div class="conf-likert">
+        <button class="conf-likert-opt" onclick="selectInGroup(this)">Not at all</button>
+        <button class="conf-likert-opt" onclick="selectInGroup(this)">Several days</button>
+        <button class="conf-likert-opt selected" onclick="selectInGroup(this)">More than half the days</button>
+        <button class="conf-likert-opt" onclick="selectInGroup(this)">Nearly every day</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div class="conf-results">
+    <div class="conf-results-inner">
+      <div class="conf-letter-greeting">Dear Founder,</div>
+      <p class="conf-letter-body">
+        Your depression screening score was <span class="highlight">14 out of 27</span>,
+        which falls in the <span class="highlight">moderate</span> range. This means you've been
+        experiencing symptoms that are affecting your daily life more days than not.
+      </p>
+      <p class="conf-letter-body">
+        You scored higher than <span class="highlight">72%</span> of the general population.
+        Among the founders who've taken this survey, your score is unfortunately common.
+      </p>
+      <p class="conf-letter-body">
+        Your anxiety score of <span class="highlight">8 out of 21</span> suggests
+        <span class="highlight">mild</span> symptoms. Your top stressor?
+        <span class="highlight">Runway anxiety</span>, which 64% of founders in our study also ranked first.
+      </p>
+      <p class="conf-letter-body" style="color: #6b7280; margin-top: 32px;">
+        This is a screening, not a diagnosis. But the fact that you took 10 minutes to check in on yourself matters. &mdash; J.S.
+      </p>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============================================================
+     3. THE SPLIT
+     ============================================================ -->
+<section class="design-section" data-design="split">
+
+  <!-- Landing -->
+  <div class="split-landing">
+    <div class="split-left">
+      <div class="split-silhouette"></div>
+      <div class="split-stats">
+        <div class="split-stat-line">Series A. $4.2M raised.</div>
+        <div class="split-stat-line">42 employees. 3x YoY growth.</div>
+        <div class="split-stat-line">Featured in TechCrunch.</div>
+      </div>
+      <div class="split-tagline">What they see</div>
+    </div>
+    <div class="split-divider"></div>
+    <div class="split-right">
+      <div class="split-silhouette"></div>
+      <div class="split-stats">
+        <div class="split-stat-line">Panic attacks before board meetings.</div>
+        <div class="split-stat-line">4 hours of sleep. 0 close friends.</div>
+        <div class="split-stat-line">Haven't called mom in 3 months.</div>
+      </div>
+      <div class="split-tagline">What's actually happening</div>
+    </div>
+    <div class="split-cta-bar">
+      <a class="split-cta" href="#">Which side are you on? &rarr;</a>
+    </div>
+  </div>
+
+  <!-- Survey -->
+  <div class="split-survey">
+    <div class="split-survey-inner">
+      <div class="split-survey-title">Depression Screening</div>
+      <div class="split-survey-note">PHQ-9. Think about the last two weeks.</div>
+      <div class="split-question-text">How often have you been feeling down, depressed, or hopeless?</div>
+      <div class="split-likert">
+        <div class="split-likert-opt" onclick="selectInGroup(this)">Not at all</div>
+        <div class="split-likert-opt" onclick="selectInGroup(this)">Several days</div>
+        <div class="split-likert-opt selected" onclick="selectInGroup(this)">More than half the days</div>
+        <div class="split-likert-opt" onclick="selectInGroup(this)">Nearly every day</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div class="split-results">
+    <div class="split-results-inner">
+      <div class="split-results-title">Your Results vs. The Research</div>
+      <div class="split-result-row" style="margin-bottom: 0;">
+        <div class="split-result-cell yours" style="border-bottom: 1px solid #e5e7eb;">
+          <div class="split-result-cell-label" style="color: #9ca3af;">Your score</div>
+        </div>
+        <div class="split-result-cell research" style="border-bottom: 1px solid #27272a;">
+          <div class="split-result-cell-label" style="color: #6b7280;">What research says</div>
+        </div>
+      </div>
+      <div class="split-result-row">
+        <div class="split-result-cell yours">
+          <div class="split-result-cell-value" style="color: #111;">14/27</div>
+          <div class="split-result-cell-desc" style="color: #6b7280;">Depression: Moderate</div>
+        </div>
+        <div class="split-result-cell research">
+          <div class="split-result-cell-value" style="color: #06b6d4;">72nd</div>
+          <div class="split-result-cell-desc" style="color: #6b7280;">percentile vs. general pop.</div>
+        </div>
+      </div>
+      <div class="split-result-row">
+        <div class="split-result-cell yours">
+          <div class="split-result-cell-value" style="color: #111;">8/21</div>
+          <div class="split-result-cell-desc" style="color: #6b7280;">Anxiety: Mild</div>
+        </div>
+        <div class="split-result-cell research">
+          <div class="split-result-cell-value" style="color: #06b6d4;">58th</div>
+          <div class="split-result-cell-desc" style="color: #6b7280;">percentile vs. general pop.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============================================================
+     4. DATA PROVOCATION
+     ============================================================ -->
+<section class="design-section" data-design="data">
+
+  <!-- Landing -->
+  <div class="data-landing" id="dataLanding">
+    <div class="data-dot-grid" id="dotGrid"></div>
+    <div class="data-big-number"><span id="dataCounter">0</span><span class="data-big-unit">%</span></div>
+    <p class="data-stat-text">
+      of founders in our study scored above <strong>clinical thresholds</strong>
+      for anxiety or depression.
+    </p>
+    <div class="data-hook">Where do you fall?</div>
+    <a class="data-cta" href="#">Find out in 10 minutes</a>
+  </div>
+
+  <!-- Survey -->
+  <div class="data-survey">
+    <div class="data-survey-inner">
+      <h2 class="data-section-title">Depression Screening</h2>
+      <p class="data-section-note">PHQ-9 &middot; Section 5 of 8</p>
+      <div class="data-question-text">Over the last 2 weeks, how often have you been feeling down, depressed, or hopeless?</div>
+      <div class="data-likert">
+        <div class="data-likert-opt" onclick="selectInGroup(this)">Not at all</div>
+        <div class="data-likert-opt" onclick="selectInGroup(this)">Several days</div>
+        <div class="data-likert-opt selected" onclick="selectInGroup(this)">More than half</div>
+        <div class="data-likert-opt" onclick="selectInGroup(this)">Nearly every day</div>
+      </div>
+      <div class="data-distribution">
+        <div class="data-dist-label">Where founders fall on this question</div>
+        <div class="data-dist-bars" id="distBars"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div class="data-results">
+    <div class="data-results-inner">
+      <h2 class="data-results-title">Your Numbers</h2>
+      <div class="data-result-card">
+        <div class="data-result-card-label">Depression (PHQ-9)</div>
+        <div class="data-result-big">14<span style="font-size: 18px; color: #4b5563;"> / 27</span></div>
+        <div class="data-result-context">Moderate &middot; Higher than 72% of the population</div>
+        <div class="data-result-bar-track">
+          <div class="data-result-bar-fill" style="width: 52%;"></div>
+        </div>
+      </div>
+      <div class="data-result-card">
+        <div class="data-result-card-label">Anxiety (GAD-7)</div>
+        <div class="data-result-big">8<span style="font-size: 18px; color: #4b5563;"> / 21</span></div>
+        <div class="data-result-context">Mild &middot; Higher than 58% of the population</div>
+        <div class="data-result-bar-track">
+          <div class="data-result-bar-fill" style="width: 38%;"></div>
+        </div>
+      </div>
+      <div class="data-result-card">
+        <div class="data-result-card-label">ADHD Screening (ASRS)</div>
+        <div class="data-result-big">4<span style="font-size: 18px; color: #4b5563;"> / 6 flagged</span></div>
+        <div class="data-result-context">Above threshold &middot; Higher than 85% of the population</div>
+        <div class="data-result-bar-track">
+          <div class="data-result-bar-fill" style="width: 85%;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============================================================
+     5. ONE QUESTION
+     ============================================================ -->
+<section class="design-section" data-design="onequestion">
+
+  <!-- Landing (IS the first question) -->
+  <div class="oq-landing">
+    <h1 class="oq-question">How are you, honestly?</h1>
+    <div class="oq-scale" id="oqScale">
+      <div class="oq-scale-opt" onclick="selectOQ(this, 1)">1</div>
+      <div class="oq-scale-opt" onclick="selectOQ(this, 2)">2</div>
+      <div class="oq-scale-opt" onclick="selectOQ(this, 3)">3</div>
+      <div class="oq-scale-opt" onclick="selectOQ(this, 4)">4</div>
+      <div class="oq-scale-opt" onclick="selectOQ(this, 5)">5</div>
+    </div>
+    <div class="oq-scale-labels">
+      <span>Struggling</span>
+      <span>Thriving</span>
+    </div>
+    <div class="oq-context" id="oqContext">
+      This is the beginning of a 10-minute confidential mental health check-in for founders.
+      Validated clinical instruments. Immediate results.
+      <br><br>
+      <a href="#">Continue the full assessment &rarr;</a>
+    </div>
+  </div>
+
+  <!-- Survey -->
+  <div class="oq-survey">
+    <div class="oq-survey-inner">
+      <div class="oq-dots">
+        <div class="oq-dot done"></div>
+        <div class="oq-dot done"></div>
+        <div class="oq-dot done"></div>
+        <div class="oq-dot done"></div>
+        <div class="oq-dot active"></div>
+        <div class="oq-dot"></div>
+        <div class="oq-dot"></div>
+        <div class="oq-dot"></div>
+      </div>
+      <div class="oq-survey-question">How often have you been feeling down, depressed, or hopeless?</div>
+      <div class="oq-survey-likert">
+        <div class="oq-survey-opt" onclick="selectInGroup(this)">Not at all</div>
+        <div class="oq-survey-opt" onclick="selectInGroup(this)">Several days</div>
+        <div class="oq-survey-opt selected" onclick="selectInGroup(this)">More than half the days</div>
+        <div class="oq-survey-opt" onclick="selectInGroup(this)">Nearly every day</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div class="oq-results">
+    <div class="oq-results-inner">
+      <div class="oq-results-title">Tap to reveal</div>
+      <div class="oq-flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="oq-flip-inner">
+          <div class="oq-flip-front">
+            <div class="oq-flip-front-label">Depression</div>
+            <div class="oq-flip-front-text">PHQ-9</div>
+            <div class="oq-flip-front-hint">tap to reveal</div>
+          </div>
+          <div class="oq-flip-back">
+            <div class="oq-flip-back-score">14/27</div>
+            <div class="oq-flip-back-label">Moderate &middot; 72nd percentile</div>
+          </div>
+        </div>
+      </div>
+      <div class="oq-flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="oq-flip-inner">
+          <div class="oq-flip-front">
+            <div class="oq-flip-front-label">Anxiety</div>
+            <div class="oq-flip-front-text">GAD-7</div>
+            <div class="oq-flip-front-hint">tap to reveal</div>
+          </div>
+          <div class="oq-flip-back">
+            <div class="oq-flip-back-score">8/21</div>
+            <div class="oq-flip-back-label">Mild &middot; 58th percentile</div>
+          </div>
+        </div>
+      </div>
+      <div class="oq-flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="oq-flip-inner">
+          <div class="oq-flip-front">
+            <div class="oq-flip-front-label">ADHD</div>
+            <div class="oq-flip-front-text">ASRS</div>
+            <div class="oq-flip-front-hint">tap to reveal</div>
+          </div>
+          <div class="oq-flip-back">
+            <div class="oq-flip-back-score">4/6</div>
+            <div class="oq-flip-back-label">Above threshold &middot; 85th percentile</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============================================================
+     6. CONFESSIONAL DATA (Mashup)
+     ============================================================ -->
+<section class="design-section" data-design="confdata">
+
+  <!-- Landing -->
+  <div class="cd-landing">
+    <div class="cd-ticker">
+      <div class="cd-ticker-inner" id="cdTicker"></div>
+    </div>
+
+    <div class="cd-main-quote">
+      I raised <span class="cd-inline-stat" data-context="Top 2% of startups">$12M</span> and
+      I can't afford therapy. Not because of money &mdash; because of
+      <span class="cd-redacted">what it would mean</span> if my board found out.
+      <br><br>
+      Last quarter I told everyone we were
+      <span class="cd-inline-stat" data-context="72% of founders misreport mental state">crushing it</span>.
+      My PHQ-9 was <span class="cd-inline-stat" data-context="Moderate depression: 10-14">14</span>.
+      <span class="cd-micro-chart" id="cdMicroChart1"></span>
+      <br><br>
+      <span class="cd-inline-stat" data-context="ASRS screening: 4+ items = likely ADHD">4 of 6</span> items
+      flagged on the ADHD screen. Funny &mdash; everyone calls it my
+      <span class="cd-redacted">superpower</span>.
+    </div>
+
+    <div class="cd-cta-area">
+      <div class="cd-landing-count"><strong>847</strong> founders have checked in. Your turn.</div>
+      <a class="cd-cta" href="#">Run your numbers &rarr;</a>
+    </div>
+  </div>
+
+  <!-- Survey -->
+  <div class="cd-survey">
+    <div class="cd-survey-inner">
+      <div class="cd-survey-tag">PHQ-9 &middot; Section 5 of 8</div>
+      <h2 class="cd-survey-title">Depression Screening</h2>
+      <p class="cd-survey-note">Over the last 2 weeks. Be honest.</p>
+      <div class="cd-question-text">How often have you been feeling down, depressed, or hopeless?</div>
+      <div class="cd-likert">
+        <button class="cd-likert-opt" onclick="selectInGroup(this)">Not at all <span class="cd-likert-pct">28%</span></button>
+        <button class="cd-likert-opt" onclick="selectInGroup(this)">Several days <span class="cd-likert-pct">34%</span></button>
+        <button class="cd-likert-opt selected" onclick="selectInGroup(this)">More than half the days <span class="cd-likert-pct">24%</span></button>
+        <button class="cd-likert-opt" onclick="selectInGroup(this)">Nearly every day <span class="cd-likert-pct">14%</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div class="cd-results">
+    <div class="cd-results-inner">
+      <div class="cd-results-greeting">Here's what your numbers say:</div>
+      <p class="cd-results-body">
+        Your PHQ-9 score is <span class="cd-inline-stat">14/27</span> &mdash; that's
+        <span class="cd-inline-stat">moderate</span> depression. You scored higher than
+        <span class="cd-inline-stat">72%</span> of the general population.
+      </p>
+      <p class="cd-results-body">
+        Your GAD-7 landed at <span class="cd-inline-stat">8/21</span> &mdash;
+        <span class="cd-inline-stat">mild</span> anxiety. Your top stressor?
+        <span class="cd-inline-stat">Runway anxiety</span>, same as 64% of founders in our study.
+      </p>
+      <p class="cd-results-body" style="color: #555; margin-top: 32px;">
+        These are screening results, not diagnoses. But they're real numbers from a real moment.
+      </p>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============================================================
+     7. THE MIRROR
+     ============================================================ -->
+<section class="design-section" data-design="mirror">
+
+  <!-- Landing -->
+  <div class="mir-landing" id="mirLanding">
+    <div class="mir-you" id="mirYou">You.</div>
+    <div class="mir-statements" id="mirStatements">
+      <div class="mir-stmt">You <strong>raised the round</strong>. Closed it in 3 weeks.</div>
+      <div class="mir-stmt">You <strong>shipped the feature</strong>. Stayed up until 4am.</div>
+      <div class="mir-stmt">You <strong>fired someone</strong> last Tuesday. <em>You haven't slept since.</em></div>
+      <div class="mir-stmt">You told everyone <strong>you're fine</strong>.</div>
+      <div class="mir-stmt">You <strong>Googled "founder burnout"</strong> at 2am. Then closed the tab.</div>
+    </div>
+    <div class="mir-punchline" id="mirPunchline">When was the last time someone asked &mdash; and you answered honestly?</div>
+    <a class="mir-cta" id="mirCta" href="#">Answer honestly now &rarr;</a>
+  </div>
+
+  <!-- Survey -->
+  <div class="mir-survey">
+    <div class="mir-survey-inner">
+      <div class="mir-survey-prompt">Be honest with yourself</div>
+      <div class="mir-survey-question">Over the last two weeks &mdash; how often have you felt down, depressed, or hopeless?</div>
+      <div class="mir-likert">
+        <button class="mir-likert-opt" onclick="selectInGroup(this)">Not at all</button>
+        <button class="mir-likert-opt" onclick="selectInGroup(this)">Several days</button>
+        <button class="mir-likert-opt selected" onclick="selectInGroup(this)">More than half the days</button>
+        <button class="mir-likert-opt" onclick="selectInGroup(this)">Nearly every day</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div class="mir-results">
+    <div class="mir-results-inner">
+      <div class="mir-result-block">
+        <div class="mir-result-you">Your depression</div>
+        <div class="mir-result-value">14 <span>/ 27</span></div>
+        <div class="mir-result-meaning">
+          That's <strong>moderate</strong>. It means most days are harder than they need to be.
+          You're in the 72nd percentile &mdash; higher than nearly three-quarters of the population.
+        </div>
+      </div>
+      <div class="mir-result-line"></div>
+      <div class="mir-result-block">
+        <div class="mir-result-you">Your anxiety</div>
+        <div class="mir-result-value">8 <span>/ 21</span></div>
+        <div class="mir-result-meaning">
+          <strong>Mild</strong>, but present. The kind that hums in the background.
+          You probably call it "being driven."
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============================================================
+     8. THE WAITING ROOM
+     ============================================================ -->
+<section class="design-section" data-design="waitingroom">
+
+  <!-- Landing -->
+  <div class="wr-landing">
+    <div class="wr-landing-inner">
+      <div class="wr-time">10 MINUTES &middot; CONFIDENTIAL</div>
+      <h1 class="wr-title">Before your next meeting, your next pitch, your next all-nighter &mdash; take this.</h1>
+      <p class="wr-body">
+        A founder's calendar has no blank space. But right now, you have 10 minutes.
+        That's enough to check in on the one thing you've been avoiding.
+      </p>
+      <p class="wr-body">
+        This isn't a personality quiz. It's six validated clinical instruments used by
+        psychologists worldwide &mdash; adapted for the specific pressures of building a company.
+      </p>
+      <div class="wr-detail">
+        <span>PHQ-9</span>
+        <span>GAD-7</span>
+        <span>ASRS</span>
+        <span>AQ-10</span>
+        <span>SD3</span>
+        <span>Founder Stressors</span>
+      </div>
+      <a class="wr-cta" href="#">Start now &rarr;</a>
+    </div>
+    <div class="wr-plant">A MOMENT FOR YOU</div>
+  </div>
+
+  <!-- Survey -->
+  <div class="wr-survey">
+    <div class="wr-survey-inner">
+      <div class="wr-survey-progress">
+        <div class="wr-prog-dot done"></div>
+        <div class="wr-prog-dot done"></div>
+        <div class="wr-prog-dot done"></div>
+        <div class="wr-prog-dot done"></div>
+        <div class="wr-prog-dot active"></div>
+        <div class="wr-prog-dot"></div>
+        <div class="wr-prog-dot"></div>
+        <div class="wr-prog-dot"></div>
+      </div>
+      <h2 class="wr-survey-title">Depression Screening</h2>
+      <p class="wr-survey-note">Think about the last two weeks. There's no wrong answer.</p>
+      <div class="wr-question-text">How often have you been bothered by feeling down, depressed, or hopeless?</div>
+      <div class="wr-likert">
+        <button class="wr-likert-opt" onclick="selectInGroup(this)">Not at all</button>
+        <button class="wr-likert-opt" onclick="selectInGroup(this)">Several days</button>
+        <button class="wr-likert-opt selected" onclick="selectInGroup(this)">More than half the days</button>
+        <button class="wr-likert-opt" onclick="selectInGroup(this)">Nearly every day</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div class="wr-results">
+    <div class="wr-results-inner">
+      <div class="wr-results-note">Your results</div>
+      <div class="wr-result-card">
+        <div class="wr-result-label">Depression (PHQ-9)</div>
+        <div class="wr-result-score">14 <span>/ 27</span></div>
+        <div class="wr-result-desc">Moderate &middot; 72nd percentile</div>
+        <div class="wr-result-bar-track">
+          <div class="wr-result-bar-fill" style="width: 52%;"></div>
+        </div>
+      </div>
+      <div class="wr-result-card">
+        <div class="wr-result-label">Anxiety (GAD-7)</div>
+        <div class="wr-result-score">8 <span>/ 21</span></div>
+        <div class="wr-result-desc">Mild &middot; 58th percentile</div>
+        <div class="wr-result-bar-track">
+          <div class="wr-result-bar-fill" style="width: 38%;"></div>
+        </div>
+      </div>
+      <div class="wr-result-card">
+        <div class="wr-result-label">ADHD Screening (ASRS)</div>
+        <div class="wr-result-score">4 <span>/ 6 flagged</span></div>
+        <div class="wr-result-desc">Above threshold &middot; 85th percentile</div>
+        <div class="wr-result-bar-track">
+          <div class="wr-result-bar-fill" style="width: 85%;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============ JAVASCRIPT ============ -->
+<script>
+// --- Design switching ---
+function switchDesign(name) {
+  document.querySelectorAll('.design-section').forEach(s => s.classList.remove('active'));
+  document.querySelector(`[data-design="${name}"]`).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+  event.target.classList.add('active');
+
+  // Set body bg to match
+  const bgMap = {
+    cinematic: '#050507',
+    confession: '#f5f0eb',
+    split: '#ffffff',
+    data: '#0f1117',
+    onequestion: '#fafafa',
+    confdata: '#111',
+    mirror: '#000',
+    waitingroom: '#f7f3ee'
+  };
+  document.body.style.background = bgMap[name] || '#000';
+
+  // Re-trigger animations
+  if (name === 'cinematic') animateCinematic();
+  if (name === 'data') animateDataCounter();
+  if (name === 'mirror') animateMirror();
+}
+
+// --- Generic Likert selection ---
+function selectInGroup(el) {
+  const group = el.parentElement;
+  group.querySelectorAll('button, div').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+// --- Cinematic word-by-word reveal ---
+function animateCinematic() {
+  const headline = document.getElementById('cinHeadline');
+  const words = 'You built something incredible. <em>What did it cost?</em>'.split(/(\s+|<em>|<\/em>)/);
+  headline.innerHTML = '';
+  let wordIndex = 0;
+  let insideEm = false;
+  let html = '';
+
+  const rawWords = [];
+  const tokens = 'You built something incredible. What did it cost?'.split(' ');
+  // Build with em tags
+  const emStart = 5; // "What" is word 5
+  tokens.forEach((word, i) => {
+    const delay = i * 0.25;
+    if (i === emStart) html += '<em>';
+    html += `<span class="cin-word" style="animation-delay: ${delay}s">${word}</span> `;
+    if (i === tokens.length - 1) html += '</em>';
+  });
+  headline.innerHTML = html;
+}
+
+// --- Data counter animation ---
+function animateDataCounter() {
+  const counter = document.getElementById('dataCounter');
+  let current = 0;
+  const target = 72;
+  const duration = 2000;
+  const stepTime = duration / target;
+  counter.textContent = '0';
+
+  const interval = setInterval(() => {
+    current++;
+    counter.textContent = current;
+    if (current >= target) clearInterval(interval);
+  }, stepTime);
+}
+
+// --- Dot grid for data provocation ---
+function buildDotGrid() {
+  const grid = document.getElementById('dotGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  for (let i = 0; i < 100; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'data-dot' + (i < 72 ? ' lit' : '');
+    grid.appendChild(dot);
+  }
+}
+
+// --- Distribution bars for data survey ---
+function buildDistBars() {
+  const container = document.getElementById('distBars');
+  if (!container) return;
+  // Simulated distribution: bell-curve-ish
+  const heights = [8, 15, 25, 35, 50, 65, 80, 90, 95, 85, 70, 55, 40, 30, 20, 12, 8, 5, 3, 2];
+  container.innerHTML = '';
+  heights.forEach((h, i) => {
+    const bar = document.createElement('div');
+    bar.className = 'data-dist-bar' + (i === 13 ? ' you' : '');
+    bar.style.height = h + '%';
+    container.appendChild(bar);
+  });
+}
+
+// --- One Question interaction ---
+function selectOQ(el, value) {
+  document.querySelectorAll('#oqScale .oq-scale-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  // Show context after selection
+  setTimeout(() => {
+    document.getElementById('oqContext').classList.add('visible');
+  }, 400);
+}
+
+// --- Confession redacted hover ---
+document.querySelectorAll('.conf-redacted').forEach(el => {
+  el.addEventListener('click', () => el.classList.toggle('revealed'));
+});
+
+// --- Confessional Data: micro chart + ticker ---
+function buildMicroCharts() {
+  const chart1 = document.getElementById('cdMicroChart1');
+  if (!chart1) return;
+  const heights = [3, 5, 8, 12, 14, 11, 9, 6, 4, 2];
+  chart1.innerHTML = '';
+  heights.forEach(h => {
+    const bar = document.createElement('div');
+    bar.className = 'cd-micro-bar';
+    bar.style.height = h + 'px';
+    chart1.appendChild(bar);
+  });
+}
+
+function buildCDTicker() {
+  const ticker = document.getElementById('cdTicker');
+  if (!ticker) return;
+  const stats = [
+    '72% above clinical thresholds',
+    'Avg PHQ-9: 11.3 (mild-moderate)',
+    'Top stressor: Runway anxiety (64%)',
+    '38% have never seen a therapist',
+    'ADHD screening positive: 41%',
+    'Avg sleep: 5.2 hours',
+    'Median age: 34',
+    '847 founders surveyed'
+  ];
+  const text = stats.map(s => `<span class="cd-ticker-stat">${s.replace(/[\d.]+%?/g, '<strong>$&</strong>')}</span>`).join('');
+  ticker.innerHTML = text + text; // duplicate for seamless loop
+}
+
+// --- Confessional Data: redacted reveal ---
+document.querySelectorAll('.cd-redacted').forEach(el => {
+  el.addEventListener('click', () => {
+    el.style.background = 'rgba(220,38,38,0.15)';
+    el.style.color = '#f87171';
+  });
+});
+
+// --- Mirror: staggered reveal ---
+function animateMirror() {
+  const youEl = document.getElementById('mirYou');
+  const stmts = document.querySelectorAll('.mir-stmt');
+  const punchline = document.getElementById('mirPunchline');
+  const cta = document.getElementById('mirCta');
+
+  // Reset
+  youEl.classList.remove('revealed');
+  stmts.forEach(s => s.classList.remove('visible'));
+  punchline.classList.remove('visible');
+  cta.classList.remove('visible');
+
+  // Stagger
+  setTimeout(() => youEl.classList.add('revealed'), 300);
+  stmts.forEach((s, i) => {
+    setTimeout(() => s.classList.add('visible'), 800 + i * 600);
+  });
+  setTimeout(() => punchline.classList.add('visible'), 800 + stmts.length * 600 + 400);
+  setTimeout(() => cta.classList.add('visible'), 800 + stmts.length * 600 + 1000);
+}
+
+// --- Init ---
+animateCinematic();
+buildDotGrid();
+buildDistBars();
+buildMicroCharts();
+buildCDTicker();
+</script>
+
+</body>
+</html>

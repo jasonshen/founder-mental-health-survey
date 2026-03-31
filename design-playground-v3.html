@@ -1,0 +1,1647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Founder Mental Health Survey — Credibility & Rigor Playground</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ================================================================
+   RESET & GLOBAL
+   ================================================================ */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #0a0f1a;
+  color: #fff;
+}
+
+/* ================================================================
+   NAV BAR
+   ================================================================ */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  background: #18181b; color: #a1a1aa;
+  padding: 8px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+  z-index: 1000;
+  border-bottom: 1px solid #27272a;
+  font-size: 13px;
+}
+.nav-left { display: flex; align-items: center; gap: 8px; }
+.nav-label { font-weight: 600; color: #e4e4e7; }
+.nav-badge {
+  background: #06d6a0; color: #0a0f1a;
+  font-size: 10px; font-weight: 700;
+  padding: 1px 6px; border-radius: 4px;
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
+.nav-screens { display: flex; gap: 4px; }
+.nav-btn {
+  padding: 4px 12px; border: 1px solid #3f3f46;
+  background: transparent; color: #a1a1aa;
+  border-radius: 4px; cursor: pointer;
+  font-size: 12px; font-family: inherit;
+  transition: all 0.15s;
+}
+.nav-btn:hover { border-color: #52525b; color: #d4d4d8; }
+.nav-btn.active {
+  background: #06d6a0; color: #0a0f1a;
+  border-color: #06d6a0; font-weight: 600;
+}
+
+/* ================================================================
+   DESIGN SECTIONS (only .active is visible)
+   ================================================================ */
+.design-section { display: none; }
+.design-section.active { display: block; }
+
+/* ================================================================
+   1. THE INSTRUMENT — Premium Diagnostic Tool
+   ================================================================ */
+.inst-landing {
+  min-height: 100vh;
+  background: #0a0f1a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 24px 60px;
+  position: relative;
+  overflow: hidden;
+}
+.inst-landing::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background:
+    linear-gradient(rgba(6,214,160,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(6,214,160,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+}
+.inst-version {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: #06d6a0;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  position: relative;
+  z-index: 2;
+}
+.inst-version span {
+  display: inline-block;
+  border: 1px solid rgba(6,214,160,0.3);
+  padding: 3px 10px;
+  border-radius: 3px;
+}
+.inst-headline {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 600;
+  color: #f0f0f0;
+  text-align: center;
+  max-width: 640px;
+  line-height: 1.25;
+  margin-bottom: 48px;
+  position: relative;
+  z-index: 2;
+  letter-spacing: -0.02em;
+}
+.inst-headline em {
+  font-style: normal;
+  color: #06d6a0;
+}
+
+/* Instrument Stack */
+.inst-stack {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  max-width: 640px;
+  width: 100%;
+  margin-bottom: 48px;
+  position: relative;
+  z-index: 2;
+}
+.inst-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  padding: 16px;
+  transition: all 0.25s;
+  cursor: default;
+}
+.inst-card:hover {
+  border-color: rgba(6,214,160,0.4);
+  background: rgba(6,214,160,0.05);
+  transform: translateY(-2px);
+}
+.inst-card-name {
+  font-family: 'Space Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: #06d6a0;
+  margin-bottom: 6px;
+}
+.inst-card-desc {
+  font-size: 12px;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+/* Metadata */
+.inst-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: center;
+  margin-bottom: 40px;
+  position: relative;
+  z-index: 2;
+}
+.inst-meta-item {
+  font-size: 13px;
+  color: #6b7280;
+}
+.inst-meta-item strong {
+  color: #d1d5db;
+  font-weight: 600;
+}
+.inst-meta-divider {
+  color: #333;
+}
+
+/* CTA */
+.inst-cta {
+  display: inline-block;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 14px 36px;
+  background: #06d6a0;
+  color: #0a0f1a;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+  position: relative;
+  z-index: 2;
+}
+.inst-cta:hover {
+  background: #05c493;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(6,214,160,0.3);
+}
+.inst-footer-note {
+  font-size: 12px;
+  color: #4b5563;
+  margin-top: 20px;
+  position: relative;
+  z-index: 2;
+}
+
+/* Instrument Survey */
+.inst-survey {
+  background: #0a0f1a;
+  padding: 80px 24px;
+}
+.inst-survey-inner {
+  max-width: 720px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 48px;
+}
+.inst-sidebar {
+  border-right: 1px solid rgba(255,255,255,0.06);
+  padding-right: 24px;
+}
+.inst-sidebar-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  color: #4b5563;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 16px;
+}
+.inst-sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  font-size: 13px;
+  color: #4b5563;
+  transition: color 0.2s;
+}
+.inst-sidebar-item.completed { color: #06d6a0; }
+.inst-sidebar-item.active { color: #f0f0f0; font-weight: 600; }
+.inst-sidebar-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  border: 1.5px solid #333;
+  flex-shrink: 0;
+}
+.inst-sidebar-item.completed .inst-sidebar-dot {
+  background: #06d6a0;
+  border-color: #06d6a0;
+}
+.inst-sidebar-item.active .inst-sidebar-dot {
+  border-color: #06d6a0;
+  box-shadow: 0 0 0 3px rgba(6,214,160,0.15);
+}
+
+.inst-survey-main {}
+.inst-survey-instrument {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: #06d6a0;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 4px;
+}
+.inst-survey-cite {
+  font-size: 12px;
+  color: #4b5563;
+  margin-bottom: 24px;
+  font-style: italic;
+}
+.inst-survey-question {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 18px;
+  font-weight: 500;
+  color: #e5e7eb;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+.inst-likert {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 32px;
+}
+.inst-likert-pill {
+  padding: 10px 20px;
+  border: 1px solid #1f2937;
+  border-radius: 100px;
+  background: transparent;
+  color: #9ca3af;
+  font-size: 13px;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.inst-likert-pill:hover {
+  border-color: #06d6a0;
+  color: #d1d5db;
+}
+.inst-likert-pill.selected {
+  background: rgba(6,214,160,0.12);
+  border-color: #06d6a0;
+  color: #06d6a0;
+  font-weight: 600;
+}
+
+/* Instrument Results */
+.inst-results {
+  background: #0a0f1a;
+  padding: 60px 24px;
+}
+.inst-results-inner {
+  max-width: 640px;
+  margin: 0 auto;
+}
+.inst-results-header {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: #f0f0f0;
+  margin-bottom: 8px;
+}
+.inst-results-sub {
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 32px;
+}
+
+/* Radar/composite placeholder */
+.inst-composite {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+  text-align: center;
+}
+.inst-composite-title {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: #4b5563;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 16px;
+}
+.inst-radar {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.inst-radar-dim {
+  text-align: center;
+  width: 80px;
+}
+.inst-radar-ring {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  border: 3px solid #1f2937;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 8px;
+  position: relative;
+}
+.inst-radar-fill {
+  position: absolute;
+  top: -3px; left: -3px; right: -3px; bottom: -3px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  border-top-color: #06d6a0;
+  border-right-color: #06d6a0;
+}
+.inst-radar-score {
+  font-family: 'Space Mono', monospace;
+  font-size: 16px;
+  font-weight: 700;
+  color: #e5e7eb;
+}
+.inst-radar-label {
+  font-size: 11px;
+  color: #6b7280;
+}
+
+/* Result cards */
+.inst-result-card {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 12px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: center;
+}
+.inst-rc-name {
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  color: #06d6a0;
+  margin-bottom: 4px;
+}
+.inst-rc-severity {
+  font-size: 14px;
+  color: #e5e7eb;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+.inst-rc-bar-track {
+  height: 4px;
+  background: #1f2937;
+  border-radius: 2px;
+  overflow: hidden;
+}
+.inst-rc-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #06d6a0, #059669);
+  border-radius: 2px;
+}
+.inst-rc-score {
+  font-family: 'Space Mono', monospace;
+  font-size: 24px;
+  font-weight: 700;
+  color: #e5e7eb;
+  text-align: right;
+}
+.inst-rc-score span {
+  font-size: 14px;
+  color: #4b5563;
+  font-weight: 400;
+}
+.inst-rc-percentile {
+  font-size: 11px;
+  color: #6b7280;
+  text-align: right;
+  margin-top: 4px;
+}
+
+/* Stressor callout */
+.inst-stressor {
+  background: rgba(6,214,160,0.06);
+  border: 1px solid rgba(6,214,160,0.2);
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 24px;
+}
+.inst-stressor-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: #06d6a0;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 8px;
+}
+.inst-stressor-value {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: #e5e7eb;
+  margin-bottom: 4px;
+}
+.inst-stressor-context {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* ================================================================
+   2. PEER BENCHMARK — See Where You Stand
+   ================================================================ */
+.bench-landing {
+  min-height: 100vh;
+  background: #fafaf9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 24px 60px;
+}
+.bench-counter-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  color: #a8a29e;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.bench-counter {
+  font-family: 'DM Sans', sans-serif;
+  font-size: clamp(48px, 8vw, 72px);
+  font-weight: 700;
+  color: #1c1917;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.bench-counter-unit {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: #78716c;
+  margin-bottom: 40px;
+}
+.bench-headline {
+  font-family: 'DM Sans', sans-serif;
+  font-size: clamp(32px, 5vw, 52px);
+  font-weight: 700;
+  color: #1c1917;
+  text-align: center;
+  letter-spacing: -0.03em;
+  margin-bottom: 16px;
+}
+.bench-sub {
+  font-size: 16px;
+  color: #78716c;
+  text-align: center;
+  max-width: 520px;
+  line-height: 1.7;
+  margin-bottom: 48px;
+}
+
+/* Preview stat bars */
+.bench-stats {
+  max-width: 480px;
+  width: 100%;
+  margin-bottom: 48px;
+}
+.bench-stat {
+  margin-bottom: 20px;
+}
+.bench-stat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 6px;
+}
+.bench-stat-label {
+  font-size: 14px;
+  color: #44403c;
+  font-weight: 500;
+}
+.bench-stat-value {
+  font-family: 'Space Mono', monospace;
+  font-size: 14px;
+  font-weight: 700;
+  color: #ea580c;
+}
+.bench-stat-bar-track {
+  height: 8px;
+  background: #e7e5e4;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.bench-stat-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 1s ease;
+}
+.bench-stat-bar-fill.depression { background: linear-gradient(90deg, #f59e0b, #ea580c); }
+.bench-stat-bar-fill.adhd { background: linear-gradient(90deg, #f59e0b, #d97706); }
+.bench-stat-bar-fill.stressor { background: linear-gradient(90deg, #f59e0b, #c2410c); }
+
+/* Credentials */
+.bench-creds {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.bench-cred-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #78716c;
+  background: #f5f5f4;
+  border: 1px solid #e7e5e4;
+  padding: 4px 12px;
+  border-radius: 100px;
+}
+.bench-cred-badge strong { color: #44403c; }
+
+/* CTA */
+.bench-cta {
+  display: inline-block;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 14px 32px;
+  background: #1c1917;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+.bench-cta:hover {
+  background: #292524;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Bench Survey */
+.bench-survey {
+  background: #fafaf9;
+  padding: 80px 24px;
+}
+.bench-survey-inner {
+  max-width: 520px;
+  margin: 0 auto;
+}
+.bench-survey-progress {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 24px;
+}
+.bench-prog-seg {
+  flex: 1;
+  height: 4px;
+  background: #e7e5e4;
+  border-radius: 2px;
+}
+.bench-prog-seg.done { background: #f59e0b; }
+.bench-prog-seg.active { background: #ea580c; }
+.bench-survey-instrument {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: #a8a29e;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 8px;
+}
+.bench-survey-title {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: #1c1917;
+  margin-bottom: 24px;
+}
+.bench-survey-question {
+  font-size: 16px;
+  color: #44403c;
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+.bench-likert {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+.bench-likert-opt {
+  padding: 14px 20px;
+  border: 1px solid #e7e5e4;
+  border-radius: 8px;
+  background: #fff;
+  color: #57534e;
+  font-size: 14px;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.bench-likert-opt:hover {
+  border-color: #d6d3d1;
+  background: #fafaf9;
+}
+.bench-likert-opt.selected {
+  border-color: #ea580c;
+  background: #fff7ed;
+  color: #1c1917;
+  font-weight: 500;
+}
+.bench-likert-pct {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: #d6d3d1;
+}
+.bench-likert-opt:hover .bench-likert-pct { color: #a8a29e; }
+.bench-likert-opt.selected .bench-likert-pct { color: #ea580c; }
+.bench-cohort-note {
+  font-size: 12px;
+  color: #a8a29e;
+  font-style: italic;
+  margin-top: 8px;
+}
+
+/* Bench Results */
+.bench-results {
+  background: #fafaf9;
+  padding: 60px 24px;
+}
+.bench-results-inner {
+  max-width: 600px;
+  margin: 0 auto;
+}
+.bench-results-header {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #1c1917;
+  margin-bottom: 8px;
+}
+.bench-results-sub {
+  font-size: 14px;
+  color: #78716c;
+  margin-bottom: 32px;
+}
+
+/* Distribution + marker */
+.bench-dist-card {
+  background: #fff;
+  border: 1px solid #e7e5e4;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.bench-dist-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 4px;
+}
+.bench-dist-name {
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  color: #78716c;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.bench-dist-score {
+  font-family: 'Space Mono', monospace;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1c1917;
+}
+.bench-dist-score span { color: #a8a29e; font-weight: 400; font-size: 14px; }
+.bench-dist-severity {
+  font-size: 13px;
+  color: #ea580c;
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+.bench-dist-chart {
+  position: relative;
+  height: 40px;
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  margin-bottom: 8px;
+}
+.bench-dist-bar {
+  flex: 1;
+  background: #e7e5e4;
+  border-radius: 2px 2px 0 0;
+  min-height: 4px;
+}
+.bench-dist-bar.you {
+  background: #ea580c;
+}
+.bench-dist-marker {
+  position: absolute;
+  top: -18px;
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  color: #ea580c;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.bench-dist-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: #a8a29e;
+}
+
+/* Comparison table */
+.bench-compare {
+  background: #fff;
+  border: 1px solid #e7e5e4;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-top: 24px;
+}
+.bench-compare-header {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  padding: 12px 20px;
+  background: #f5f5f4;
+  font-size: 11px;
+  font-weight: 600;
+  color: #78716c;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.bench-compare-row {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  padding: 12px 20px;
+  font-size: 13px;
+  color: #44403c;
+  border-top: 1px solid #f5f5f4;
+}
+.bench-compare-row .you {
+  font-weight: 700;
+  color: #ea580c;
+}
+
+/* Peer group + resources */
+.bench-peer-group {
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 24px;
+}
+.bench-pg-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: #ea580c;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 8px;
+}
+.bench-pg-text {
+  font-size: 14px;
+  color: #44403c;
+  line-height: 1.6;
+}
+.bench-pg-text strong { color: #1c1917; }
+
+/* ================================================================
+   3. CLINICAL AUTHORITY — Academic/Medical Gravitas
+   ================================================================ */
+.clin-landing {
+  min-height: 100vh;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 44px 24px 60px;
+}
+.clin-topbar {
+  width: 100%;
+  max-width: 640px;
+  font-size: 12px;
+  color: #94a3b8;
+  padding: 20px 0 16px;
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 48px;
+  display: flex;
+  justify-content: space-between;
+}
+.clin-topbar-left { font-weight: 500; }
+.clin-topbar-right { font-style: italic; }
+.clin-main {
+  max-width: 640px;
+  width: 100%;
+}
+.clin-headline {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 700;
+  color: #1e293b;
+  line-height: 1.3;
+  margin-bottom: 24px;
+  letter-spacing: -0.01em;
+}
+.clin-body {
+  font-size: 16px;
+  color: #475569;
+  line-height: 1.85;
+  margin-bottom: 20px;
+}
+.clin-body:last-of-type { margin-bottom: 40px; }
+
+/* Methodology block (academic abstract feel) */
+.clin-method {
+  background: #f8fafc;
+  border-left: 3px solid #2563eb;
+  padding: 24px;
+  margin-bottom: 40px;
+}
+.clin-method-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #1e293b;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 16px;
+}
+.clin-method-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.clin-method-label {
+  font-weight: 600;
+  color: #1e293b;
+  min-width: 100px;
+  flex-shrink: 0;
+}
+.clin-method-value {
+  color: #475569;
+}
+
+/* CTA (understated link) */
+.clin-cta {
+  display: inline-block;
+  font-size: 16px;
+  font-weight: 500;
+  color: #2563eb;
+  text-decoration: none;
+  border-bottom: 1px solid #93c5fd;
+  padding-bottom: 2px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.clin-cta:hover {
+  border-color: #2563eb;
+}
+.clin-footer-note {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 40px;
+  max-width: 640px;
+  line-height: 1.6;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 16px;
+}
+
+/* Clinical Survey */
+.clin-survey {
+  background: #fff;
+  padding: 80px 24px;
+}
+.clin-survey-inner {
+  max-width: 600px;
+  margin: 0 auto;
+}
+.clin-survey-instrument-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 32px;
+}
+.clin-survey-instrument-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+}
+.clin-survey-instrument-name span {
+  font-weight: 400;
+  color: #94a3b8;
+}
+.clin-survey-section {
+  font-size: 13px;
+  color: #94a3b8;
+}
+.clin-survey-question {
+  font-size: 16px;
+  color: #1e293b;
+  line-height: 1.7;
+  margin-bottom: 24px;
+}
+.clin-likert {
+  display: flex;
+  gap: 0;
+  margin-bottom: 24px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  overflow: hidden;
+}
+.clin-likert-opt {
+  flex: 1;
+  padding: 12px 8px;
+  background: #fff;
+  border: none;
+  border-right: 1px solid #e2e8f0;
+  color: #64748b;
+  font-size: 12px;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: center;
+}
+.clin-likert-opt:last-child { border-right: none; }
+.clin-likert-opt:hover {
+  background: #f8fafc;
+  color: #1e293b;
+}
+.clin-likert-opt.selected {
+  background: #2563eb;
+  color: #fff;
+  font-weight: 600;
+}
+.clin-survey-note {
+  font-size: 12px;
+  color: #94a3b8;
+  font-style: italic;
+  line-height: 1.6;
+}
+
+/* Clinical Results */
+.clin-results {
+  background: #fff;
+  padding: 60px 24px;
+}
+.clin-results-inner {
+  max-width: 600px;
+  margin: 0 auto;
+}
+.clin-results-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 8px;
+}
+.clin-results-date {
+  font-size: 13px;
+  color: #94a3b8;
+  margin-bottom: 24px;
+}
+
+/* Summary */
+.clin-summary {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 32px;
+}
+.clin-summary-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #1e293b;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+}
+.clin-summary-text {
+  font-size: 14px;
+  color: #475569;
+  line-height: 1.7;
+}
+
+/* Result sections */
+.clin-result-section {
+  padding: 20px 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+.clin-result-section:last-of-type { border-bottom: none; }
+.clin-rs-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 4px;
+}
+.clin-rs-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1e293b;
+}
+.clin-rs-score {
+  font-family: 'Space Mono', monospace;
+  font-size: 15px;
+  font-weight: 700;
+  color: #1e293b;
+}
+.clin-rs-score span { color: #94a3b8; font-weight: 400; }
+.clin-rs-classification {
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+.clin-rs-classification.moderate { color: #d97706; }
+.clin-rs-classification.mild { color: #2563eb; }
+.clin-rs-classification.elevated { color: #dc2626; }
+.clin-rs-interpretation {
+  font-size: 13px;
+  color: #64748b;
+  line-height: 1.7;
+}
+
+/* Recommended actions */
+.clin-actions {
+  margin-top: 32px;
+  padding: 20px;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  background: #f0fdf4;
+}
+.clin-actions-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #166534;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 12px;
+}
+.clin-actions-list {
+  list-style: none;
+  padding: 0;
+}
+.clin-actions-list li {
+  font-size: 14px;
+  color: #166534;
+  line-height: 1.6;
+  margin-bottom: 8px;
+  padding-left: 16px;
+  position: relative;
+}
+.clin-actions-list li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: #16a34a;
+}
+
+/* Crisis footer */
+.clin-crisis {
+  font-size: 11px;
+  color: #94a3b8;
+  margin-top: 32px;
+  padding-top: 16px;
+  border-top: 1px solid #e2e8f0;
+  line-height: 1.6;
+}
+
+/* ================================================================
+   RESPONSIVE
+   ================================================================ */
+@media (max-width: 768px) {
+  .inst-stack { grid-template-columns: 1fr; }
+  .inst-survey-inner { grid-template-columns: 1fr; }
+  .inst-sidebar { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.06); padding-right: 0; padding-bottom: 16px; }
+  .inst-sidebar-item { display: inline-flex; margin-right: 12px; }
+  .inst-likert { flex-direction: column; }
+  .bench-compare-header,
+  .bench-compare-row { grid-template-columns: 1.2fr 1fr 1fr 1fr; font-size: 11px; padding: 10px 12px; }
+  .clin-likert { flex-direction: column; }
+  .clin-likert-opt { border-right: none; border-bottom: 1px solid #e2e8f0; }
+  .clin-likert-opt:last-child { border-bottom: none; }
+  .nav-screens { gap: 3px; }
+  .nav-btn { padding: 3px 8px; font-size: 11px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============ NAV BAR ============ -->
+<div class="nav">
+  <div class="nav-left">
+    <span class="nav-label">Credibility &amp; Rigor</span>
+    <span class="nav-badge">v3</span>
+  </div>
+  <div class="nav-screens">
+    <button class="nav-btn active" onclick="switchDesign('instrument')">The Instrument</button>
+    <button class="nav-btn" onclick="switchDesign('benchmark')">Peer Benchmark</button>
+    <button class="nav-btn" onclick="switchDesign('clinical')">Clinical</button>
+  </div>
+</div>
+
+<!-- ============================================================
+     1. THE INSTRUMENT
+     ============================================================ -->
+<section class="design-section active" data-design="instrument">
+
+  <!-- Landing -->
+  <div class="inst-landing">
+    <div class="inst-version"><span>FOUNDER MENTAL HEALTH ASSESSMENT v1.0</span></div>
+    <h1 class="inst-headline">Six validated instruments.<br><em>One founder-specific profile.</em></h1>
+
+    <div class="inst-stack">
+      <div class="inst-card">
+        <div class="inst-card-name">PHQ-9</div>
+        <div class="inst-card-desc">Depression screening (Patient Health Questionnaire)</div>
+      </div>
+      <div class="inst-card">
+        <div class="inst-card-name">GAD-7</div>
+        <div class="inst-card-desc">Generalized anxiety severity and impairment</div>
+      </div>
+      <div class="inst-card">
+        <div class="inst-card-name">ASRS-v1.1</div>
+        <div class="inst-card-desc">Adult ADHD self-report screening</div>
+      </div>
+      <div class="inst-card">
+        <div class="inst-card-name">AQ-10</div>
+        <div class="inst-card-desc">Autism spectrum quotient (short form)</div>
+      </div>
+      <div class="inst-card">
+        <div class="inst-card-name">SD3</div>
+        <div class="inst-card-desc">Dark triad personality traits (short dark triad)</div>
+      </div>
+      <div class="inst-card">
+        <div class="inst-card-name">FSI</div>
+        <div class="inst-card-desc">Founder Stressors Index (proprietary)</div>
+      </div>
+    </div>
+
+    <div class="inst-meta">
+      <span class="inst-meta-item"><strong>10 min</strong> to complete</span>
+      <span class="inst-meta-divider">&middot;</span>
+      <span class="inst-meta-item"><strong>847+</strong> founders benchmarked</span>
+      <span class="inst-meta-divider">&middot;</span>
+      <span class="inst-meta-item">Created by <strong>Keegan Walden</strong> &amp; <strong>Jason Shen</strong></span>
+    </div>
+
+    <a class="inst-cta" href="#">Run Your Assessment</a>
+    <div class="inst-footer-note">Confidential &middot; No account required &middot; Immediate results</div>
+  </div>
+
+  <!-- Survey -->
+  <div class="inst-survey">
+    <div class="inst-survey-inner">
+      <div class="inst-sidebar">
+        <div class="inst-sidebar-label">Instruments</div>
+        <div class="inst-sidebar-item completed"><div class="inst-sidebar-dot"></div> PHQ-9</div>
+        <div class="inst-sidebar-item completed"><div class="inst-sidebar-dot"></div> GAD-7</div>
+        <div class="inst-sidebar-item completed"><div class="inst-sidebar-dot"></div> ASRS</div>
+        <div class="inst-sidebar-item completed"><div class="inst-sidebar-dot"></div> AQ-10</div>
+        <div class="inst-sidebar-item active"><div class="inst-sidebar-dot"></div> SD3</div>
+        <div class="inst-sidebar-item"><div class="inst-sidebar-dot"></div> Stressors</div>
+      </div>
+      <div class="inst-survey-main">
+        <div class="inst-survey-instrument">Short Dark Triad (SD3)</div>
+        <div class="inst-survey-cite">Jones & Paulhus, 2014 &middot; Question 3 of 9</div>
+        <div class="inst-survey-question">I like to use clever manipulation to get my way.</div>
+        <div class="inst-likert">
+          <button class="inst-likert-pill" onclick="selectInGroup(this)">Strongly disagree</button>
+          <button class="inst-likert-pill" onclick="selectInGroup(this)">Disagree</button>
+          <button class="inst-likert-pill" onclick="selectInGroup(this)">Neutral</button>
+          <button class="inst-likert-pill selected" onclick="selectInGroup(this)">Agree</button>
+          <button class="inst-likert-pill" onclick="selectInGroup(this)">Strongly agree</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div class="inst-results">
+    <div class="inst-results-inner">
+      <h2 class="inst-results-header">Your Founder Profile</h2>
+      <p class="inst-results-sub">Assessment completed March 19, 2026 &middot; Benchmarked against 847 founders</p>
+
+      <div class="inst-composite">
+        <div class="inst-composite-title">Composite Overview</div>
+        <div class="inst-radar">
+          <div class="inst-radar-dim">
+            <div class="inst-radar-ring"><div class="inst-radar-fill" style="transform: rotate(190deg);"></div><span class="inst-radar-score">14</span></div>
+            <div class="inst-radar-label">Depression</div>
+          </div>
+          <div class="inst-radar-dim">
+            <div class="inst-radar-ring"><div class="inst-radar-fill" style="transform: rotate(140deg);"></div><span class="inst-radar-score">8</span></div>
+            <div class="inst-radar-label">Anxiety</div>
+          </div>
+          <div class="inst-radar-dim">
+            <div class="inst-radar-ring"><div class="inst-radar-fill" style="transform: rotate(240deg);"></div><span class="inst-radar-score">4/6</span></div>
+            <div class="inst-radar-label">ADHD</div>
+          </div>
+          <div class="inst-radar-dim">
+            <div class="inst-radar-ring"><div class="inst-radar-fill" style="transform: rotate(120deg);"></div><span class="inst-radar-score">3</span></div>
+            <div class="inst-radar-label">AQ-10</div>
+          </div>
+          <div class="inst-radar-dim">
+            <div class="inst-radar-ring"><div class="inst-radar-fill" style="transform: rotate(160deg);"></div><span class="inst-radar-score">2.8</span></div>
+            <div class="inst-radar-label">SD3</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="inst-result-card">
+        <div>
+          <div class="inst-rc-name">PHQ-9 &middot; DEPRESSION</div>
+          <div class="inst-rc-severity">Moderate</div>
+          <div class="inst-rc-bar-track"><div class="inst-rc-bar-fill" style="width: 52%;"></div></div>
+        </div>
+        <div>
+          <div class="inst-rc-score">14 <span>/27</span></div>
+          <div class="inst-rc-percentile">72nd percentile</div>
+        </div>
+      </div>
+
+      <div class="inst-result-card">
+        <div>
+          <div class="inst-rc-name">GAD-7 &middot; ANXIETY</div>
+          <div class="inst-rc-severity">Mild</div>
+          <div class="inst-rc-bar-track"><div class="inst-rc-bar-fill" style="width: 38%;"></div></div>
+        </div>
+        <div>
+          <div class="inst-rc-score">8 <span>/21</span></div>
+          <div class="inst-rc-percentile">58th percentile</div>
+        </div>
+      </div>
+
+      <div class="inst-result-card">
+        <div>
+          <div class="inst-rc-name">ASRS &middot; ADHD SCREENING</div>
+          <div class="inst-rc-severity">Above threshold</div>
+          <div class="inst-rc-bar-track"><div class="inst-rc-bar-fill" style="width: 67%;"></div></div>
+        </div>
+        <div>
+          <div class="inst-rc-score">4 <span>/6</span></div>
+          <div class="inst-rc-percentile">85th percentile</div>
+        </div>
+      </div>
+
+      <div class="inst-stressor">
+        <div class="inst-stressor-label">Your Top Stressor</div>
+        <div class="inst-stressor-value">Runway anxiety</div>
+        <div class="inst-stressor-context">Reported by 64% of founders in our cohort. Most common among Seed &ndash; Series A stage.</div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============================================================
+     2. PEER BENCHMARK
+     ============================================================ -->
+<section class="design-section" data-design="benchmark">
+
+  <!-- Landing -->
+  <div class="bench-landing">
+    <div class="bench-counter-label">FOUNDERS ASSESSED</div>
+    <div class="bench-counter" id="benchCounter">847</div>
+    <div class="bench-counter-unit">and counting</div>
+
+    <h1 class="bench-headline">See where you stand.</h1>
+    <p class="bench-sub">The first comprehensive mental health and neurodiversity benchmark for venture-backed founders. 10 minutes. 6 clinical instruments. Instant results compared to your peers.</p>
+
+    <div class="bench-stats" id="benchStats">
+      <div class="bench-stat">
+        <div class="bench-stat-header">
+          <span class="bench-stat-label">Depression above clinical threshold</span>
+          <span class="bench-stat-value">72%</span>
+        </div>
+        <div class="bench-stat-bar-track"><div class="bench-stat-bar-fill depression" style="width: 72%;"></div></div>
+      </div>
+      <div class="bench-stat">
+        <div class="bench-stat-header">
+          <span class="bench-stat-label">ADHD screening positive</span>
+          <span class="bench-stat-value">41%</span>
+        </div>
+        <div class="bench-stat-bar-track"><div class="bench-stat-bar-fill adhd" style="width: 41%;"></div></div>
+      </div>
+      <div class="bench-stat">
+        <div class="bench-stat-header">
+          <span class="bench-stat-label">Top stressor: Runway anxiety</span>
+          <span class="bench-stat-value">64%</span>
+        </div>
+        <div class="bench-stat-bar-track"><div class="bench-stat-bar-fill stressor" style="width: 64%;"></div></div>
+      </div>
+    </div>
+
+    <div class="bench-creds">
+      <span class="bench-cred-badge"><strong>YC Alumni</strong> founders</span>
+      <span class="bench-cred-badge">By <strong>Keegan Walden</strong> &amp; <strong>Jason Shen</strong></span>
+      <span class="bench-cred-badge">Executive coaches</span>
+    </div>
+
+    <a class="bench-cta" href="#">Take the Assessment</a>
+  </div>
+
+  <!-- Survey -->
+  <div class="bench-survey">
+    <div class="bench-survey-inner">
+      <div class="bench-survey-progress">
+        <div class="bench-prog-seg done"></div>
+        <div class="bench-prog-seg done"></div>
+        <div class="bench-prog-seg done"></div>
+        <div class="bench-prog-seg done"></div>
+        <div class="bench-prog-seg active"></div>
+        <div class="bench-prog-seg"></div>
+      </div>
+      <div class="bench-survey-instrument">PHQ-9 &middot; Depression Screening</div>
+      <h2 class="bench-survey-title">Question 5 of 9</h2>
+      <div class="bench-survey-question">Over the last 2 weeks, how often have you been bothered by feeling down, depressed, or hopeless?</div>
+      <div class="bench-likert">
+        <button class="bench-likert-opt" onclick="selectInGroup(this)">Not at all <span class="bench-likert-pct">28%</span></button>
+        <button class="bench-likert-opt" onclick="selectInGroup(this)">Several days <span class="bench-likert-pct">34%</span></button>
+        <button class="bench-likert-opt selected" onclick="selectInGroup(this)">More than half the days <span class="bench-likert-pct">24%</span></button>
+        <button class="bench-likert-opt" onclick="selectInGroup(this)">Nearly every day <span class="bench-likert-pct">14%</span></button>
+      </div>
+      <div class="bench-cohort-note">Among our founder cohort, the average response was "Several days."</div>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div class="bench-results">
+    <div class="bench-results-inner">
+      <h2 class="bench-results-header">Your Founder Benchmark</h2>
+      <p class="bench-results-sub">How you compare to 847 venture-backed founders</p>
+
+      <div class="bench-dist-card">
+        <div class="bench-dist-header">
+          <span class="bench-dist-name">Depression (PHQ-9)</span>
+          <span class="bench-dist-score">14 <span>/27</span></span>
+        </div>
+        <div class="bench-dist-severity">Moderate &middot; 72nd percentile</div>
+        <div class="bench-dist-chart" id="benchDistDepression"></div>
+        <div class="bench-dist-labels"><span>Minimal</span><span>Mild</span><span>Moderate</span><span>Severe</span></div>
+      </div>
+
+      <div class="bench-dist-card">
+        <div class="bench-dist-header">
+          <span class="bench-dist-name">Anxiety (GAD-7)</span>
+          <span class="bench-dist-score">8 <span>/21</span></span>
+        </div>
+        <div class="bench-dist-severity">Mild &middot; 58th percentile</div>
+        <div class="bench-dist-chart" id="benchDistAnxiety"></div>
+        <div class="bench-dist-labels"><span>Minimal</span><span>Mild</span><span>Moderate</span><span>Severe</span></div>
+      </div>
+
+      <div class="bench-dist-card">
+        <div class="bench-dist-header">
+          <span class="bench-dist-name">ADHD Screening (ASRS)</span>
+          <span class="bench-dist-score">4 <span>/6 flagged</span></span>
+        </div>
+        <div class="bench-dist-severity">Above threshold &middot; 85th percentile</div>
+        <div class="bench-dist-chart" id="benchDistADHD"></div>
+        <div class="bench-dist-labels"><span>0 flagged</span><span></span><span></span><span>6 flagged</span></div>
+      </div>
+
+      <!-- Comparison table -->
+      <div class="bench-compare">
+        <div class="bench-compare-header">
+          <span>Instrument</span>
+          <span>You</span>
+          <span>Founder Avg</span>
+          <span>Gen. Pop.</span>
+        </div>
+        <div class="bench-compare-row">
+          <span>PHQ-9</span>
+          <span class="you">14</span>
+          <span>11.3</span>
+          <span>5.1</span>
+        </div>
+        <div class="bench-compare-row">
+          <span>GAD-7</span>
+          <span class="you">8</span>
+          <span>7.8</span>
+          <span>3.2</span>
+        </div>
+        <div class="bench-compare-row">
+          <span>ASRS</span>
+          <span class="you">4/6</span>
+          <span>3.2/6</span>
+          <span>1.4/6</span>
+        </div>
+      </div>
+
+      <div class="bench-peer-group">
+        <div class="bench-pg-label">Your Peer Group</div>
+        <p class="bench-pg-text">Your profile most resembles founders who are <strong>Series A, 2&ndash;4 years in, 20&ndash;50 employees</strong>. Based on your scores, we recommend exploring resources on <strong>stress management</strong> and <strong>ADHD-friendly productivity systems</strong>.</p>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============================================================
+     3. CLINICAL AUTHORITY
+     ============================================================ -->
+<section class="design-section" data-design="clinical">
+
+  <!-- Landing -->
+  <div class="clin-landing">
+    <div class="clin-topbar">
+      <span class="clin-topbar-left">Founder Mental Health Project &middot; Walden &amp; Shen, 2024&ndash;2025</span>
+      <span class="clin-topbar-right">n = 847</span>
+    </div>
+    <div class="clin-main">
+      <h1 class="clin-headline">A Rigorous Mental Health Assessment Built for Founders</h1>
+      <p class="clin-body">This assessment combines six validated clinical instruments into a single 10-minute screening designed specifically for venture-backed founders. It is, to our knowledge, the first of its kind.</p>
+      <p class="clin-body">Your results are benchmarked against a cohort of 847 founders across stages from pre-seed to Series C. You will receive immediate, personalized results with clinical context and recommended next steps.</p>
+
+      <div class="clin-method">
+        <div class="clin-method-title">Methodology</div>
+        <div class="clin-method-row">
+          <span class="clin-method-label">Instruments</span>
+          <span class="clin-method-value">PHQ-9 (depression), GAD-7 (anxiety), ASRS-v1.1 (ADHD), AQ-10 (autism spectrum), SD3 (dark triad), Founder Stressors Index</span>
+        </div>
+        <div class="clin-method-row">
+          <span class="clin-method-label">Cohort</span>
+          <span class="clin-method-value">847 venture-backed founders, pre-seed through Series C, median age 34</span>
+        </div>
+        <div class="clin-method-row">
+          <span class="clin-method-label">Duration</span>
+          <span class="clin-method-value">Approximately 10 minutes</span>
+        </div>
+        <div class="clin-method-row">
+          <span class="clin-method-label">Created by</span>
+          <span class="clin-method-value">Keegan Walden and Jason Shen &mdash; Y Combinator alumni, executive coaches, and mental health researchers</span>
+        </div>
+      </div>
+
+      <a class="clin-cta" href="#">Begin Assessment &rarr;</a>
+
+      <div class="clin-footer-note">All responses are confidential. No account is required. This screening does not constitute a clinical diagnosis.</div>
+    </div>
+  </div>
+
+  <!-- Survey -->
+  <div class="clin-survey">
+    <div class="clin-survey-inner">
+      <div class="clin-survey-instrument-bar">
+        <span class="clin-survey-instrument-name">Patient Health Questionnaire <span>(PHQ-9) &mdash; Question 5 of 9</span></span>
+        <span class="clin-survey-section">Section 1 of 6</span>
+      </div>
+      <div class="clin-survey-question">Over the last two weeks, how often have you been bothered by feeling down, depressed, or hopeless?</div>
+      <div class="clin-likert">
+        <button class="clin-likert-opt" onclick="selectInGroup(this)">Not at all</button>
+        <button class="clin-likert-opt" onclick="selectInGroup(this)">Several days</button>
+        <button class="clin-likert-opt selected" onclick="selectInGroup(this)">More than half the days</button>
+        <button class="clin-likert-opt" onclick="selectInGroup(this)">Nearly every day</button>
+      </div>
+      <div class="clin-survey-note">The PHQ-9 is a validated 9-item depression screening tool (Kroenke, Spitzer &amp; Williams, 2001). Responses are scored 0&ndash;3 and summed for a total severity score.</div>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div class="clin-results">
+    <div class="clin-results-inner">
+      <h2 class="clin-results-title">Assessment Results</h2>
+      <div class="clin-results-date">Completed March 19, 2026 &middot; Cohort: 847 venture-backed founders</div>
+
+      <div class="clin-summary">
+        <div class="clin-summary-title">Summary</div>
+        <p class="clin-summary-text">Your screening results indicate moderate depressive symptoms, mild anxiety, and an above-threshold ADHD screening score. Your primary reported stressor is runway-related financial anxiety, consistent with 64% of founders in the cohort at a similar stage.</p>
+      </div>
+
+      <div class="clin-result-section">
+        <div class="clin-rs-header">
+          <span class="clin-rs-name">Depression (PHQ-9)</span>
+          <span class="clin-rs-score">14 <span>/ 27</span></span>
+        </div>
+        <div class="clin-rs-classification moderate">Moderate (clinical threshold: &ge;10)</div>
+        <p class="clin-rs-interpretation">Your score places you in the 72nd percentile of the founder cohort (n=847). The general population average is 5.1. A score of 10&ndash;14 indicates moderate depression; clinical evaluation is recommended.</p>
+      </div>
+
+      <div class="clin-result-section">
+        <div class="clin-rs-header">
+          <span class="clin-rs-name">Anxiety (GAD-7)</span>
+          <span class="clin-rs-score">8 <span>/ 21</span></span>
+        </div>
+        <div class="clin-rs-classification mild">Mild (clinical threshold: &ge;10)</div>
+        <p class="clin-rs-interpretation">Your score places you in the 58th percentile of the founder cohort. The general population average is 3.2. A score of 5&ndash;9 indicates mild anxiety; monitoring is suggested.</p>
+      </div>
+
+      <div class="clin-result-section">
+        <div class="clin-rs-header">
+          <span class="clin-rs-name">ADHD Screening (ASRS-v1.1)</span>
+          <span class="clin-rs-score">4 <span>/ 6 flagged</span></span>
+        </div>
+        <div class="clin-rs-classification elevated">Above threshold (&ge;4 items flagged)</div>
+        <p class="clin-rs-interpretation">Your score places you in the 85th percentile. 41% of founders in our cohort screened positive, compared to approximately 4% of the general population. A full diagnostic evaluation is recommended.</p>
+      </div>
+
+      <div class="clin-actions">
+        <div class="clin-actions-title">Recommended Actions</div>
+        <ul class="clin-actions-list">
+          <li>Consider scheduling a clinical evaluation for depression with a licensed provider</li>
+          <li>Explore ADHD-specific coaching or evaluation, particularly given prevalence in the founder population</li>
+          <li>Review personalized resource library based on your stressor profile</li>
+        </ul>
+      </div>
+
+      <div class="clin-crisis">This report was generated from validated screening instruments and does not replace professional clinical evaluation. If you are in crisis, contact the 988 Suicide &amp; Crisis Lifeline (call or text 988).</div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============ JAVASCRIPT ============ -->
+<script>
+// --- Design switching ---
+function switchDesign(name) {
+  document.querySelectorAll('.design-section').forEach(s => s.classList.remove('active'));
+  document.querySelector(`[data-design="${name}"]`).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+  event.target.classList.add('active');
+
+  const bgMap = {
+    instrument: '#0a0f1a',
+    benchmark: '#fafaf9',
+    clinical: '#ffffff'
+  };
+  document.body.style.background = bgMap[name] || '#0a0f1a';
+
+  if (name === 'benchmark') buildBenchDists();
+}
+
+// --- Generic Likert selection ---
+function selectInGroup(el) {
+  const group = el.parentElement;
+  group.querySelectorAll('button, div').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+// --- Benchmark distribution charts ---
+function buildBenchDists() {
+  buildOneDist('benchDistDepression', [5, 10, 18, 28, 40, 55, 70, 82, 90, 85, 72, 55, 40, 28, 18, 10, 6, 4, 2, 1], 13);
+  buildOneDist('benchDistAnxiety', [8, 15, 28, 42, 58, 72, 85, 90, 82, 68, 50, 35, 22, 14, 8, 5, 3, 2, 1, 1], 8);
+  buildOneDist('benchDistADHD', [35, 30, 22, 18, 55, 70, 15], 4);
+}
+
+function buildOneDist(containerId, heights, youIndex) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = '';
+  const maxH = Math.max(...heights);
+  heights.forEach((h, i) => {
+    const bar = document.createElement('div');
+    bar.className = 'bench-dist-bar' + (i === youIndex ? ' you' : '');
+    bar.style.height = (h / maxH * 100) + '%';
+    container.appendChild(bar);
+    if (i === youIndex) {
+      const marker = document.createElement('div');
+      marker.className = 'bench-dist-marker';
+      marker.textContent = '▼ YOU';
+      marker.style.left = ((i / heights.length) * 100) + '%';
+      container.appendChild(marker);
+    }
+  });
+}
+
+// --- Init ---
+buildBenchDists();
+</script>
+
+</body>
+</html>
