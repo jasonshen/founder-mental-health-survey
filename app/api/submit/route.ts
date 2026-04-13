@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 import { computeAllScores } from "@/lib/scoring";
 
+export const dynamic = "force-dynamic";
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
