@@ -42,7 +42,7 @@ export const SECTIONS: SectionMeta[] = [
 export const SECTION_ORDER: SectionId[] = SECTIONS.map((s) => s.id);
 
 // ============================================================
-// Section 1: Company Info (8 questions)
+// Section 1: Company Info (10 questions)
 // ============================================================
 
 const companyQuestions: Question[] = [
@@ -61,6 +61,44 @@ const companyQuestions: Question[] = [
     text: "What is your gender?",
     type: "single_select",
     options: ["Male", "Female", "Non-binary", "Prefer not to say"],
+    required: true,
+    instrument: null,
+  },
+  {
+    id: "company_age",
+    section: "company",
+    text: "What is your age?",
+    type: "dropdown",
+    options: [
+      "18-24",
+      "25-29",
+      "30-34",
+      "35-39",
+      "40-44",
+      "45-49",
+      "50-54",
+      "55+",
+    ],
+    required: true,
+    instrument: null,
+  },
+  {
+    id: "company_ethnicity",
+    section: "company",
+    text: "What is your race/ethnicity?",
+    type: "dropdown",
+    options: [
+      "Asian",
+      "Black / African American",
+      "Hispanic / Latino",
+      "Middle Eastern / North African",
+      "Native American / Alaska Native",
+      "Native Hawaiian / Pacific Islander",
+      "White / Caucasian",
+      "Multiracial / Mixed",
+      "Prefer not to say",
+      "Other",
+    ],
     required: true,
     instrument: null,
   },
@@ -151,7 +189,7 @@ const companyQuestions: Question[] = [
   {
     id: "company_revenue",
     section: "company",
-    text: "What is your approximate annual revenue?",
+    text: "What is your approximate annual run rate?",
     type: "dropdown",
     options: [
       "Pre-revenue",
@@ -168,7 +206,7 @@ const companyQuestions: Question[] = [
   {
     id: "company_team_size",
     section: "company",
-    text: "How many people are on your team (including yourself)?",
+    text: "How many people are on your team? (employees + full-time contractors, including yourself)",
     type: "single_select",
     options: [
       "Just me",
