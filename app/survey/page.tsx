@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { v4 as uuidv4 } from "uuid";
+import { generateToken } from "@/lib/token";
 import {
   getQuestionsBySection,
   SECTIONS,
@@ -11,15 +11,8 @@ import type { Question, SectionId } from "@/lib/types";
 import ProgressBar from "@/components/ProgressBar";
 import SurveySection from "@/components/SurveySection";
 import LikertScale from "@/components/QuestionTypes/LikertScale";
-import YesNo from "@/components/QuestionTypes/YesNo";
-import MultiSelect from "@/components/QuestionTypes/MultiSelect";
 import SingleSelect from "@/components/QuestionTypes/SingleSelect";
-
-const PART_TITLES: Record<number, string> = {
-  1: "About You",
-  2: "Mental Health Screens",
-  3: "Treatment & Support",
-};
+import Dropdown from "@/components/QuestionTypes/Dropdown";
 
 export default function SurveyPage() {
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
@@ -28,26 +21,12 @@ export default function SurveyPage() {
   >({});
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showPartTransition, setShowPartTransition] = useState(false);
-  const [transitionPart, setTransitionPart] = useState<number | null>(null);
 
   const currentSectionId = SECTION_ORDER[currentSectionIndex];
   const currentSectionMeta = SECTIONS.find((s) => s.id === currentSectionId)!;
   const currentQuestions = getQuestionsBySection(currentSectionId);
   const totalSections = SECTION_ORDER.length;
   const isLastSection = currentSectionIndex === totalSections - 1;
-
-  const isConditionMet = useCallback(
-    (question: Question): boolean => {
-      if (!question.conditionalOn) return true;
-      const parentValue = responses[question.conditionalOn];
-      const conditionalValues = Array.isArray(question.conditionalValue)
-        ? question.conditionalValue
-        : [question.conditionalValue];
-      return conditionalValues.includes(parentValue as string);
-    },
-    [responses]
-  );
 
   const handleResponseChange = useCallback(
     (questionId: string, value: string | string[] | number) => {
@@ -61,8 +40,6 @@ export default function SurveyPage() {
     const errors: string[] = [];
     for (const question of currentQuestions) {
       if (!question.required) continue;
-      if (!isConditionMet(question)) continue;
-
       const response = responses[question.id];
       if (response === undefined || response === "" || response === null) {
         errors.push(question.id);
@@ -72,16 +49,7 @@ export default function SurveyPage() {
     }
     setValidationErrors(errors);
     return errors.length === 0;
-  }, [currentQuestions, responses, isConditionMet]);
-
-  const showPartTransitionScreen = (partNumber: number) => {
-    setTransitionPart(partNumber);
-    setShowPartTransition(true);
-    setTimeout(() => {
-      setShowPartTransition(false);
-      setTransitionPart(null);
-    }, 1500);
-  };
+  }, [currentQuestions, responses]);
 
   const handleNext = useCallback(() => {
     if (!validateCurrentSection()) {
@@ -97,24 +65,8 @@ export default function SurveyPage() {
       return;
     }
 
-    const nextIndex = currentSectionIndex + 1;
-    const currentPart = SECTIONS.find(
-      (s) => s.id === SECTION_ORDER[currentSectionIndex]
-    )!.part;
-    const nextPart = SECTIONS.find(
-      (s) => s.id === SECTION_ORDER[nextIndex]
-    )!.part;
-
-    if (nextPart !== currentPart) {
-      showPartTransitionScreen(nextPart);
-      setTimeout(() => {
-        setCurrentSectionIndex(nextIndex);
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }, 1500);
-    } else {
-      setCurrentSectionIndex(nextIndex);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
+    setCurrentSectionIndex((prev) => prev + 1);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, [validateCurrentSection, isLastSection, currentSectionIndex]);
 
   const handleBack = useCallback(() => {
@@ -128,7 +80,7 @@ export default function SurveyPage() {
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
-      const token = uuidv4();
+      const token = generateToken();
 
       const groupedResponses: Record<string, Record<string, string | string[] | number>> = {};
       for (const sectionId of SECTION_ORDER) {
@@ -167,10 +119,6 @@ export default function SurveyPage() {
   };
 
   const renderQuestion = (question: Question) => {
-    if (!isConditionMet(question)) {
-      return null;
-    }
-
     const hasError = validationErrors.includes(question.id);
 
     const wrapper = (children: React.ReactNode) => (
@@ -191,28 +139,12 @@ export default function SurveyPage() {
     );
 
     switch (question.type) {
-      case "likert5":
       case "likert4":
+      case "likert5":
         return wrapper(
           <LikertScale
             question={question}
             value={(responses[question.id] as string) || ""}
-            onChange={(val) => handleResponseChange(question.id, val)}
-          />
-        );
-      case "yes_no":
-        return wrapper(
-          <YesNo
-            question={question}
-            value={(responses[question.id] as string) || ""}
-            onChange={(val) => handleResponseChange(question.id, val)}
-          />
-        );
-      case "multi_select":
-        return wrapper(
-          <MultiSelect
-            question={question}
-            value={(responses[question.id] as string[]) || []}
             onChange={(val) => handleResponseChange(question.id, val)}
           />
         );
@@ -224,81 +156,18 @@ export default function SurveyPage() {
             onChange={(val) => handleResponseChange(question.id, val)}
           />
         );
-      case "number":
+      case "dropdown":
         return wrapper(
-          <div className="mb-2">
-            <label
-              htmlFor={question.id}
-              className="block text-base font-medium text-gray-900 mb-3"
-            >
-              {question.text}
-              {question.required && (
-                <span className="text-red-500 ml-1">*</span>
-              )}
-            </label>
-            <input
-              id={question.id}
-              type="number"
-              value={
-                responses[question.id] !== undefined
-                  ? responses[question.id]
-                  : ""
-              }
-              onChange={(e) => {
-                const val = e.target.value;
-                if (val === "") {
-                  handleResponseChange(question.id, "" as unknown as number);
-                } else {
-                  handleResponseChange(question.id, Number(val));
-                }
-              }}
-              className="w-32 px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900"
-              min={0}
-            />
-          </div>
-        );
-      case "text":
-        return wrapper(
-          <div className="mb-2">
-            <label
-              htmlFor={question.id}
-              className="block text-base font-medium text-gray-900 mb-3"
-            >
-              {question.text}
-              {question.required && (
-                <span className="text-red-500 ml-1">*</span>
-              )}
-            </label>
-            <input
-              id={question.id}
-              type="text"
-              value={(responses[question.id] as string) || ""}
-              onChange={(e) =>
-                handleResponseChange(question.id, e.target.value)
-              }
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900"
-            />
-          </div>
+          <Dropdown
+            question={question}
+            value={(responses[question.id] as string) || ""}
+            onChange={(val) => handleResponseChange(question.id, val)}
+          />
         );
       default:
         return null;
     }
   };
-
-  if (showPartTransition && transitionPart !== null) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-center animate-pulse">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Part {transitionPart}
-          </h1>
-          <p className="text-xl text-gray-600">
-            {PART_TITLES[transitionPart]}
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-white">

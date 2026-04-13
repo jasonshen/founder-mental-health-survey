@@ -11,7 +11,7 @@ export async function GET(
     const supabase = createServerClient();
     const { data, error } = await supabase
       .from("survey_responses")
-      .select("scores, section_founder_stress, section_treatment, created_at")
+      .select("scores, section_company, section_founder_stress, created_at")
       .eq("anonymous_token", token)
       .single();
 
@@ -24,8 +24,8 @@ export async function GET(
 
     return NextResponse.json({
       scores: data.scores,
+      section_company: data.section_company,
       section_founder_stress: data.section_founder_stress,
-      section_treatment: data.section_treatment,
       created_at: data.created_at,
     });
   } catch (err) {

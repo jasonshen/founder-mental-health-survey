@@ -3,64 +3,74 @@
 import { useEffect, useState } from "react";
 import type {
   ResultsResponse,
-  PopulationComparison,
   PHQ9Severity,
   GAD7Severity,
 } from "@/lib/types";
 import CrisisBanner from "./CrisisBanner";
 import ResultsCard from "./ResultsCard";
 
-function formatComparison(comparison: PopulationComparison): string {
-  switch (comparison) {
-    case "below_average":
-      return "Below Average";
-    case "average":
-      return "Average";
-    case "above_average":
-      return "Above Average";
-  }
-}
+const STRESS_LABELS: Record<string, string> = {
+  fs_runway: "Financial pressure / runway",
+  fs_loneliness: "Loneliness & isolation",
+  fs_cofounder: "Co-founder / team strain",
+  fs_identity: "Identity tied to company",
+  fs_sleep: "Sleep quality",
+};
+
+const STRESS_VALUE_MAP: Record<string, number> = {
+  "Not at all": 0,
+  "Slightly": 1,
+  "Moderately": 2,
+  "Very much": 3,
+  "Extremely": 4,
+};
 
 function formatPHQ9Severity(severity: PHQ9Severity): string {
   switch (severity) {
-    case "none":
-      return "None/Minimal";
-    case "mild":
-      return "Mild";
-    case "moderate":
-      return "Moderate";
-    case "moderately_severe":
-      return "Moderately Severe";
-    case "severe":
-      return "Severe";
+    case "none": return "None/Minimal";
+    case "mild": return "Mild";
+    case "moderate": return "Moderate";
+    case "moderately_severe": return "Moderately Severe";
+    case "severe": return "Severe";
   }
 }
 
 function formatGAD7Severity(severity: GAD7Severity): string {
   switch (severity) {
-    case "none":
-      return "None/Minimal";
-    case "mild":
-      return "Mild";
-    case "moderate":
-      return "Moderate";
-    case "severe":
-      return "Severe";
+    case "none": return "None/Minimal";
+    case "mild": return "Mild";
+    case "moderate": return "Moderate";
+    case "severe": return "Severe";
   }
 }
 
 function severityColor(severity: PHQ9Severity | GAD7Severity): string {
   switch (severity) {
-    case "none":
-      return "text-green-700 bg-green-50";
-    case "mild":
-      return "text-yellow-700 bg-yellow-50";
-    case "moderate":
-      return "text-orange-700 bg-orange-50";
-    case "moderately_severe":
-      return "text-red-600 bg-red-50";
-    case "severe":
-      return "text-red-800 bg-red-100";
+    case "none": return "text-green-700 bg-green-50";
+    case "mild": return "text-yellow-700 bg-yellow-50";
+    case "moderate": return "text-orange-700 bg-orange-50";
+    case "moderately_severe": return "text-red-600 bg-red-50";
+    case "severe": return "text-red-800 bg-red-100";
+  }
+}
+
+function severityBarWidth(severity: PHQ9Severity | GAD7Severity): string {
+  switch (severity) {
+    case "none": return "20%";
+    case "mild": return "40%";
+    case "moderate": return "60%";
+    case "moderately_severe": return "80%";
+    case "severe": return "100%";
+  }
+}
+
+function severityBarColor(severity: PHQ9Severity | GAD7Severity): string {
+  switch (severity) {
+    case "none": return "bg-green-500";
+    case "mild": return "bg-yellow-500";
+    case "moderate": return "bg-orange-500";
+    case "moderately_severe": return "bg-red-500";
+    case "severe": return "bg-red-700";
   }
 }
 
@@ -124,28 +134,17 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
     );
   }
 
-  const { scores, section_founder_stress, section_treatment } = data;
+  const { scores, section_founder_stress } = data;
 
-  // Get top 3 highest-rated stressors
-  const stressorEntries = Object.entries(section_founder_stress)
-    .filter(([, value]) => typeof value === "number" || typeof value === "string")
+  // Parse stressor data and sort by severity
+  const stressorEntries = Object.entries(section_founder_stress || {})
+    .filter(([key]) => key.startsWith("fs_"))
     .map(([key, value]) => ({
       key,
-      label: key
-        .replace(/^fs_/, "")
-        .replace(/_/g, " ")
-        .replace(/\b\w/g, (c) => c.toUpperCase()),
-      value: Number(value),
+      label: STRESS_LABELS[key] || key,
+      value: typeof value === "string" ? (STRESS_VALUE_MAP[value] ?? 0) : Number(value),
     }))
-    .filter((entry) => !isNaN(entry.value))
-    .sort((a, b) => b.value - a.value)
-    .slice(0, 3);
-
-  // Treatment summary
-  const therapyStatus = section_treatment.treatment_therapy;
-  const coachStatus = section_treatment.treatment_coach;
-  const medicationStatus = section_treatment.treatment_medication;
-  const barriers = section_treatment.treatment_barriers;
+    .sort((a, b) => b.value - a.value);
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">
@@ -179,16 +178,72 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
         </div>
       </div>
 
-      {/* Part 1: Your Profile */}
-      <h2 className="text-xl font-bold text-gray-900 mb-4 border-b pb-2">
-        Your Profile
-      </h2>
-
-      <ResultsCard title="ADHD Screening (ASRS)">
+      {/* Depression */}
+      <ResultsCard title="Depression Screening (PHQ-9)">
+        <div className="mb-3">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-sm text-gray-600">Score</span>
+            <span className="font-semibold text-lg">{scores.phq9.score}/27</span>
+          </div>
+          <div className="w-full bg-gray-200 rounded-full h-3">
+            <div
+              className={`h-3 rounded-full transition-all ${severityBarColor(scores.phq9.severity)}`}
+              style={{ width: severityBarWidth(scores.phq9.severity) }}
+            />
+          </div>
+        </div>
         <p className="mb-1">
-          <span className="font-medium">{scores.asrs.items_flagged} of 6</span>{" "}
-          items flagged
+          Severity:{" "}
+          <span className={`inline-block px-2 py-0.5 rounded text-sm font-medium ${severityColor(scores.phq9.severity)}`}>
+            {formatPHQ9Severity(scores.phq9.severity)}
+          </span>
         </p>
+        <p className="text-sm text-gray-500">
+          Your score is higher than {scores.phq9.percentile_general}% of the general population.
+        </p>
+      </ResultsCard>
+
+      {/* Anxiety */}
+      <ResultsCard title="Anxiety Screening (GAD-7)">
+        <div className="mb-3">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-sm text-gray-600">Score</span>
+            <span className="font-semibold text-lg">{scores.gad7.score}/21</span>
+          </div>
+          <div className="w-full bg-gray-200 rounded-full h-3">
+            <div
+              className={`h-3 rounded-full transition-all ${severityBarColor(scores.gad7.severity)}`}
+              style={{ width: severityBarWidth(scores.gad7.severity) }}
+            />
+          </div>
+        </div>
+        <p className="mb-1">
+          Severity:{" "}
+          <span className={`inline-block px-2 py-0.5 rounded text-sm font-medium ${severityColor(scores.gad7.severity)}`}>
+            {formatGAD7Severity(scores.gad7.severity)}
+          </span>
+        </p>
+        <p className="text-sm text-gray-500">
+          Your score is higher than {scores.gad7.percentile_general}% of the general population.
+        </p>
+      </ResultsCard>
+
+      {/* ADHD */}
+      <ResultsCard title="ADHD Screening (ASRS)">
+        <div className="mb-3">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-sm text-gray-600">Items flagged</span>
+            <span className="font-semibold text-lg">{scores.asrs.items_flagged}/6</span>
+          </div>
+          <div className="w-full bg-gray-200 rounded-full h-3">
+            <div
+              className={`h-3 rounded-full transition-all ${
+                scores.asrs.above_threshold ? "bg-orange-500" : "bg-green-500"
+              }`}
+              style={{ width: `${(scores.asrs.items_flagged / 6) * 100}%` }}
+            />
+          </div>
+        </div>
         <p className="mb-1">
           Threshold:{" "}
           <span
@@ -198,159 +253,48 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
                 : "bg-green-100 text-green-800"
             }`}
           >
-            {scores.asrs.above_threshold ? "Above" : "Below"}
+            {scores.asrs.above_threshold ? "Above (4+ items)" : "Below"}
           </span>
         </p>
         <p className="text-sm text-gray-500">
-          Percentile (general population): {scores.asrs.percentile_general}%
+          Your score is higher than {scores.asrs.percentile_general}% of the general population.
         </p>
       </ResultsCard>
 
-      <ResultsCard title="Autism Screening (AQ-10)">
-        <p className="mb-1">
-          Score: <span className="font-medium">{scores.aq10.score}/10</span>
-        </p>
-        <p className="mb-1">
-          Threshold:{" "}
-          <span
-            className={`inline-block px-2 py-0.5 rounded text-sm font-medium ${
-              scores.aq10.above_threshold
-                ? "bg-orange-100 text-orange-800"
-                : "bg-green-100 text-green-800"
-            }`}
-          >
-            {scores.aq10.above_threshold ? "Above" : "Below"}
-          </span>
-        </p>
-        <p className="text-sm text-gray-500">
-          Percentile (general population): {scores.aq10.percentile_general}%
-        </p>
-      </ResultsCard>
-
-      <ResultsCard title="Dark Triad (SD3)">
-        <div className="space-y-2">
-          {(
-            [
-              ["Machiavellianism", scores.sd3.machiavellianism],
-              ["Narcissism", scores.sd3.narcissism],
-              ["Psychopathy", scores.sd3.psychopathy],
-            ] as const
-          ).map(([label, sub]) => (
-            <div key={label} className="flex items-center justify-between">
-              <span className="text-sm">{label}</span>
-              <span className="text-sm">
-                <span className="font-medium">{sub.mean.toFixed(2)}</span>
-                <span className="text-gray-400 mx-1">&mdash;</span>
-                <span className="text-gray-500">
-                  {formatComparison(sub.comparison_to_population)}
-                </span>
-              </span>
-            </div>
-          ))}
-        </div>
-      </ResultsCard>
-
-      {/* Part 2: Your Current State */}
-      <h2 className="text-xl font-bold text-gray-900 mb-4 mt-8 border-b pb-2">
-        Your Current State
-      </h2>
-
-      <ResultsCard title="Depression (PHQ-9)">
-        <p className="mb-1">
-          Score: <span className="font-medium">{scores.phq9.score}/27</span>
-          <span className="mx-1">&mdash;</span>
-          <span
-            className={`inline-block px-2 py-0.5 rounded text-sm font-medium ${severityColor(
-              scores.phq9.severity
-            )}`}
-          >
-            {formatPHQ9Severity(scores.phq9.severity)}
-          </span>
-        </p>
-        <p className="text-sm text-gray-500">
-          Percentile (general population): {scores.phq9.percentile_general}%
-        </p>
-      </ResultsCard>
-
-      <ResultsCard title="Anxiety (GAD-7)">
-        <p className="mb-1">
-          Score: <span className="font-medium">{scores.gad7.score}/21</span>
-          <span className="mx-1">&mdash;</span>
-          <span
-            className={`inline-block px-2 py-0.5 rounded text-sm font-medium ${severityColor(
-              scores.gad7.severity
-            )}`}
-          >
-            {formatGAD7Severity(scores.gad7.severity)}
-          </span>
-        </p>
-        <p className="text-sm text-gray-500">
-          Percentile (general population): {scores.gad7.percentile_general}%
-        </p>
-      </ResultsCard>
-
-      <ResultsCard title="Top Founder Stressors">
+      {/* Founder Stress */}
+      <ResultsCard title="Your Top Founder Stressors">
         {stressorEntries.length > 0 ? (
-          <ol className="list-decimal list-inside space-y-1">
+          <div className="space-y-3">
             {stressorEntries.map((entry) => (
-              <li key={entry.key} className="text-sm">
-                {entry.label}{" "}
-                <span className="text-gray-400">({entry.value}/5)</span>
-              </li>
+              <div key={entry.key}>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-sm">{entry.label}</span>
+                  <span className="text-sm text-gray-400">{entry.value}/4</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div
+                    className="bg-indigo-500 h-2 rounded-full transition-all"
+                    style={{ width: `${(entry.value / 4) * 100}%` }}
+                  />
+                </div>
+              </div>
             ))}
-          </ol>
+          </div>
         ) : (
           <p className="text-sm text-gray-400">No stressor data available.</p>
         )}
       </ResultsCard>
 
-      {/* Part 3: Your Treatment Landscape */}
-      <h2 className="text-xl font-bold text-gray-900 mb-4 mt-8 border-b pb-2">
-        Your Treatment Landscape
-      </h2>
-
-      <ResultsCard title="Current Treatment">
-        <div className="space-y-1 text-sm">
-          <p>
-            Therapy:{" "}
-            <span className="font-medium">
-              {therapyStatus === "yes" || therapyStatus === true
-                ? "Yes"
-                : "No"}
-            </span>
-          </p>
-          <p>
-            Coach:{" "}
-            <span className="font-medium">
-              {coachStatus === "yes" || coachStatus === true ? "Yes" : "No"}
-            </span>
-          </p>
-          <p>
-            Medication:{" "}
-            <span className="font-medium">
-              {medicationStatus === "yes" || medicationStatus === true
-                ? "Yes"
-                : "No"}
-            </span>
-          </p>
-        </div>
-      </ResultsCard>
-
-      <ResultsCard title="Barriers to Treatment">
-        {barriers ? (
-          Array.isArray(barriers) ? (
-            <ul className="list-disc list-inside space-y-1 text-sm">
-              {barriers.map((b, i) => (
-                <li key={i}>{String(b)}</li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-sm">{String(barriers)}</p>
-          )
-        ) : (
-          <p className="text-sm text-gray-400">No barriers reported.</p>
-        )}
-      </ResultsCard>
+      {/* What this means */}
+      <div className="mt-8 p-5 bg-indigo-50 border border-indigo-100 rounded-lg">
+        <h3 className="font-semibold text-indigo-900 mb-2">What do these scores mean?</h3>
+        <ul className="text-sm text-indigo-800 space-y-2">
+          <li><strong>PHQ-9</strong> is a validated depression screener. Scores of 10+ suggest moderate depression worth discussing with a professional.</li>
+          <li><strong>GAD-7</strong> measures generalized anxiety. Scores of 10+ suggest moderate anxiety that may benefit from support.</li>
+          <li><strong>ASRS</strong> screens for ADHD traits. 4+ flagged items suggest further evaluation may be worthwhile — many founders have undiagnosed ADHD.</li>
+          <li><strong>Founder stressors</strong> are common pressure points. High scores here don't mean something is wrong — they mean you're carrying a lot.</li>
+        </ul>
+      </div>
 
       {/* CTA */}
       <div className="mt-8 text-center">
@@ -358,7 +302,7 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
           href={`/email?token=${token}`}
           className="inline-block px-6 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-700 transition-colors font-medium"
         >
-          Get Your Full Report via Email
+          Get the Full Report & Explore Resources
         </a>
       </div>
 

@@ -21,33 +21,27 @@ export default function HomePage() {
 
         <p>
           <strong>What it measures:</strong> This survey uses validated clinical
-          instruments to screen for depression (PHQ-9), anxiety (GAD-7), ADHD
-          (ASRS), autism traits (AQ-10), and personality factors (SD3). It also
-          asks about founder-specific stressors and your current treatment
-          landscape.
+          instruments to screen for depression (PHQ-9), anxiety (GAD-7), and
+          ADHD traits (ASRS), plus founder-specific stressors like runway
+          pressure, isolation, and identity fusion with your company.
         </p>
 
         <p>
-          <strong>What you get:</strong> Personalized results with your scores,
-          severity levels, and how you compare to the general population. Your
-          results are available immediately and can be emailed to you.
+          <strong>What you get:</strong> Immediate results with your scores,
+          severity levels, and how you compare to the general population. You can
+          optionally receive a detailed report and learn about resources
+          including coaching, retreats, and more.
         </p>
 
         <p>
-          <strong>How long it takes:</strong> About 10-15 minutes to complete.
+          <strong>How long it takes:</strong> About 3-5 minutes.
         </p>
 
         <p>
           <strong>Anonymity:</strong> Your responses are completely anonymous.
           You receive a unique token to access your results. No personally
           identifiable information is collected unless you choose to provide your
-          email.
-        </p>
-
-        <p>
-          <strong>Who&apos;s behind it:</strong> This project was created by
-          Jason Shen, a founder and researcher interested in understanding and
-          improving founder mental health.
+          email afterward.
         </p>
       </div>
 
@@ -64,14 +58,13 @@ export default function HomePage() {
         <p>
           Created by{" "}
           <a
-            href="https://refactorlabs.com"
+            href="https://jasonshen.com"
             target="_blank"
             rel="noopener noreferrer"
             className="underline hover:text-gray-600"
           >
             Jason Shen
-          </a>{" "}
-          at Refactor Labs
+          </a>
         </p>
       </footer>
     </div>

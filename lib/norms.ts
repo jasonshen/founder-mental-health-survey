@@ -1,5 +1,4 @@
 // Population norm data for percentile computation
-// Source citations in each section
 
 // PHQ-9 cumulative percentiles (score -> % of population at or below)
 // Source: Kroenke et al., 2001
@@ -29,20 +28,3 @@ export const ASRS_PERCENTILES: Record<number, number> = {
 };
 
 export const ASRS_THRESHOLD = 4;
-
-// AQ-10 cumulative percentiles
-// Source: Allison et al., 2012
-export const AQ10_PERCENTILES: Record<number, number> = {
-  0: 30, 1: 50, 2: 70, 3: 82, 4: 90, 5: 98,
-  6: 99, 7: 99.3, 8: 99.6, 9: 99.8, 10: 100,
-};
-
-export const AQ10_THRESHOLD = 6;
-
-// SD3 population norms
-// Source: Jones & Paulhus, 2014
-export const SD3_NORMS = {
-  machiavellianism: { mean: 3.10, sd: 0.69 },
-  narcissism: { mean: 2.97, sd: 0.64 },
-  psychopathy: { mean: 2.09, sd: 0.63 },
-};

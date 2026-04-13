@@ -19,14 +19,11 @@ export async function POST(request: Request) {
     const supabase = createServerClient();
     const { error } = await supabase.from("survey_responses").insert({
       anonymous_token: token,
-      section_demographics: responses.demographics,
+      section_company: responses.company,
       section_adhd: responses.adhd,
-      section_autism: responses.autism,
-      section_dark_triad: responses.dark_triad,
       section_depression: responses.depression,
       section_anxiety: responses.anxiety,
       section_founder_stress: responses.founder_stress,
-      section_treatment: responses.treatment,
       scores,
       completed: true,
     });
