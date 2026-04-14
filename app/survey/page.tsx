@@ -164,6 +164,38 @@ export default function SurveyPage() {
             onChange={(val) => handleResponseChange(question.id, val)}
           />
         );
+      case "number":
+        return wrapper(
+          <div className="mb-2">
+            <label
+              htmlFor={question.id}
+              className="block text-base font-medium text-gray-900 mb-3"
+            >
+              {question.text}
+              {question.required && <span className="text-red-500 ml-1">*</span>}
+            </label>
+            <input
+              id={question.id}
+              type="number"
+              inputMode="numeric"
+              value={
+                responses[question.id] !== undefined
+                  ? String(responses[question.id])
+                  : ""
+              }
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val === "") {
+                  handleResponseChange(question.id, "" as unknown as number);
+                } else {
+                  handleResponseChange(question.id, Number(val));
+                }
+              }}
+              className="w-32 px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900"
+              min={0}
+            />
+          </div>
+        );
       default:
         return null;
     }
