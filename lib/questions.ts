@@ -43,33 +43,14 @@ export const SECTION_ORDER: SectionId[] = SECTIONS.map((s) => s.id);
 
 // ============================================================
 // Section 1: Company Info (10 questions)
-// Order: Year → YC → Role → Age → Gender → Race → Industry → Funding → Run rate → Team
+// Order: YC → Year → Role → Age → Gender → Race → Industry → Funding → Run rate → Team
 // ============================================================
 
 const companyQuestions: Question[] = [
   {
-    id: "company_year_founded",
-    section: "company",
-    text: "What year was your company founded?",
-    type: "dropdown",
-    options: [
-      "2026",
-      "2025",
-      "2024",
-      "2023",
-      "2022",
-      "2021",
-      "2020",
-      "2019",
-      "2018 or earlier",
-    ],
-    required: true,
-    instrument: null,
-  },
-  {
     id: "company_yc_batch",
     section: "company",
-    text: "Are you a Y Combinator company? If so, which batch?",
+    text: "What Y Combinator batch were you?",
     type: "dropdown",
     options: [
       "X26 (Summer 2026)",
@@ -92,6 +73,25 @@ const companyQuestions: Question[] = [
       "W20 (Winter 2020)",
       "Earlier than 2020",
       "Not a YC company",
+    ],
+    required: true,
+    instrument: null,
+  },
+  {
+    id: "company_year_founded",
+    section: "company",
+    text: "What year was your company founded?",
+    type: "dropdown",
+    options: [
+      "2026",
+      "2025",
+      "2024",
+      "2023",
+      "2022",
+      "2021",
+      "2020",
+      "2019",
+      "2018 or earlier",
     ],
     required: true,
     instrument: null,
@@ -167,7 +167,6 @@ const companyQuestions: Question[] = [
     text: "How much total funding has your company raised?",
     type: "dropdown",
     options: [
-      "Haven't raised outside funding",
       "Less than $1M",
       "$1M - $2M",
       "$2M - $5M",
