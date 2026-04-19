@@ -91,24 +91,48 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
       return;
     }
 
+    let cancelled = false;
+    let pendingRetries = 0;
+    const MAX_PENDING_RETRIES = 3;
+
     async function fetchResults() {
       try {
         const res = await fetch(`/api/results/${token}`);
-        if (!res.ok) {
-          throw new Error("Failed to load results. Please check your token.");
+
+        // 202 = scoring hasn't finished yet. Poll a few times.
+        if (res.status === 202 && pendingRetries < MAX_PENDING_RETRIES) {
+          pendingRetries += 1;
+          setTimeout(() => !cancelled && fetchResults(), 1500);
+          return;
         }
-        const json: ResultsResponse = await res.json();
-        setData(json);
+
+        const body = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+          throw new Error(
+            body.error ||
+              (res.status === 404
+                ? "We couldn't find results for this code. Double-check it and try again."
+                : "We couldn't load your results. Please refresh in a moment.")
+          );
+        }
+
+        if (!cancelled) setData(body as ResultsResponse);
       } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "An unexpected error occurred."
-        );
+        if (!cancelled) {
+          setError(
+            err instanceof Error ? err.message : "An unexpected error occurred."
+          );
+        }
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     }
 
     fetchResults();
+    return () => {
+      cancelled = true;
+    };
   }, [token]);
 
   function handleCopyToken() {
@@ -120,16 +144,47 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
 
   if (loading) {
     return (
-      <div className="max-w-2xl mx-auto px-4 py-16 text-center">
-        <p className="text-gray-500 text-lg">Loading your results...</p>
+      <div className="max-w-2xl mx-auto px-4 py-8" aria-busy="true" aria-live="polite">
+        <span className="sr-only">Loading your results</span>
+        <div className="h-8 w-48 bg-gray-200 rounded animate-pulse mb-3" />
+        <div className="h-4 w-64 bg-gray-100 rounded animate-pulse mb-8" />
+        <div className="h-20 bg-gray-100 rounded-lg animate-pulse mb-8" />
+        {[0, 1, 2].map((i) => (
+          <div
+            key={i}
+            className="border border-gray-200 rounded-lg p-5 mb-4 animate-pulse"
+          >
+            <div className="h-5 w-40 bg-gray-200 rounded mb-3" />
+            <div className="h-3 w-full bg-gray-100 rounded mb-2" />
+            <div className="h-3 w-1/2 bg-gray-100 rounded" />
+          </div>
+        ))}
       </div>
     );
   }
 
   if (error || !data) {
     return (
-      <div className="max-w-2xl mx-auto px-4 py-16 text-center">
-        <p className="text-red-600 text-lg">{error || "No results found."}</p>
+      <div className="max-w-2xl mx-auto px-4 py-16 text-center" role="alert">
+        <h2 className="text-xl font-semibold text-gray-900 mb-2">
+          We couldn&apos;t load your results
+        </h2>
+        <p className="text-gray-600 mb-6">{error || "No results found."}</p>
+        <div className="flex gap-3 justify-center">
+          <button
+            type="button"
+            onClick={() => window.location.reload()}
+            className="px-6 py-2.5 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-700 transition-colors"
+          >
+            Try again
+          </button>
+          <a
+            href="/"
+            className="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors inline-flex items-center"
+          >
+            Go home
+          </a>
+        </div>
       </div>
     );
   }

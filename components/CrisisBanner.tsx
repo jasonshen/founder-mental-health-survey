@@ -8,7 +8,11 @@ export default function CrisisBanner({ show }: CrisisBannerProps) {
   if (!show) return null;
 
   return (
-    <div className="bg-amber-100 border-l-4 border-amber-500 p-4 mb-6">
+    <div
+      role="alert"
+      aria-live="assertive"
+      className="bg-amber-100 border-l-4 border-amber-500 p-4 mb-6"
+    >
       <p className="font-semibold text-amber-900 mb-2">
         If you&apos;re experiencing thoughts of self-harm, please reach out for
         support.
