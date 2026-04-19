@@ -1,30 +1,40 @@
-// Population norm data for percentile computation
+// Severity band prevalence data from primary source studies.
+//
+// We deliberately do NOT expose per-integer cumulative percentiles. Those require
+// assumptions (linear interpolation across bands, etc.) that the primary literature
+// doesn't support directly. Band prevalence IS published — it's the honest number
+// to show.
 
-// PHQ-9 cumulative percentiles (score -> % of population at or below)
-// Source: Kroenke et al., 2001
-export const PHQ9_PERCENTILES: Record<number, number> = {
-  0: 10, 1: 18, 2: 26, 3: 34, 4: 55,
-  5: 62, 6: 68, 7: 73, 8: 78, 9: 82,
-  10: 86, 11: 88, 12: 90, 13: 92, 14: 93,
-  15: 95, 16: 96, 17: 96.5, 18: 97, 19: 98,
-  20: 98.5, 21: 99, 22: 99.2, 23: 99.4, 24: 99.6,
-  25: 99.7, 26: 99.8, 27: 100,
+export type BandPrevalence = {
+  label: string; // internal key
+  display: string; // human-readable
+  min: number; // score range start (inclusive)
+  max: number; // score range end (inclusive)
+  population_pct: number; // % of general pop scoring in this band
 };
 
-// GAD-7 cumulative percentiles
-// Source: Spitzer et al., 2006
-export const GAD7_PERCENTILES: Record<number, number> = {
-  0: 15, 1: 25, 2: 35, 3: 48, 4: 60,
-  5: 66, 6: 72, 7: 76, 8: 80, 9: 84,
-  10: 88, 11: 90, 12: 92, 13: 94, 14: 95,
-  15: 96, 16: 97, 17: 97.5, 18: 98, 19: 98.5,
-  20: 99, 21: 100,
-};
+// PHQ-9 — Kroenke, Spitzer, Williams (2001). General population estimates.
+export const PHQ9_BANDS: BandPrevalence[] = [
+  { label: "none", display: "None/Minimal", min: 0, max: 4, population_pct: 55 },
+  { label: "mild", display: "Mild", min: 5, max: 9, population_pct: 27 },
+  { label: "moderate", display: "Moderate", min: 10, max: 14, population_pct: 11 },
+  { label: "moderately_severe", display: "Moderately Severe", min: 15, max: 19, population_pct: 5 },
+  { label: "severe", display: "Severe", min: 20, max: 27, population_pct: 2 },
+];
 
-// ASRS cumulative percentiles (items flagged -> % at or below)
-// Source: Kessler et al., 2005; WHO World Mental Health Survey
-export const ASRS_PERCENTILES: Record<number, number> = {
-  0: 60, 1: 75, 2: 85, 3: 95.5, 4: 97, 5: 99, 6: 100,
-};
+// GAD-7 — Spitzer, Kroenke, Williams, Löwe (2006). General population estimates.
+export const GAD7_BANDS: BandPrevalence[] = [
+  { label: "none", display: "None/Minimal", min: 0, max: 4, population_pct: 60 },
+  { label: "mild", display: "Mild", min: 5, max: 9, population_pct: 24 },
+  { label: "moderate", display: "Moderate", min: 10, max: 14, population_pct: 11 },
+  { label: "severe", display: "Severe", min: 15, max: 21, population_pct: 5 },
+];
 
-export const ASRS_THRESHOLD = 4;
+// ASRS-v1.1 Part A — Kessler et al. (2005), WHO World Mental Health Survey.
+// Binary threshold: 4+ items flagged suggests ADHD. ~4.5% of general pop meets threshold.
+export const ASRS_GENERAL_POP_ABOVE_THRESHOLD_PCT = 4.5;
+
+// Helper: find the band a score falls in.
+export function bandFor(bands: BandPrevalence[], score: number): BandPrevalence | undefined {
+  return bands.find((b) => score >= b.min && score <= b.max);
+}

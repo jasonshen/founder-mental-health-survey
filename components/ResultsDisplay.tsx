@@ -78,8 +78,44 @@ interface ResultsDisplayProps {
   token: string;
 }
 
+interface CohortData {
+  N: number;
+  phq9: { percentile: number; mean: number };
+  gad7: { percentile: number; mean: number };
+  asrs: { percentile: number; above_threshold_pct: number };
+}
+
+function CohortRow({
+  label,
+  percentile,
+  caption,
+}: {
+  label: string;
+  percentile: number;
+  caption: string;
+}) {
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-1">
+        <span className="text-sm font-medium text-gray-800">{label}</span>
+        <span className="text-sm font-semibold text-indigo-700">
+          {percentile}th %ile
+        </span>
+      </div>
+      <div className="w-full bg-gray-200 rounded-full h-2 mb-1">
+        <div
+          className="bg-indigo-500 h-2 rounded-full transition-all"
+          style={{ width: `${percentile}%` }}
+        />
+      </div>
+      <p className="text-xs text-gray-500">{caption}</p>
+    </div>
+  );
+}
+
 export default function ResultsDisplay({ token }: ResultsDisplayProps) {
   const [data, setData] = useState<ResultsResponse | null>(null);
+  const [cohort, setCohort] = useState<CohortData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
@@ -130,6 +166,25 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
     }
 
     fetchResults();
+    return () => {
+      cancelled = true;
+    };
+  }, [token]);
+
+  // Separately fetch cohort data. 404 = flag off or not enough data — silent no-op.
+  useEffect(() => {
+    if (!token) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(`/api/cohort?token=${encodeURIComponent(token)}`);
+        if (!res.ok) return; // 404 or 503 — no cohort card to show
+        const body = (await res.json()) as CohortData;
+        if (!cancelled) setCohort(body);
+      } catch {
+        // Silent — cohort is an enhancement, not required.
+      }
+    })();
     return () => {
       cancelled = true;
     };
@@ -254,7 +309,9 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
           </span>
         </p>
         <p className="text-sm text-gray-500">
-          Your score is higher than {scores.phq9.percentile_general}% of the general population.
+          About {scores.phq9.general_pop_band_pct}% of the general population
+          scores in the {formatPHQ9Severity(scores.phq9.severity).toLowerCase()}{" "}
+          range.
         </p>
       </ResultsCard>
 
@@ -279,7 +336,9 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
           </span>
         </p>
         <p className="text-sm text-gray-500">
-          Your score is higher than {scores.gad7.percentile_general}% of the general population.
+          About {scores.gad7.general_pop_band_pct}% of the general population
+          scores in the {formatGAD7Severity(scores.gad7.severity).toLowerCase()}{" "}
+          range.
         </p>
       </ResultsCard>
 
@@ -312,7 +371,8 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
           </span>
         </p>
         <p className="text-sm text-gray-500">
-          Your score is higher than {scores.asrs.percentile_general}% of the general population.
+          About {scores.asrs.general_pop_above_threshold_pct}% of the general
+          population meets the threshold for further ADHD evaluation.
         </p>
       </ResultsCard>
 
@@ -339,6 +399,43 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
           <p className="text-sm text-gray-400">No stressor data available.</p>
         )}
       </ResultsCard>
+
+      {/* Founder cohort comparison — only shown when flag is on */}
+      {cohort && (
+        <div className="mt-8">
+          <h2 className="text-xl font-bold text-gray-900 mb-2 border-b pb-2">
+            Compared to other founders
+          </h2>
+          <p className="text-sm text-gray-500 mb-4">
+            Based on {cohort.N.toLocaleString()} founder responses to this
+            survey.
+          </p>
+          <ResultsCard title="How you compare (founder cohort)">
+            <div className="space-y-4">
+              <CohortRow
+                label="Depression (PHQ-9)"
+                percentile={cohort.phq9.percentile}
+                caption={`Founder cohort average: ${cohort.phq9.mean} / 27`}
+              />
+              <CohortRow
+                label="Anxiety (GAD-7)"
+                percentile={cohort.gad7.percentile}
+                caption={`Founder cohort average: ${cohort.gad7.mean} / 21`}
+              />
+              <CohortRow
+                label="ADHD (ASRS items flagged)"
+                percentile={cohort.asrs.percentile}
+                caption={`${cohort.asrs.above_threshold_pct}% of founders meet the threshold`}
+              />
+            </div>
+            <p className="text-xs text-gray-400 mt-4">
+              Percentiles here are empirical — computed from real founder
+              responses, not interpolated. Higher percentile = your score is
+              higher than that fraction of founders.
+            </p>
+          </ResultsCard>
+        </div>
+      )}
 
       {/* What this means */}
       <div className="mt-8 p-5 bg-indigo-50 border border-indigo-100 rounded-lg">

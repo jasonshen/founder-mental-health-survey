@@ -66,20 +66,23 @@ export type GAD7Severity = "none" | "mild" | "moderate" | "severe";
 export interface PHQ9Score {
   score: number;
   severity: PHQ9Severity;
-  percentile_general: number;
+  /** % of general population scoring in the same severity band */
+  general_pop_band_pct: number;
   suicidal_ideation_flagged: boolean;
 }
 
 export interface GAD7Score {
   score: number;
   severity: GAD7Severity;
-  percentile_general: number;
+  /** % of general population scoring in the same severity band */
+  general_pop_band_pct: number;
 }
 
 export interface ASRSScore {
   items_flagged: number;
   above_threshold: boolean;
-  percentile_general: number;
+  /** % of general population meeting the ADHD threshold (for context) */
+  general_pop_above_threshold_pct: number;
 }
 
 export interface AllScores {

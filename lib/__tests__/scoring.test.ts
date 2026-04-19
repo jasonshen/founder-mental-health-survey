@@ -177,6 +177,37 @@ describe("ASRS Scoring (ADHD)", () => {
   });
 });
 
+describe("Band prevalence", () => {
+  it("PHQ-9 score 0 returns 'none' band prevalence (55%)", () => {
+    const responses: Record<string, string> = {};
+    for (let i = 1; i <= 9; i++) responses[`phq9_${i}`] = "Not at all";
+    expect(scorePHQ9(responses).general_pop_band_pct).toBe(55);
+  });
+
+  it("PHQ-9 score 13 returns 'moderate' band prevalence (11%)", () => {
+    const responses: Record<string, string> = {};
+    for (let i = 1; i <= 6; i++) responses[`phq9_${i}`] = "More than half the days"; // 12
+    responses["phq9_7"] = "Several days"; // +1 = 13
+    for (let i = 8; i <= 9; i++) responses[`phq9_${i}`] = "Not at all";
+    const r = scorePHQ9(responses);
+    expect(r.score).toBe(13);
+    expect(r.severity).toBe("moderate");
+    expect(r.general_pop_band_pct).toBe(11);
+  });
+
+  it("GAD-7 max score returns 'severe' band prevalence (5%)", () => {
+    const responses: Record<string, string> = {};
+    for (let i = 1; i <= 7; i++) responses[`gad7_${i}`] = "Nearly every day";
+    expect(scoreGAD7(responses).general_pop_band_pct).toBe(5);
+  });
+
+  it("ASRS exposes general_pop_above_threshold_pct", () => {
+    const responses: Record<string, string> = {};
+    for (let i = 1; i <= 6; i++) responses[`asrs_${i}`] = "Never";
+    expect(scoreASRS(responses).general_pop_above_threshold_pct).toBe(4.5);
+  });
+});
+
 describe("computeAllScores", () => {
   it("computes all scores together", () => {
     const responses = {

@@ -7,7 +7,12 @@ import {
   ASRSScore,
   SurveyResponses,
 } from "./types";
-import { PHQ9_PERCENTILES, GAD7_PERCENTILES, ASRS_PERCENTILES, ASRS_THRESHOLD } from "./norms";
+import {
+  PHQ9_BANDS,
+  GAD7_BANDS,
+  ASRS_GENERAL_POP_ABOVE_THRESHOLD_PCT,
+  bandFor,
+} from "./norms";
 
 // ============================================================
 // PHQ-9 Scoring (Depression)
@@ -46,7 +51,7 @@ export function scorePHQ9(responses: SurveyResponses): PHQ9Score {
   return {
     score,
     severity: getPHQ9Severity(score),
-    percentile_general: PHQ9_PERCENTILES[score] ?? 100,
+    general_pop_band_pct: bandFor(PHQ9_BANDS, score)?.population_pct ?? 0,
     suicidal_ideation_flagged: q9Value > 0,
   };
 }
@@ -84,7 +89,7 @@ export function scoreGAD7(responses: SurveyResponses): GAD7Score {
   return {
     score,
     severity: getGAD7Severity(score),
-    percentile_general: GAD7_PERCENTILES[score] ?? 100,
+    general_pop_band_pct: bandFor(GAD7_BANDS, score)?.population_pct ?? 0,
   };
 }
 
@@ -96,6 +101,7 @@ export function scoreGAD7(responses: SurveyResponses): GAD7Score {
 // Questions 4-6: flagged if "Often" or "Very Often"
 const ASRS_Q1_3_FLAGGED = ["Sometimes", "Often", "Very Often"];
 const ASRS_Q4_6_FLAGGED = ["Often", "Very Often"];
+const ASRS_THRESHOLD = 4;
 
 export function scoreASRS(responses: SurveyResponses): ASRSScore {
   const q1to3 = ["asrs_1", "asrs_2", "asrs_3"];
@@ -120,7 +126,7 @@ export function scoreASRS(responses: SurveyResponses): ASRSScore {
   return {
     items_flagged: itemsFlagged,
     above_threshold: itemsFlagged >= ASRS_THRESHOLD,
-    percentile_general: ASRS_PERCENTILES[itemsFlagged] ?? 100,
+    general_pop_above_threshold_pct: ASRS_GENERAL_POP_ABOVE_THRESHOLD_PCT,
   };
 }
 
