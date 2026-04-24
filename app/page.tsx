@@ -1,4 +1,5 @@
 import Link from "next/link";
+import AuthorCredits from "@/components/AuthorCredits";
 
 export default function HomePage() {
   return (
@@ -55,17 +56,7 @@ export default function HomePage() {
       </div>
 
       <footer className="text-center text-sm text-gray-400 border-t pt-6">
-        <p>
-          Created by{" "}
-          <a
-            href="https://jasonshen.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline hover:text-gray-600"
-          >
-            Jason Shen
-          </a>
-        </p>
+        <AuthorCredits />
       </footer>
     </div>
   );

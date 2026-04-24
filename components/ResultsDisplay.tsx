@@ -27,6 +27,47 @@ const CHALLENGE_LABELS: Record<string, string> = {
   fc_competition: "Competition anxiety",
 };
 
+// Roll up the 14 challenge items into 4 themes. Keeps the results page
+// compact — respondents see one bar per theme, plus their worst item
+// in each theme as a subhead.
+const CHALLENGE_GROUPS: Array<{
+  id: string;
+  label: string;
+  description: string;
+  items: string[];
+}> = [
+  {
+    id: "self_leadership",
+    label: "Self-Leadership",
+    description: "How you lead yourself",
+    items: ["fc_own_way", "fc_ic_to_leader", "fc_operational_trap", "fc_fraud"],
+  },
+  {
+    id: "team_execution",
+    label: "Team & Execution",
+    description: "How the team moves",
+    items: ["fc_accountability", "fc_hard_conversations", "fc_team_slow"],
+  },
+  {
+    id: "relationships",
+    label: "Cofounder & Board",
+    description: "Key relationships",
+    items: ["fc_cofounder_friction", "fc_board_conflict"],
+  },
+  {
+    id: "business",
+    label: "Business Risk",
+    description: "External pressures on the company",
+    items: [
+      "fc_runway_worry",
+      "fc_next_round",
+      "fc_pivot",
+      "fc_growth",
+      "fc_competition",
+    ],
+  },
+];
+
 const CHALLENGE_VALUE_MAP: Record<string, number> = {
   "Not a challenge for me": 0,
   "Minor challenge": 1,
@@ -274,38 +315,59 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
 
   const { scores, section_founder_challenges, section_founder_stress } = data;
 
-  // Prefer V3 founder_challenges. Fall back to V2 founder_stress for
-  // pre-V3 respondents. Whichever has data wins — we don't merge.
-  const challengeEntries = Object.entries(section_founder_challenges || {})
-    .filter(([key]) => key.startsWith("fc_"))
-    .map(([key, value]) => ({
-      key,
-      label: CHALLENGE_LABELS[key] || key,
-      value:
-        typeof value === "string" ? (CHALLENGE_VALUE_MAP[value] ?? 0) : Number(value),
-    }))
-    .sort((a, b) => b.value - a.value);
+  // Score each V3 challenge item (0-4). Missing answers are skipped,
+  // not counted as zero — otherwise a respondent who left items blank
+  // would look like they rated them "Not a challenge".
+  const itemScores: Record<string, number> = {};
+  for (const [key, raw] of Object.entries(section_founder_challenges || {})) {
+    if (!key.startsWith("fc_")) continue;
+    if (raw === undefined || raw === null || raw === "") continue;
+    const n =
+      typeof raw === "string" ? CHALLENGE_VALUE_MAP[raw] : Number(raw);
+    if (Number.isFinite(n)) itemScores[key] = n;
+  }
 
-  const legacyStressorEntries =
-    challengeEntries.length === 0
-      ? Object.entries(section_founder_stress || {})
-          .filter(([key]) => key.startsWith("fs_"))
-          .map(([key, value]) => ({
-            key,
-            label: STRESS_LABELS[key] || key,
-            value:
-              typeof value === "string"
-                ? (STRESS_VALUE_MAP[value] ?? 0)
-                : Number(value),
-          }))
-          .sort((a, b) => b.value - a.value)
-      : [];
+  // Roll up into themes. Each theme shows its average severity plus
+  // the single highest-rated item in that theme as a subhead.
+  const challengeGroups = CHALLENGE_GROUPS.map((group) => {
+    const answered = group.items
+      .map((id) => ({ id, value: itemScores[id] }))
+      .filter((x) => typeof x.value === "number") as Array<{
+      id: string;
+      value: number;
+    }>;
+    const avg =
+      answered.length > 0
+        ? answered.reduce((sum, x) => sum + x.value, 0) / answered.length
+        : 0;
+    const topItem = answered.length
+      ? answered.reduce((best, x) => (x.value > best.value ? x : best))
+      : null;
+    return {
+      ...group,
+      answered: answered.length,
+      avg,
+      topItem: topItem
+        ? { label: CHALLENGE_LABELS[topItem.id] ?? topItem.id, value: topItem.value }
+        : null,
+    };
+  });
+  const hasAnyChallengeData = challengeGroups.some((g) => g.answered > 0);
 
-  const showChallenges = challengeEntries.length > 0;
-  const shownEntries = showChallenges ? challengeEntries : legacyStressorEntries;
-  const cardTitle = showChallenges
-    ? "Your Top Founder Challenges"
-    : "Your Top Founder Stressors";
+  // Pre-V3 legacy fallback — unchanged.
+  const legacyStressorEntries = !hasAnyChallengeData
+    ? Object.entries(section_founder_stress || {})
+        .filter(([key]) => key.startsWith("fs_"))
+        .map(([key, value]) => ({
+          key,
+          label: STRESS_LABELS[key] || key,
+          value:
+            typeof value === "string"
+              ? (STRESS_VALUE_MAP[value] ?? 0)
+              : Number(value),
+        }))
+        .sort((a, b) => b.value - a.value)
+    : [];
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">
@@ -447,11 +509,47 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
         </p>
       </ResultsCard>
 
-      {/* Founder Challenges (V3) or legacy Stressors (V2 fallback) */}
-      <ResultsCard title={cardTitle}>
-        {shownEntries.length > 0 ? (
+      {/* Founder Challenges (V3) grouped into themes, or legacy Stressors (V2 fallback) */}
+      {hasAnyChallengeData ? (
+        <ResultsCard title="Your Founder Challenges">
+          <div className="space-y-5">
+            {challengeGroups.map((group) => (
+              <div key={group.id}>
+                <div className="flex items-center justify-between mb-1">
+                  <div>
+                    <span className="text-sm font-semibold text-gray-900">
+                      {group.label}
+                    </span>
+                    <span className="text-xs text-gray-500 ml-2">
+                      {group.description}
+                    </span>
+                  </div>
+                  <span className="text-sm text-gray-400 tabular-nums">
+                    {group.answered > 0 ? group.avg.toFixed(1) : "—"}/4
+                  </span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2 mb-1">
+                  <div
+                    className="bg-indigo-500 h-2 rounded-full transition-all"
+                    style={{ width: `${(group.avg / 4) * 100}%` }}
+                  />
+                </div>
+                {group.topItem && group.topItem.value > 0 ? (
+                  <p className="text-xs text-gray-500">
+                    Biggest challenge: <span className="text-gray-700">{group.topItem.label}</span>
+                    <span className="text-gray-400"> ({group.topItem.value}/4)</span>
+                  </p>
+                ) : group.answered === 0 ? (
+                  <p className="text-xs text-gray-400 italic">No answers in this theme.</p>
+                ) : null}
+              </div>
+            ))}
+          </div>
+        </ResultsCard>
+      ) : legacyStressorEntries.length > 0 ? (
+        <ResultsCard title="Your Top Founder Stressors">
           <div className="space-y-3">
-            {shownEntries.map((entry) => (
+            {legacyStressorEntries.map((entry) => (
               <div key={entry.key}>
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-sm">{entry.label}</span>
@@ -466,10 +564,12 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
               </div>
             ))}
           </div>
-        ) : (
+        </ResultsCard>
+      ) : (
+        <ResultsCard title="Your Founder Challenges">
           <p className="text-sm text-gray-400">No challenge data available.</p>
-        )}
-      </ResultsCard>
+        </ResultsCard>
+      )}
 
       {/* Founder cohort comparison — only shown when flag is on */}
       {cohort && (

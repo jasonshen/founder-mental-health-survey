@@ -33,7 +33,7 @@ export default function LikertScale({
         role="radiogroup"
         aria-labelledby={labelId}
         aria-required={question.required}
-        className="flex flex-col sm:flex-row sm:flex-wrap gap-2 sm:gap-3"
+        className="flex flex-col gap-2"
       >
         {options.map((option) => {
           const checked = value === option;
