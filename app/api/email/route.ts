@@ -78,8 +78,13 @@ export async function POST(request: Request) {
     );
   }
 
+  // PRIVACY: we intentionally do NOT store the token alongside the email.
+  // email_contacts must not be joinable to survey_responses — that's the
+  // structural guarantee we make to respondents. The token only lives in
+  // the scores lookup above and in the confirmation email we're about
+  // to send. After this request, the link between email and responses
+  // exists nowhere on our servers. See migration 005_privacy_hardening.sql.
   const { error: insertError } = await supabase.from("email_contacts").insert({
-    anonymous_token: token,
     email: data.email,
     wants_report: data.wants_report,
     wants_coaching: data.wants_coaching,
@@ -90,7 +95,8 @@ export async function POST(request: Request) {
 
   if (insertError) {
     log.error("email_db_insert_error", {
-      token: tokenPrefix(token),
+      // token is not recorded against this failure either — logs must not
+      // re-create the email↔token linkage we just avoided in the DB.
       code: insertError.code,
       message: insertError.message,
     });
@@ -100,7 +106,7 @@ export async function POST(request: Request) {
     );
   }
 
-  log.info("email_captured", { token: tokenPrefix(token) });
+  log.info("email_captured", {}); // no token — see note above.
 
   // Fire confirmation email (don't block the response on send success or failure —
   // the user has already seen "Thanks for leaving your email" in the UI).

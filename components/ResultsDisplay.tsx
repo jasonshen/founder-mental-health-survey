@@ -314,29 +314,49 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
       <h1 className="text-3xl font-bold text-gray-900 mb-2">Your Results</h1>
       <p className="text-gray-500 text-sm mb-8">
         Survey completed on{" "}
-        {new Date(data.created_at).toLocaleDateString("en-US", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        })}
+        {/* created_at is a DATE (YYYY-MM-DD) per privacy migration 005.
+            Slice the first 10 chars so we render the same date regardless
+            of whether the DB row predates the migration (TIMESTAMPTZ) or
+            post-dates it (DATE). Parse at local noon to avoid tz drift. */}
+        {new Date(data.created_at.slice(0, 10) + "T12:00:00").toLocaleDateString(
+          "en-US",
+          { year: "numeric", month: "long", day: "numeric" }
+        )}
       </p>
 
       {/* Token Display */}
-      <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-8">
-        <p className="text-sm text-gray-600 mb-2">
-          Your anonymous token (save this to access your results later):
-        </p>
+      <div className="bg-amber-50 border border-amber-200 rounded-lg p-5 mb-8">
+        <div className="flex items-start gap-2 mb-3">
+          <span aria-hidden="true" className="text-amber-600 text-lg leading-none mt-0.5">🔑</span>
+          <div>
+            <p className="text-sm font-semibold text-amber-900 mb-1">
+              Save your access code
+            </p>
+            <p className="text-xs text-amber-800 leading-relaxed">
+              This code is the <strong>only way</strong> to view these results
+              again. We don&apos;t store your email alongside your responses —
+              they live in separate tables with no join key, so even we
+              can&apos;t look you up by email. If you lose this code, your
+              results are gone for good. Save it in a password manager or notes
+              app.
+            </p>
+          </div>
+        </div>
         <div className="flex items-center gap-3">
-          <code className="bg-white border border-gray-300 rounded px-3 py-1.5 text-sm font-mono flex-1 truncate">
+          <code className="bg-white border border-amber-300 rounded px-3 py-2 text-base font-mono font-semibold flex-1 truncate tracking-wide">
             {token}
           </code>
           <button
             onClick={handleCopyToken}
-            className="px-3 py-1.5 bg-gray-900 text-white text-sm rounded hover:bg-gray-700 transition-colors whitespace-nowrap"
+            className="px-4 py-2 bg-amber-600 text-white text-sm font-medium rounded hover:bg-amber-700 transition-colors whitespace-nowrap"
           >
             {copied ? "Copied!" : "Copy"}
           </button>
         </div>
+        <p className="text-xs text-amber-700 mt-3">
+          Tip: if you leave your email on the next page, we&apos;ll also send
+          this code to you — so you have a backup.
+        </p>
       </div>
 
       {/* Depression */}

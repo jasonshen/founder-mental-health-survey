@@ -72,11 +72,14 @@ function EmailContent() {
           {wantsReport && "We'll send your full report shortly. "}
           We'll be in touch about the resources you expressed interest in.
         </p>
-        <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6 inline-block">
-          <p className="text-sm text-gray-500 mb-1">
-            Your anonymous token:
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-5 mb-6 inline-block text-left max-w-md">
+          <p className="text-sm font-semibold text-amber-900 mb-1">
+            🔑 Your private access code
           </p>
-          <code className="text-sm font-mono font-medium">{token}</code>
+          <p className="text-xs text-amber-800 mb-3">
+            We&apos;ve emailed this to you too — save it somewhere safe. It&apos;s the only way back to your results.
+          </p>
+          <code className="block bg-white border border-amber-300 rounded px-3 py-2 text-base font-mono font-semibold">{token}</code>
         </div>
         <div>
           <a

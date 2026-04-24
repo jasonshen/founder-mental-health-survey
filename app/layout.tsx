@@ -29,6 +29,34 @@ export default function RootLayout({
           Skip to main content
         </a>
         <main id="main-content">{children}</main>
+        <footer className="border-t border-gray-100 mt-16">
+          <div className="max-w-2xl mx-auto px-4 py-6 text-xs text-gray-500 flex flex-col sm:flex-row gap-2 sm:gap-4 sm:justify-between">
+            <p>
+              Anonymous by design. Your email and your responses live in{" "}
+              <strong>separate tables with no join key</strong> — we can&apos;t
+              look you up by email.{" "}
+              <a
+                href="https://github.com/jasonshen/founder-mental-health-survey/blob/main/supabase/migrations/005_privacy_hardening.sql"
+                className="underline hover:text-gray-700"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                See the schema
+              </a>
+              .
+            </p>
+            <p>
+              <a
+                href="https://github.com/jasonshen/founder-mental-health-survey"
+                className="underline hover:text-gray-700"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Open source on GitHub
+              </a>
+            </p>
+          </div>
+        </footer>
       </body>
     </html>
   );

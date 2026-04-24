@@ -94,7 +94,16 @@ ${
 
 <div style="margin:32px 0;padding:20px;background:#f5f5f4;border-radius:8px;text-align:center;">
   <a href="${resultsUrl}" style="display:inline-block;background:#111;color:#ffffff;text-decoration:none;font-weight:500;padding:12px 24px;border-radius:8px;font-size:14px;">View your full results</a>
-  <p style="margin:12px 0 0 0;font-size:12px;color:#737373;">Your code: <code style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;">${token}</code></p>
+</div>
+
+<div style="margin:24px 0;padding:16px;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;">
+  <p style="margin:0 0 8px 0;font-size:13px;font-weight:600;color:#78350f;">🔑 Your private access code</p>
+  <p style="margin:0 0 12px 0;font-size:12px;color:#92400e;line-height:1.5;">
+    This code is the only way to access your results. Your email and your responses live in separate database tables with no join key, so even we can't look them up by email. Save this email, or copy the code somewhere safe.
+  </p>
+  <div style="background:#ffffff;border:1px solid #fde68a;border-radius:6px;padding:10px 12px;text-align:center;">
+    <code style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:16px;font-weight:600;letter-spacing:0.5px;color:#111;">${token}</code>
+  </div>
 </div>
 
 ${
@@ -137,7 +146,8 @@ ADHD (ASRS): ${scores.asrs.items_flagged} / 6 items flagged — ${scores.asrs.ab
 
 View your full results: ${resultsUrl}
 
-Your code: ${token}
+YOUR PRIVATE ACCESS CODE: ${token}
+This code is the only way to access your results. Your email and your responses live in separate tables with no join key, so even we can't look them up by email. Save this email or copy the code somewhere safe.
 
 ---
 This survey is a screening tool, not a medical diagnosis.
