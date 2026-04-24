@@ -1,49 +1,21 @@
-import type { Question, SectionId } from "./types";
+import type { FlatResponses, Question, SectionId } from "./types";
 
 // ============================================================
-// V2 — Streamlined Questions (34 total)
-// Sections: Company, ADHD (ASRS), Depression (PHQ-9), Anxiety (GAD-7), Founder Stress
+// V3 — Expanded Survey (18 sections, ~130+ questions)
 // ============================================================
 
 export interface SectionMeta {
   id: SectionId;
   label: string;
   intro: string;
+  /** If returns false, the entire section is hidden. */
+  condition?: (r: FlatResponses) => boolean;
+  /** Inline info card rendered immediately after this section. */
+  postSection?: "crisis_resources";
 }
 
-export const SECTIONS: SectionMeta[] = [
-  {
-    id: "company",
-    label: "About You & Your Company",
-    intro: "Tell us a bit about yourself and your startup. This helps us contextualize your responses.",
-  },
-  {
-    id: "adhd",
-    label: "Focus & Attention",
-    intro: "These questions screen for attention-related traits. Answer based on your experience over the past 6 months.",
-  },
-  {
-    id: "depression",
-    label: "How You've Been Feeling",
-    intro: "Over the last 2 weeks, how often have you been bothered by any of the following problems?",
-  },
-  {
-    id: "anxiety",
-    label: "Worry & Anxiety",
-    intro: "Over the last 2 weeks, how often have you been bothered by any of the following problems?",
-  },
-  {
-    id: "founder_stress",
-    label: "Founder-Specific Stressors",
-    intro: "Rate how much each of the following has been a source of stress for you in the past month.",
-  },
-];
-
-export const SECTION_ORDER: SectionId[] = SECTIONS.map((s) => s.id);
-
 // ============================================================
-// Section 1: Company Info (10 questions)
-// Order: YC → Year → Role → Age → Gender → Race → Industry → Funding → Run rate → Team
+// Section 1: Demographics / Company (10 questions, existing)
 // ============================================================
 
 const companyQuestions: Question[] = [
@@ -74,7 +46,7 @@ const companyQuestions: Question[] = [
       "Earlier than 2020",
       "Not a YC company",
     ],
-    required: true,
+    required: false,
     instrument: null,
   },
   {
@@ -93,7 +65,7 @@ const companyQuestions: Question[] = [
       "2019",
       "2018 or earlier",
     ],
-    required: true,
+    required: false,
     instrument: null,
   },
   {
@@ -101,8 +73,14 @@ const companyQuestions: Question[] = [
     section: "company",
     text: "What is your role?",
     type: "single_select",
-    options: ["Solo Founder", "Co-Founder / CEO", "Co-Founder / CTO", "Co-Founder / Other", "Other"],
-    required: true,
+    options: [
+      "Solo Founder",
+      "Co-Founder / CEO",
+      "Co-Founder / CTO",
+      "Co-Founder / Other",
+      "Other",
+    ],
+    required: false,
     instrument: null,
   },
   {
@@ -110,7 +88,7 @@ const companyQuestions: Question[] = [
     section: "company",
     text: "What is your age?",
     type: "number",
-    required: true,
+    required: false,
     instrument: null,
   },
   {
@@ -119,7 +97,7 @@ const companyQuestions: Question[] = [
     text: "What is your gender?",
     type: "single_select",
     options: ["Male", "Female", "Non-binary", "Prefer not to say"],
-    required: true,
+    required: false,
     instrument: null,
   },
   {
@@ -139,7 +117,7 @@ const companyQuestions: Question[] = [
       "Prefer not to say",
       "Other",
     ],
-    required: true,
+    required: false,
     instrument: null,
   },
   {
@@ -158,7 +136,7 @@ const companyQuestions: Question[] = [
       "Hardware / Robotics",
       "Other",
     ],
-    required: true,
+    required: false,
     instrument: null,
   },
   {
@@ -175,7 +153,7 @@ const companyQuestions: Question[] = [
       "$25M - $50M",
       "$50M+",
     ],
-    required: true,
+    required: false,
     instrument: null,
   },
   {
@@ -192,7 +170,7 @@ const companyQuestions: Question[] = [
       "$5M - $10M",
       "$10M+",
     ],
-    required: true,
+    required: false,
     instrument: null,
   },
   {
@@ -200,90 +178,543 @@ const companyQuestions: Question[] = [
     section: "company",
     text: "How many people are on your team? (employees + full-time contractors, including yourself)",
     type: "single_select",
-    options: [
-      "Just me",
-      "2-5",
-      "6-15",
-      "16-50",
-      "51-100",
-      "100+",
-    ],
-    required: true,
+    options: ["Just me", "2-5", "6-15", "16-50", "51-100", "100+"],
+    required: false,
     instrument: null,
   },
 ];
 
 // ============================================================
-// Section 2: ASRS-v1.1 Part A — ADHD Screening (6 questions)
+// Section 2: Life Outlook & Flourishing (12 × scale_0_10)
 // ============================================================
 
-const ASRS_OPTIONS = [
-  "Never",
-  "Rarely",
-  "Sometimes",
-  "Often",
-  "Very Often",
-];
-
-const adhdQuestions: Question[] = [
+const lifeOutlookQuestions: Question[] = [
   {
-    id: "asrs_1",
-    section: "adhd",
-    text: "How often do you have trouble wrapping up the final details of a project, once the challenging parts have been done?",
-    type: "likert5",
-    options: ASRS_OPTIONS,
-    required: true,
-    instrument: "ASRS",
+    id: "life_satisfaction",
+    section: "life_outlook",
+    text: "Overall, how satisfied are you with life as a whole these days?",
+    type: "scale_0_10",
+    anchors: { left: "Not satisfied at all", right: "Completely satisfied" },
+    required: false,
+    instrument: null,
   },
   {
-    id: "asrs_2",
-    section: "adhd",
-    text: "How often do you have difficulty getting things in order when you have to do a task that requires organization?",
-    type: "likert5",
-    options: ASRS_OPTIONS,
-    required: true,
-    instrument: "ASRS",
+    id: "life_happy",
+    section: "life_outlook",
+    text: "In general, how happy or unhappy do you usually feel?",
+    type: "scale_0_10",
+    anchors: { left: "Extremely unhappy", right: "Extremely happy" },
+    required: false,
+    instrument: null,
   },
   {
-    id: "asrs_3",
-    section: "adhd",
-    text: "How often do you have problems remembering appointments or obligations?",
-    type: "likert5",
-    options: ASRS_OPTIONS,
-    required: true,
-    instrument: "ASRS",
+    id: "life_worthwhile",
+    section: "life_outlook",
+    text: "Overall, to what extent do you feel the things you do in your life are worthwhile?",
+    type: "scale_0_10",
+    anchors: { left: "Not at all worthwhile", right: "Completely worthwhile" },
+    required: false,
+    instrument: null,
   },
   {
-    id: "asrs_4",
-    section: "adhd",
-    text: "When you have a task that requires a lot of thought, how often do you avoid or delay getting started?",
-    type: "likert5",
-    options: ASRS_OPTIONS,
-    required: true,
-    instrument: "ASRS",
+    id: "life_purpose",
+    section: "life_outlook",
+    text: "I understand my purpose in life.",
+    type: "scale_0_10",
+    anchors: { left: "Strongly disagree", right: "Strongly agree" },
+    required: false,
+    instrument: null,
   },
   {
-    id: "asrs_5",
-    section: "adhd",
-    text: "How often do you fidget or squirm with your hands or feet when you have to sit down for a long time?",
-    type: "likert5",
-    options: ASRS_OPTIONS,
-    required: true,
-    instrument: "ASRS",
+    id: "life_good",
+    section: "life_outlook",
+    text: "I always act to promote good in all circumstances, even in difficult and challenging situations.",
+    type: "scale_0_10",
+    anchors: { left: "Not true of me", right: "Completely true of me" },
+    required: false,
+    instrument: null,
   },
   {
-    id: "asrs_6",
-    section: "adhd",
-    text: "How often do you feel overly active and compelled to do things, like you were driven by a motor?",
-    type: "likert5",
-    options: ASRS_OPTIONS,
-    required: true,
-    instrument: "ASRS",
+    id: "life_delay_gratification",
+    section: "life_outlook",
+    text: "I am always able to give up some happiness now for greater happiness later.",
+    type: "scale_0_10",
+    anchors: { left: "Not true of me", right: "Completely true of me" },
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "life_friendships",
+    section: "life_outlook",
+    text: "I am content with my friendships and relationships.",
+    type: "scale_0_10",
+    anchors: { left: "Strongly disagree", right: "Strongly agree" },
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "life_relationships_satisfying",
+    section: "life_outlook",
+    text: "My relationships are as satisfying as I would want them to be.",
+    type: "scale_0_10",
+    anchors: { left: "Strongly disagree", right: "Strongly agree" },
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "life_money_worry",
+    section: "life_outlook",
+    text: "How often do you worry about being able to meet normal monthly living expenses?",
+    type: "scale_0_10",
+    anchors: { left: "Worry all of the time", right: "Do not ever worry" },
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "life_safety_worry",
+    section: "life_outlook",
+    text: "How often do you worry about safety, food, or housing?",
+    type: "scale_0_10",
+    anchors: { left: "Worry all of the time", right: "Do not ever worry" },
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "life_physical_health",
+    section: "life_outlook",
+    text: "In general, how would you rate your physical health?",
+    type: "scale_0_10",
+    anchors: { left: "Poor", right: "Excellent" },
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "life_mental_health",
+    section: "life_outlook",
+    text: "How would you rate your overall mental health?",
+    type: "scale_0_10",
+    anchors: { left: "Poor", right: "Excellent" },
+    required: false,
+    instrument: null,
   },
 ];
 
 // ============================================================
-// Section 3: PHQ-9 Depression Screening (9 questions)
+// Section 3: Ambition (5 Hirschi/Spurk + 7 custom Ambition Breadth)
+// ============================================================
+
+const AGREE_5 = [
+  "Strongly disagree",
+  "Disagree",
+  "Neither agree nor disagree",
+  "Agree",
+  "Strongly agree",
+];
+
+const ambitionQuestions: Question[] = [
+  // 3A — Hirschi/Spurk core
+  {
+    id: "amb_ambitious",
+    section: "ambition",
+    text: "I am ambitious.",
+    type: "likert5",
+    options: AGREE_5,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "amb_strive",
+    section: "ambition",
+    text: "I strive for success.",
+    type: "likert5",
+    options: AGREE_5,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "amb_challenging_goals",
+    section: "ambition",
+    text: "I have challenging goals.",
+    type: "likert5",
+    options: AGREE_5,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "amb_outstanding_results",
+    section: "ambition",
+    text: "For me it is very important to achieve outstanding results in my life.",
+    type: "likert5",
+    options: AGREE_5,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "amb_great_things",
+    section: "ambition",
+    text: "For me it is very important to accomplish great things.",
+    type: "likert5",
+    options: AGREE_5,
+    required: false,
+    instrument: null,
+  },
+  // 3B — Ambition Breadth (custom)
+  {
+    id: "amb_multi_domain",
+    section: "ambition",
+    text: "I am pursuing ambitious goals in more than one domain of my life (e.g., work, creative work, physical, relational, spiritual).",
+    type: "likert5",
+    options: AGREE_5,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "amb_identity_professional",
+    section: "ambition",
+    text: "My identity is primarily defined by what I do professionally.",
+    type: "likert5",
+    options: AGREE_5,
+    required: false,
+    instrument: null,
+    reverseCoded: true,
+  },
+  {
+    id: "amb_one_vs_many",
+    section: "ambition",
+    text: "I would rather be excellent at one thing than very good at several things.",
+    type: "likert5",
+    options: AGREE_5,
+    required: false,
+    instrument: null,
+    reverseCoded: true,
+  },
+  {
+    id: "amb_beyond_company",
+    section: "ambition",
+    text: "I measure my life by more than the success of my company.",
+    type: "likert5",
+    options: AGREE_5,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "amb_sacrifices",
+    section: "ambition",
+    text: "I have made deliberate sacrifices in non-work domains (health, relationships, creative pursuits) to succeed in my work.",
+    type: "likert5",
+    options: AGREE_5,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "amb_outside_career",
+    section: "ambition",
+    text: "My version of a successful life includes achievements outside of my career.",
+    type: "likert5",
+    options: AGREE_5,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "amb_worth_it",
+    section: "ambition",
+    text: "The sacrifices I'm making now for my company will be worth it.",
+    type: "likert5",
+    options: AGREE_5,
+    required: false,
+    instrument: null,
+  },
+];
+
+// ============================================================
+// Section 4: Founder-Specific Challenges (14 items, no ranking)
+// ============================================================
+
+const CHALLENGE_5 = [
+  "Not a challenge for me",
+  "Minor challenge",
+  "Moderate challenge",
+  "Significant challenge",
+  "Major challenge",
+];
+
+const isCofounder = (r: FlatResponses) => r["company_role"] !== "Solo Founder";
+
+const founderChallengeQuestions: Question[] = [
+  // Self-Leadership
+  {
+    id: "fc_own_way",
+    section: "founder_challenges",
+    text: "I keep getting in my own way.",
+    type: "likert5",
+    options: CHALLENGE_5,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "fc_ic_to_leader",
+    section: "founder_challenges",
+    text: "I struggle to evolve from being a technical/functional contributor to being a leader.",
+    type: "likert5",
+    options: CHALLENGE_5,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "fc_operational_trap",
+    section: "founder_challenges",
+    text: "I am trapped in operational details instead of being strategic.",
+    type: "likert5",
+    options: CHALLENGE_5,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "fc_fraud",
+    section: "founder_challenges",
+    text: "I feel like a fraud or pretend leader.",
+    type: "likert5",
+    options: CHALLENGE_5,
+    required: false,
+    instrument: null,
+  },
+  // Team & Execution
+  {
+    id: "fc_accountability",
+    section: "founder_challenges",
+    text: "I struggle to hold my team accountable.",
+    type: "likert5",
+    options: CHALLENGE_5,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "fc_hard_conversations",
+    section: "founder_challenges",
+    text: "I avoid hard calls and difficult conversations I know I need to have.",
+    type: "likert5",
+    options: CHALLENGE_5,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "fc_team_slow",
+    section: "founder_challenges",
+    text: "Our team is moving too slowly given what we need to accomplish.",
+    type: "likert5",
+    options: CHALLENGE_5,
+    required: false,
+    instrument: null,
+  },
+  // Cofounder & Board
+  {
+    id: "fc_cofounder_friction",
+    section: "founder_challenges",
+    text: "There is too much friction between me and my cofounder(s).",
+    type: "likert5",
+    options: CHALLENGE_5,
+    required: false,
+    instrument: null,
+    condition: isCofounder,
+  },
+  {
+    id: "fc_board_conflict",
+    section: "founder_challenges",
+    text: "I am dealing with conflict with my board or investors.",
+    type: "likert5",
+    options: CHALLENGE_5,
+    required: false,
+    instrument: null,
+  },
+  // Existential Business Anxiety
+  {
+    id: "fc_runway_worry",
+    section: "founder_challenges",
+    text: "I am worried we will run out of money.",
+    type: "likert5",
+    options: CHALLENGE_5,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "fc_next_round",
+    section: "founder_challenges",
+    text: "I am worried we won't be able to raise our next round.",
+    type: "likert5",
+    options: CHALLENGE_5,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "fc_pivot",
+    section: "founder_challenges",
+    text: "I am worried we may need to pivot the company.",
+    type: "likert5",
+    options: CHALLENGE_5,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "fc_growth",
+    section: "founder_challenges",
+    text: "We are not growing fast enough.",
+    type: "likert5",
+    options: CHALLENGE_5,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "fc_competition",
+    section: "founder_challenges",
+    text: "I am anxious about competition.",
+    type: "likert5",
+    options: CHALLENGE_5,
+    required: false,
+    instrument: null,
+  },
+];
+
+// ============================================================
+// Section 5: Outlook on AI and Economy (4 items)
+// ============================================================
+
+const VALENCE_5 = [
+  "Very bad",
+  "Somewhat bad",
+  "Neutral",
+  "Somewhat good",
+  "Very good",
+];
+
+const macroOutlookQuestions: Question[] = [
+  {
+    id: "macro_ai_business",
+    section: "macro_outlook",
+    text: "I think AI will be net ___ for my business.",
+    type: "likert5",
+    options: VALENCE_5,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "macro_ai_society",
+    section: "macro_outlook",
+    text: "I think AI will be net ___ for society.",
+    type: "likert5",
+    options: VALENCE_5,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "macro_econ_business",
+    section: "macro_outlook",
+    text: "I think the economy over the next 2 years will be ___ for my business.",
+    type: "likert5",
+    options: VALENCE_5,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "macro_econ_society",
+    section: "macro_outlook",
+    text: "I think the economy over the next 2 years will be ___ for society.",
+    type: "likert5",
+    options: VALENCE_5,
+    required: false,
+    instrument: null,
+  },
+];
+
+// ============================================================
+// Section 6: Cofounder Relationship Quality (9 items, skip if solo)
+// ============================================================
+
+const cofounderQuestions: Question[] = [
+  {
+    id: "cf_aligned_vision",
+    section: "cofounder",
+    text: "My cofounder and I are aligned on where we want to take the company.",
+    type: "likert5",
+    options: AGREE_5,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "cf_quality_standards",
+    section: "cofounder",
+    text: "My cofounder and I share the same standards for quality and excellence.",
+    type: "likert5",
+    options: AGREE_5,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "cf_trust_do",
+    section: "cofounder",
+    text: "I trust my cofounder to do what they say they'll do.",
+    type: "likert5",
+    options: AGREE_5,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "cf_honest_doubts",
+    section: "cofounder",
+    text: "I can be honest with my cofounder about my doubts, fears, and mistakes.",
+    type: "likert5",
+    options: AGREE_5,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "cf_work_through",
+    section: "cofounder",
+    text: "When my cofounder and I disagree, we work through it rather than avoid it.",
+    type: "likert5",
+    options: AGREE_5,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "cf_difficult_topics",
+    section: "cofounder",
+    text: "I can raise difficult topics with my cofounder without it damaging the relationship.",
+    type: "likert5",
+    options: AGREE_5,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "cf_roles",
+    section: "cofounder",
+    text: "My cofounder and I have clear, agreed-upon roles and decision rights.",
+    type: "likert5",
+    options: AGREE_5,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "cf_fair_division",
+    section: "cofounder",
+    text: "The division of labor between my cofounder and me feels fair.",
+    type: "likert5",
+    options: AGREE_5,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "cf_overall_health",
+    section: "cofounder",
+    text: "Overall, how would you rate the health of your cofounder relationship today?",
+    type: "scale_0_10",
+    anchors: { left: "Very unhealthy", right: "Very healthy" },
+    required: false,
+    instrument: null,
+  },
+];
+
+// ============================================================
+// Section 7: PHQ-9 Depression Screening (existing, 9 items)
 // ============================================================
 
 const PHQ9_OPTIONS = [
@@ -300,7 +731,7 @@ const depressionQuestions: Question[] = [
     text: "Little interest or pleasure in doing things",
     type: "likert4",
     options: PHQ9_OPTIONS,
-    required: true,
+    required: false,
     instrument: "PHQ-9",
   },
   {
@@ -309,7 +740,7 @@ const depressionQuestions: Question[] = [
     text: "Feeling down, depressed, or hopeless",
     type: "likert4",
     options: PHQ9_OPTIONS,
-    required: true,
+    required: false,
     instrument: "PHQ-9",
   },
   {
@@ -318,7 +749,7 @@ const depressionQuestions: Question[] = [
     text: "Trouble falling or staying asleep, or sleeping too much",
     type: "likert4",
     options: PHQ9_OPTIONS,
-    required: true,
+    required: false,
     instrument: "PHQ-9",
   },
   {
@@ -327,7 +758,7 @@ const depressionQuestions: Question[] = [
     text: "Feeling tired or having little energy",
     type: "likert4",
     options: PHQ9_OPTIONS,
-    required: true,
+    required: false,
     instrument: "PHQ-9",
   },
   {
@@ -336,7 +767,7 @@ const depressionQuestions: Question[] = [
     text: "Poor appetite or overeating",
     type: "likert4",
     options: PHQ9_OPTIONS,
-    required: true,
+    required: false,
     instrument: "PHQ-9",
   },
   {
@@ -345,16 +776,16 @@ const depressionQuestions: Question[] = [
     text: "Feeling bad about yourself — or that you are a failure or have let yourself or your family down",
     type: "likert4",
     options: PHQ9_OPTIONS,
-    required: true,
+    required: false,
     instrument: "PHQ-9",
   },
   {
     id: "phq9_7",
     section: "depression",
-    text: "Trouble concentrating on things, such as reading or watching TV",
+    text: "Trouble concentrating on things, such as reading the newspaper or watching television",
     type: "likert4",
     options: PHQ9_OPTIONS,
-    required: true,
+    required: false,
     instrument: "PHQ-9",
   },
   {
@@ -363,22 +794,22 @@ const depressionQuestions: Question[] = [
     text: "Moving or speaking so slowly that other people could have noticed? Or the opposite — being so fidgety or restless that you have been moving around a lot more than usual",
     type: "likert4",
     options: PHQ9_OPTIONS,
-    required: true,
+    required: false,
     instrument: "PHQ-9",
   },
   {
     id: "phq9_9",
     section: "depression",
-    text: "Thoughts that you would be better off dead, or of hurting yourself in some way",
+    text: "Thoughts that you would be better off dead or of hurting yourself in some way",
     type: "likert4",
     options: PHQ9_OPTIONS,
-    required: true,
+    required: false,
     instrument: "PHQ-9",
   },
 ];
 
 // ============================================================
-// Section 3: GAD-7 Anxiety Screening (7 questions)
+// Section 8: GAD-7 Anxiety Screening (existing, 7 items)
 // ============================================================
 
 const GAD7_OPTIONS = [
@@ -395,7 +826,7 @@ const anxietyQuestions: Question[] = [
     text: "Feeling nervous, anxious, or on edge",
     type: "likert4",
     options: GAD7_OPTIONS,
-    required: true,
+    required: false,
     instrument: "GAD-7",
   },
   {
@@ -404,7 +835,7 @@ const anxietyQuestions: Question[] = [
     text: "Not being able to stop or control worrying",
     type: "likert4",
     options: GAD7_OPTIONS,
-    required: true,
+    required: false,
     instrument: "GAD-7",
   },
   {
@@ -413,7 +844,7 @@ const anxietyQuestions: Question[] = [
     text: "Worrying too much about different things",
     type: "likert4",
     options: GAD7_OPTIONS,
-    required: true,
+    required: false,
     instrument: "GAD-7",
   },
   {
@@ -422,7 +853,7 @@ const anxietyQuestions: Question[] = [
     text: "Trouble relaxing",
     type: "likert4",
     options: GAD7_OPTIONS,
-    required: true,
+    required: false,
     instrument: "GAD-7",
   },
   {
@@ -431,7 +862,7 @@ const anxietyQuestions: Question[] = [
     text: "Being so restless that it is hard to sit still",
     type: "likert4",
     options: GAD7_OPTIONS,
-    required: true,
+    required: false,
     instrument: "GAD-7",
   },
   {
@@ -440,79 +871,977 @@ const anxietyQuestions: Question[] = [
     text: "Becoming easily annoyed or irritable",
     type: "likert4",
     options: GAD7_OPTIONS,
-    required: true,
+    required: false,
     instrument: "GAD-7",
   },
   {
     id: "gad7_7",
     section: "anxiety",
-    text: "Feeling afraid, as if something awful might happen",
+    text: "Feeling afraid as if something awful might happen",
     type: "likert4",
     options: GAD7_OPTIONS,
-    required: true,
+    required: false,
     instrument: "GAD-7",
   },
 ];
 
 // ============================================================
-// Section 4: Founder-Specific Stress (5 questions)
+// Section 9: Burnout (MBI-GS, 9 items + 1 attention check)
 // ============================================================
 
-const STRESS_OPTIONS = [
-  "Not at all",
-  "Slightly",
-  "Moderately",
-  "Very much",
-  "Extremely",
+const MBI_OPTIONS = [
+  "Never",
+  "A few times a year",
+  "Once a month or less",
+  "A few times a month",
+  "Once a week",
+  "A few times a week",
+  "Every day",
 ];
 
-const founderStressQuestions: Question[] = [
+const burnoutQuestions: Question[] = [
+  // Exhaustion
   {
-    id: "fs_runway",
-    section: "founder_stress",
-    text: "Financial pressure or runway concerns",
+    id: "mbi_exhaust_1",
+    section: "burnout",
+    text: "I feel emotionally drained from my work.",
+    type: "likert7",
+    options: MBI_OPTIONS,
+    required: false,
+    instrument: "MBI-GS",
+  },
+  {
+    id: "mbi_exhaust_2",
+    section: "burnout",
+    text: "I feel used up at the end of a workday.",
+    type: "likert7",
+    options: MBI_OPTIONS,
+    required: false,
+    instrument: "MBI-GS",
+  },
+  {
+    id: "mbi_exhaust_3",
+    section: "burnout",
+    text: "I feel tired when I get up in the morning and have to face another day on the job.",
+    type: "likert7",
+    options: MBI_OPTIONS,
+    required: false,
+    instrument: "MBI-GS",
+  },
+  // Cynicism
+  {
+    id: "mbi_cynicism_1",
+    section: "burnout",
+    text: "I have become less interested in my work since I started this job.",
+    type: "likert7",
+    options: MBI_OPTIONS,
+    required: false,
+    instrument: "MBI-GS",
+  },
+  {
+    id: "mbi_cynicism_2",
+    section: "burnout",
+    text: "I have become less enthusiastic about my work.",
+    type: "likert7",
+    options: MBI_OPTIONS,
+    required: false,
+    instrument: "MBI-GS",
+  },
+  {
+    id: "mbi_cynicism_3",
+    section: "burnout",
+    text: "I have become more cynical about whether my work contributes anything.",
+    type: "likert7",
+    options: MBI_OPTIONS,
+    required: false,
+    instrument: "MBI-GS",
+  },
+  // Attention check (placed in middle third, after cynicism items)
+  {
+    id: "attn_1",
+    section: "burnout",
+    text: "Please select 'A few times a month' for this item.",
+    type: "likert7",
+    options: MBI_OPTIONS,
+    required: false,
+    instrument: null,
+    attentionCheck: true,
+  },
+  // Professional Efficacy (all reverse-coded)
+  {
+    id: "mbi_efficacy_1",
+    section: "burnout",
+    text: "In my opinion, I am good at my job.",
+    type: "likert7",
+    options: MBI_OPTIONS,
+    required: false,
+    instrument: "MBI-GS",
+    reverseCoded: true,
+  },
+  {
+    id: "mbi_efficacy_2",
+    section: "burnout",
+    text: "I feel exhilarated when I accomplish something at work.",
+    type: "likert7",
+    options: MBI_OPTIONS,
+    required: false,
+    instrument: "MBI-GS",
+    reverseCoded: true,
+  },
+  {
+    id: "mbi_efficacy_3",
+    section: "burnout",
+    text: "I have accomplished many worthwhile things in this job.",
+    type: "likert7",
+    options: MBI_OPTIONS,
+    required: false,
+    instrument: "MBI-GS",
+    reverseCoded: true,
+  },
+];
+
+// ============================================================
+// Section 10: ADHD ASRS-6 (existing, 6 items)
+// ============================================================
+
+const ASRS_OPTIONS = ["Never", "Rarely", "Sometimes", "Often", "Very often"];
+
+const adhdQuestions: Question[] = [
+  {
+    id: "asrs_1",
+    section: "adhd",
+    text: "How often do you have trouble wrapping up the final details of a project, once the challenging parts have been done?",
     type: "likert5",
-    options: STRESS_OPTIONS,
-    required: true,
+    options: ASRS_OPTIONS,
+    required: false,
+    instrument: "ASRS",
+  },
+  {
+    id: "asrs_2",
+    section: "adhd",
+    text: "How often do you have difficulty getting things in order when you have to do a task that requires organization?",
+    type: "likert5",
+    options: ASRS_OPTIONS,
+    required: false,
+    instrument: "ASRS",
+  },
+  {
+    id: "asrs_3",
+    section: "adhd",
+    text: "How often do you have problems remembering appointments or obligations?",
+    type: "likert5",
+    options: ASRS_OPTIONS,
+    required: false,
+    instrument: "ASRS",
+  },
+  {
+    id: "asrs_4",
+    section: "adhd",
+    text: "When you have a task that requires a lot of thought, how often do you avoid or delay getting started?",
+    type: "likert5",
+    options: ASRS_OPTIONS,
+    required: false,
+    instrument: "ASRS",
+  },
+  {
+    id: "asrs_5",
+    section: "adhd",
+    text: "How often do you fidget or squirm with your hands or feet when you have to sit down for a long time?",
+    type: "likert5",
+    options: ASRS_OPTIONS,
+    required: false,
+    instrument: "ASRS",
+  },
+  {
+    id: "asrs_6",
+    section: "adhd",
+    text: "How often do you feel overly active and compelled to do things, like you were driven by a motor?",
+    type: "likert5",
+    options: ASRS_OPTIONS,
+    required: false,
+    instrument: "ASRS",
+  },
+];
+
+// ============================================================
+// Section 11: Autism AQ-10 + 3 diagnosis follow-ups
+// ============================================================
+
+const AQ_OPTIONS = [
+  "Definitely agree",
+  "Slightly agree",
+  "Slightly disagree",
+  "Definitely disagree",
+];
+
+const autismQuestions: Question[] = [
+  {
+    id: "aq_1",
+    section: "autism",
+    text: "I often notice small sounds when others do not.",
+    type: "likert4",
+    options: AQ_OPTIONS,
+    required: false,
+    instrument: "AQ-10",
+  },
+  {
+    id: "aq_2",
+    section: "autism",
+    text: "I usually concentrate more on the whole picture, rather than small details.",
+    type: "likert4",
+    options: AQ_OPTIONS,
+    required: false,
+    instrument: "AQ-10",
+    reverseCoded: true,
+  },
+  {
+    id: "aq_3",
+    section: "autism",
+    text: "I find it easy to do more than one thing at once.",
+    type: "likert4",
+    options: AQ_OPTIONS,
+    required: false,
+    instrument: "AQ-10",
+    reverseCoded: true,
+  },
+  {
+    id: "aq_4",
+    section: "autism",
+    text: "If there is an interruption, I can switch back to what I was doing very quickly.",
+    type: "likert4",
+    options: AQ_OPTIONS,
+    required: false,
+    instrument: "AQ-10",
+    reverseCoded: true,
+  },
+  {
+    id: "aq_5",
+    section: "autism",
+    text: "I find it easy to 'read between the lines' when someone is talking to me.",
+    type: "likert4",
+    options: AQ_OPTIONS,
+    required: false,
+    instrument: "AQ-10",
+    reverseCoded: true,
+  },
+  {
+    id: "aq_6",
+    section: "autism",
+    text: "I know how to tell if someone listening to me is getting bored.",
+    type: "likert4",
+    options: AQ_OPTIONS,
+    required: false,
+    instrument: "AQ-10",
+    reverseCoded: true,
+  },
+  {
+    id: "aq_7",
+    section: "autism",
+    text: "When I'm reading a story, I find it difficult to work out the characters' intentions.",
+    type: "likert4",
+    options: AQ_OPTIONS,
+    required: false,
+    instrument: "AQ-10",
+  },
+  {
+    id: "aq_8",
+    section: "autism",
+    text: "I like to collect information about categories of things (e.g., types of car, types of bird, types of train, types of plant).",
+    type: "likert4",
+    options: AQ_OPTIONS,
+    required: false,
+    instrument: "AQ-10",
+  },
+  {
+    id: "aq_9",
+    section: "autism",
+    text: "I find it easy to work out what someone is thinking or feeling just by looking at their face.",
+    type: "likert4",
+    options: AQ_OPTIONS,
+    required: false,
+    instrument: "AQ-10",
+    reverseCoded: true,
+  },
+  {
+    id: "aq_10",
+    section: "autism",
+    text: "I find it difficult to work out people's intentions.",
+    type: "likert4",
+    options: AQ_OPTIONS,
+    required: false,
+    instrument: "AQ-10",
+  },
+  // Diagnosis follow-ups
+  {
+    id: "nd_adhd_diagnosis",
+    section: "autism",
+    text: "Have you ever been formally diagnosed with ADHD?",
+    type: "single_select",
+    options: ["Yes", "No", "Suspected but not diagnosed", "Prefer not to say"],
+    required: false,
     instrument: null,
   },
   {
-    id: "fs_loneliness",
-    section: "founder_stress",
-    text: "Loneliness or isolation in your role as founder",
-    type: "likert5",
-    options: STRESS_OPTIONS,
-    required: true,
+    id: "nd_autism_diagnosis",
+    section: "autism",
+    text: "Have you ever been formally diagnosed with autism or Asperger's?",
+    type: "single_select",
+    options: ["Yes", "No", "Suspected but not diagnosed", "Prefer not to say"],
+    required: false,
     instrument: null,
   },
   {
-    id: "fs_cofounder",
-    section: "founder_stress",
-    text: "Co-founder or team relationship strain",
-    type: "likert5",
-    options: STRESS_OPTIONS,
-    required: true,
+    id: "nd_other_diagnosis",
+    section: "autism",
+    text: "Have you ever been formally diagnosed with any other neurodivergent condition (e.g., dyslexia, dyscalculia, Tourette's)?",
+    type: "single_select",
+    options: ["Yes", "No", "Prefer not to say"],
+    required: false,
     instrument: null,
   },
   {
-    id: "fs_identity",
-    section: "founder_stress",
-    text: "Feeling like your identity is tied entirely to your company's success or failure",
+    id: "nd_other_specify",
+    section: "autism",
+    text: "If yes, please specify:",
+    type: "text",
+    required: false,
+    instrument: null,
+    maxLength: 200,
+    specifyIf: { questionId: "nd_other_diagnosis", value: "Yes" },
+  },
+];
+
+// ============================================================
+// Section 12: Dirty Dozen Dark Triad (12 items)
+// ============================================================
+
+const darkTriadQuestions: Question[] = [
+  // Machiavellianism
+  {
+    id: "dd_m_1",
+    section: "dark_triad",
+    text: "I have used deceit or lied to get my way.",
     type: "likert5",
-    options: STRESS_OPTIONS,
-    required: true,
+    options: AGREE_5,
+    required: false,
+    instrument: "DD",
+  },
+  {
+    id: "dd_m_2",
+    section: "dark_triad",
+    text: "I have used flattery to get my way.",
+    type: "likert5",
+    options: AGREE_5,
+    required: false,
+    instrument: "DD",
+  },
+  {
+    id: "dd_m_3",
+    section: "dark_triad",
+    text: "I tend to manipulate others to get my way.",
+    type: "likert5",
+    options: AGREE_5,
+    required: false,
+    instrument: "DD",
+  },
+  {
+    id: "dd_m_4",
+    section: "dark_triad",
+    text: "I tend to exploit others towards my own end.",
+    type: "likert5",
+    options: AGREE_5,
+    required: false,
+    instrument: "DD",
+  },
+  // Psychopathy
+  {
+    id: "dd_p_1",
+    section: "dark_triad",
+    text: "I tend to lack remorse.",
+    type: "likert5",
+    options: AGREE_5,
+    required: false,
+    instrument: "DD",
+  },
+  {
+    id: "dd_p_2",
+    section: "dark_triad",
+    text: "I tend to be unconcerned with the morality of my actions.",
+    type: "likert5",
+    options: AGREE_5,
+    required: false,
+    instrument: "DD",
+  },
+  {
+    id: "dd_p_3",
+    section: "dark_triad",
+    text: "I tend to be callous or insensitive.",
+    type: "likert5",
+    options: AGREE_5,
+    required: false,
+    instrument: "DD",
+  },
+  {
+    id: "dd_p_4",
+    section: "dark_triad",
+    text: "I tend to be cynical.",
+    type: "likert5",
+    options: AGREE_5,
+    required: false,
+    instrument: "DD",
+  },
+  // Narcissism
+  {
+    id: "dd_n_1",
+    section: "dark_triad",
+    text: "I tend to want others to admire me.",
+    type: "likert5",
+    options: AGREE_5,
+    required: false,
+    instrument: "DD",
+  },
+  {
+    id: "dd_n_2",
+    section: "dark_triad",
+    text: "I tend to want others to pay attention to me.",
+    type: "likert5",
+    options: AGREE_5,
+    required: false,
+    instrument: "DD",
+  },
+  {
+    id: "dd_n_3",
+    section: "dark_triad",
+    text: "I tend to seek prestige or status.",
+    type: "likert5",
+    options: AGREE_5,
+    required: false,
+    instrument: "DD",
+  },
+  {
+    id: "dd_n_4",
+    section: "dark_triad",
+    text: "I tend to expect special favors from others.",
+    type: "likert5",
+    options: AGREE_5,
+    required: false,
+    instrument: "DD",
+  },
+];
+
+// ============================================================
+// Section 13: Social Support & Connection (4 items)
+// ============================================================
+
+const YES_NO_SOMETIMES = ["Yes", "No", "Sometimes"];
+
+const socialSupportQuestions: Question[] = [
+  {
+    id: "ss_friend_freq",
+    section: "social_support",
+    text: "In an average week, how many times do you see a friend or speak with them on the phone about your life?",
+    type: "number_bounded",
+    min: 0,
+    max: 20,
+    required: false,
     instrument: null,
   },
   {
-    id: "fs_sleep",
-    section: "founder_stress",
-    text: "Difficulty sleeping or poor sleep quality due to work stress",
-    type: "likert5",
-    options: STRESS_OPTIONS,
-    required: true,
+    id: "ss_family_freq",
+    section: "social_support",
+    text: "In an average week, how many times do you see a family member or speak with them on the phone about your life?",
+    type: "number_bounded",
+    min: 0,
+    max: 20,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "ss_confide_work",
+    section: "social_support",
+    text: "Do you have at least one person outside of your company you can confide in about work struggles?",
+    type: "yes_no_sometimes",
+    options: YES_NO_SOMETIMES,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "ss_confide_personal",
+    section: "social_support",
+    text: "Do you have at least one person outside of work you can confide in about personal struggles?",
+    type: "yes_no_sometimes",
+    options: YES_NO_SOMETIMES,
+    required: false,
     instrument: null,
   },
 ];
+
+// ============================================================
+// Section 14: Help-Seeking & Mental Health Support
+// ============================================================
+
+const therapyEver = (r: FlatResponses) => r["hs_therapy_ever"] === "Yes";
+const therapyCurrent = (r: FlatResponses) =>
+  therapyEver(r) && r["hs_therapy_current"] === "Yes";
+const coachEver = (r: FlatResponses) => r["hs_coach_ever"] === "Yes";
+const coachCurrent = (r: FlatResponses) =>
+  coachEver(r) && r["hs_coach_current"] === "Yes";
+const consideredButNot = (r: FlatResponses) =>
+  r["hs_considered_no_go"] === "Yes";
+
+const helpSeekingQuestions: Question[] = [
+  // Therapy block
+  {
+    id: "hs_therapy_ever",
+    section: "help_seeking",
+    text: "Have you ever worked with a therapist or counselor?",
+    type: "yes_no",
+    options: ["Yes", "No"],
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "hs_therapy_count",
+    section: "help_seeking",
+    text: "How many therapists have you worked with in your lifetime?",
+    type: "number_bounded",
+    min: 0,
+    max: 50,
+    required: false,
+    instrument: null,
+    condition: therapyEver,
+  },
+  {
+    id: "hs_therapy_current",
+    section: "help_seeking",
+    text: "Are you currently in therapy?",
+    type: "yes_no",
+    options: ["Yes", "No"],
+    required: false,
+    instrument: null,
+    condition: therapyEver,
+  },
+  {
+    id: "hs_therapy_duration",
+    section: "help_seeking",
+    text: "How long have you been with your current therapist?",
+    type: "single_select",
+    options: ["Under 3 months", "3-12 months", "1-3 years", "3+ years"],
+    required: false,
+    instrument: null,
+    condition: therapyCurrent,
+  },
+  {
+    id: "hs_therapy_impact",
+    section: "help_seeking",
+    text: "How would you rate the overall impact of therapy on your life?",
+    type: "scale_0_10",
+    anchors: { left: "Strongly negative", right: "Strongly positive" },
+    required: false,
+    instrument: null,
+    condition: therapyEver,
+  },
+  // Coaching block
+  {
+    id: "hs_coach_ever",
+    section: "help_seeking",
+    text: "Have you ever worked with an executive, leadership, or other professional coach?",
+    type: "yes_no",
+    options: ["Yes", "No"],
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "hs_coach_count",
+    section: "help_seeking",
+    text: "How many coaches have you worked with in your lifetime?",
+    type: "number_bounded",
+    min: 0,
+    max: 50,
+    required: false,
+    instrument: null,
+    condition: coachEver,
+  },
+  {
+    id: "hs_coach_current",
+    section: "help_seeking",
+    text: "Are you currently working with a coach?",
+    type: "yes_no",
+    options: ["Yes", "No"],
+    required: false,
+    instrument: null,
+    condition: coachEver,
+  },
+  {
+    id: "hs_coach_type",
+    section: "help_seeking",
+    text: "What kind of coach?",
+    type: "single_select",
+    options: [
+      "Executive / leadership",
+      "Cofounder or partnership",
+      "Life",
+      "Performance",
+      "Other",
+    ],
+    required: false,
+    instrument: null,
+    condition: coachCurrent,
+  },
+  {
+    id: "hs_coach_impact",
+    section: "help_seeking",
+    text: "How would you rate the overall impact of coaching on your life?",
+    type: "scale_0_10",
+    anchors: { left: "Strongly negative", right: "Strongly positive" },
+    required: false,
+    instrument: null,
+    condition: coachEver,
+  },
+  // Barriers
+  {
+    id: "hs_considered_no_go",
+    section: "help_seeking",
+    text: "In the last 12 months, have you considered seeking mental health support but didn't?",
+    type: "yes_no",
+    options: ["Yes", "No"],
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "hs_barriers",
+    section: "help_seeking",
+    text: "What got in the way? (select all that apply)",
+    type: "multi_select",
+    options: [
+      "Cost",
+      "Time",
+      "Didn't know where to start",
+      "Concerned about stigma or what investors/employees would think",
+      "Didn't think my issues were serious enough",
+      "Previous bad experience with mental health care",
+      "Couldn't find someone who understood founders",
+      "Other",
+    ],
+    required: false,
+    instrument: null,
+    condition: consideredButNot,
+  },
+  {
+    id: "hs_leave",
+    section: "help_seeking",
+    text: "In the last 12 months, have you taken a mental health leave or extended break from work?",
+    type: "yes_no",
+    options: ["Yes", "No"],
+    required: false,
+    instrument: null,
+  },
+];
+
+// ============================================================
+// Section 15: Medication (1 multi-select)
+// ============================================================
+
+const medicationQuestions: Question[] = [
+  {
+    id: "med_current",
+    section: "medication",
+    text: "Are you currently taking any of the following? Select all that apply. Responses are anonymous.",
+    type: "multi_select",
+    options: [
+      "SSRI or SNRI antidepressant (e.g., Lexapro, Zoloft, Prozac, Wellbutrin, Effexor)",
+      "Stimulant for ADHD (e.g., Adderall, Vyvanse, Concerta, Ritalin)",
+      "Benzodiazepine (e.g., Xanax, Ativan, Klonopin)",
+      "Prescription sleep medication (e.g., Ambien, Lunesta, trazodone)",
+      "Beta blocker for performance or anxiety (e.g., propranolol)",
+      "Mood stabilizer or antipsychotic (e.g., lithium, lamotrigine, quetiapine)",
+      "Other psychiatric medication",
+      "None of the above",
+      "Prefer not to say",
+    ],
+    required: false,
+    instrument: null,
+  },
+];
+
+// ============================================================
+// Section 16: Substance Use (10 items + AUDIT-C follow-ups)
+// ============================================================
+
+const SUBSTANCE_FREQ = [
+  "Never",
+  "Once or twice",
+  "Monthly",
+  "Weekly",
+  "2-3 times per week",
+  "Daily or near-daily",
+];
+
+// AUDIT-C shows if alcohol frequency is Monthly or more often.
+const alcoholMonthlyPlus = (r: FlatResponses) => {
+  const v = r["sub_alcohol"];
+  return (
+    v === "Monthly" ||
+    v === "Weekly" ||
+    v === "2-3 times per week" ||
+    v === "Daily or near-daily"
+  );
+};
+
+const substanceQuestions: Question[] = [
+  {
+    id: "sub_alcohol",
+    section: "substance_use",
+    text: "Alcohol",
+    type: "likert6_freq",
+    options: SUBSTANCE_FREQ,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "sub_cannabis",
+    section: "substance_use",
+    text: "Cannabis / marijuana",
+    type: "likert6_freq",
+    options: SUBSTANCE_FREQ,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "sub_nicotine",
+    section: "substance_use",
+    text: "Nicotine (cigarettes, vapes, pouches)",
+    type: "likert6_freq",
+    options: SUBSTANCE_FREQ,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "sub_stimulants_no_rx",
+    section: "substance_use",
+    text: "Stimulants obtained without a prescription (e.g., Adderall, cocaine)",
+    type: "likert6_freq",
+    options: SUBSTANCE_FREQ,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "sub_mdma",
+    section: "substance_use",
+    text: "MDMA",
+    type: "likert6_freq",
+    options: SUBSTANCE_FREQ,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "sub_psilocybin",
+    section: "substance_use",
+    text: "Psilocybin (\"magic mushrooms\")",
+    type: "likert6_freq",
+    options: SUBSTANCE_FREQ,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "sub_ayahuasca",
+    section: "substance_use",
+    text: "Ayahuasca or DMT",
+    type: "likert6_freq",
+    options: SUBSTANCE_FREQ,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "sub_lsd",
+    section: "substance_use",
+    text: "LSD or other psychedelics",
+    type: "likert6_freq",
+    options: SUBSTANCE_FREQ,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "sub_ketamine",
+    section: "substance_use",
+    text: "Ketamine (recreational, not prescribed)",
+    type: "likert6_freq",
+    options: SUBSTANCE_FREQ,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "sub_other",
+    section: "substance_use",
+    text: "Other substances (optional):",
+    type: "text",
+    required: false,
+    instrument: null,
+    maxLength: 200,
+  },
+  // AUDIT-C follow-ups — alcohol frequency ≥ Monthly
+  {
+    id: "auditc_drinks_per_day",
+    section: "substance_use",
+    text: "How many drinks containing alcohol do you have on a typical day when drinking?",
+    type: "single_select",
+    options: ["1-2", "3-4", "5-6", "7-9", "10+"],
+    required: false,
+    instrument: "AUDIT-C",
+    condition: alcoholMonthlyPlus,
+  },
+  {
+    id: "auditc_binge_freq",
+    section: "substance_use",
+    text: "How often do you have 5 or more drinks on one occasion?",
+    type: "single_select",
+    options: [
+      "Never",
+      "Less than monthly",
+      "Monthly",
+      "Weekly",
+      "Daily or near-daily",
+    ],
+    required: false,
+    instrument: "AUDIT-C",
+    condition: alcoholMonthlyPlus,
+  },
+];
+
+// ============================================================
+// Section 17: Open-ended (optional)
+// ============================================================
+
+const openEndedQuestions: Question[] = [
+  {
+    id: "open_reflection",
+    section: "open_ended",
+    text: "Is there anything else about your mental health, wellbeing, or life as a founder that you'd like to share? (Optional)",
+    type: "text_long",
+    required: false,
+    instrument: null,
+    maxLength: 1000,
+  },
+];
+
+// ============================================================
+// Section 4 legacy alias — founder_stress column still exists but is
+// no longer populated by the survey. (Kept in SECTION_ORDER as an
+// internal no-op to avoid breaking migrations that reference the
+// column; the section itself is hidden via condition: () => false.)
+// ============================================================
+
+const founderStressQuestions: Question[] = [];
+
+// ============================================================
+// Sections metadata (order matters — this is the canonical survey flow)
+// ============================================================
+
+const isSoloFounder = (r: FlatResponses) => r["company_role"] === "Solo Founder";
+
+export const SECTIONS: SectionMeta[] = [
+  {
+    id: "company",
+    label: "About You & Your Company",
+    intro: "Tell us a bit about yourself and your startup.",
+  },
+  {
+    id: "life_outlook",
+    label: "Life Outlook & Flourishing",
+    intro:
+      "A few questions about how life is going. Use the 0–10 scale for each — the anchors change per item.",
+  },
+  {
+    id: "ambition",
+    label: "Ambition",
+    intro: "Reflect on how you relate to achievement, goals, and what a successful life looks like.",
+  },
+  {
+    id: "founder_challenges",
+    label: "Founder-Specific Challenges",
+    intro:
+      "For each statement, rate how much of a challenge this is for you right now.",
+  },
+  {
+    id: "macro_outlook",
+    label: "Outlook on AI and the Economy",
+    intro: "Your read on the macro forces shaping your work.",
+  },
+  {
+    id: "cofounder",
+    label: "Cofounder Relationship",
+    intro:
+      "These questions are about your primary cofounder relationship. If you have multiple cofounders, answer about the one you work most closely with.",
+    condition: (r) => !isSoloFounder(r),
+  },
+  {
+    id: "depression",
+    label: "How You've Been Feeling",
+    intro: "Over the last 2 weeks, how often have you been bothered by any of the following problems?",
+    postSection: "crisis_resources",
+  },
+  {
+    id: "anxiety",
+    label: "Worry & Anxiety",
+    intro: "Over the last 2 weeks, how often have you been bothered by the following problems?",
+  },
+  {
+    id: "burnout",
+    label: "Burnout",
+    intro: "For each statement, indicate how often it applies to your work.",
+  },
+  {
+    id: "adhd",
+    label: "Focus & Attention",
+    intro: "How often do you experience the following?",
+  },
+  {
+    id: "autism",
+    label: "Perception & Social Processing",
+    intro: "To what extent do you agree with the following statements?",
+  },
+  {
+    id: "dark_triad",
+    label: "Personality",
+    intro: "Please indicate how much you agree with each statement.",
+  },
+  {
+    id: "social_support",
+    label: "Social Support & Connection",
+    intro: "A few questions about the people in your life.",
+  },
+  {
+    id: "help_seeking",
+    label: "Help-Seeking & Mental Health Support",
+    intro: "Your experience with therapy, coaching, and mental health support.",
+  },
+  {
+    id: "medication",
+    label: "Medication",
+    intro: "",
+  },
+  {
+    id: "substance_use",
+    label: "Substance Use",
+    intro: "In the past 12 months, how often have you used each of the following?",
+  },
+  {
+    id: "open_ended",
+    label: "Anything Else?",
+    intro: "Optional — one last place to share anything on your mind.",
+  },
+  // founder_stress legacy column: always hidden, never populated. Kept
+  // only so that existing SECTION_ORDER-based code doesn't trip over a
+  // missing id if anything in the codebase references it.
+  {
+    id: "founder_stress",
+    label: "Founder Stress (legacy)",
+    intro: "",
+    condition: () => false,
+  },
+];
+
+export const SECTION_ORDER: SectionId[] = SECTIONS.map((s) => s.id);
 
 // ============================================================
 // All Questions & Helpers
@@ -520,9 +1849,22 @@ const founderStressQuestions: Question[] = [
 
 export const ALL_QUESTIONS: Question[] = [
   ...companyQuestions,
-  ...adhdQuestions,
+  ...lifeOutlookQuestions,
+  ...ambitionQuestions,
+  ...founderChallengeQuestions,
+  ...macroOutlookQuestions,
+  ...cofounderQuestions,
   ...depressionQuestions,
   ...anxietyQuestions,
+  ...burnoutQuestions,
+  ...adhdQuestions,
+  ...autismQuestions,
+  ...darkTriadQuestions,
+  ...socialSupportQuestions,
+  ...helpSeekingQuestions,
+  ...medicationQuestions,
+  ...substanceQuestions,
+  ...openEndedQuestions,
   ...founderStressQuestions,
 ];
 

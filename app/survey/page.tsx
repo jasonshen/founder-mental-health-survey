@@ -1,30 +1,46 @@
 "use client";
 
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 import {
   getQuestionsBySection,
   SECTIONS,
-  SECTION_ORDER,
+  type SectionMeta,
 } from "@/lib/questions";
-import type { Question } from "@/lib/types";
+import {
+  EXT_SECTIONS,
+  LEGACY_SECTION_COLUMNS,
+  type Question,
+  type ResponseValue,
+  type SectionId,
+} from "@/lib/types";
+import {
+  isQuestionVisible,
+  isSectionVisible,
+} from "@/lib/conditions";
 import ProgressBar from "@/components/ProgressBar";
 import SurveySection from "@/components/SurveySection";
 import LikertScale from "@/components/QuestionTypes/LikertScale";
 import SingleSelect from "@/components/QuestionTypes/SingleSelect";
 import Dropdown from "@/components/QuestionTypes/Dropdown";
+import Scale0to10 from "@/components/QuestionTypes/Scale0to10";
+import CheckboxGroup from "@/components/QuestionTypes/CheckboxGroup";
+import Textarea from "@/components/QuestionTypes/Textarea";
+import NumberBounded from "@/components/QuestionTypes/NumberBounded";
+import CrisisResourcesBlock from "@/components/CrisisResourcesBlock";
 
 // Bump this when the question set changes, to invalidate stale drafts.
-const SURVEY_VERSION = "v2-2026-04";
+const SURVEY_VERSION = "v3-2026-04";
 const DRAFT_KEY = "fmh_survey_draft";
 
-type ResponseValue = string | string[] | number;
+type FlatResponses = Record<string, ResponseValue>;
 
 interface Draft {
   version: string;
-  responses: Record<string, ResponseValue>;
+  responses: FlatResponses;
   currentSectionIndex: number;
   submission_id: string;
   savedAt: string;
+  postSectionShown?: string;
 }
 
 function loadDraft(): Draft | null {
@@ -58,20 +74,57 @@ function clearDraft() {
   }
 }
 
+async function postSectionSave(
+  submission_id: string,
+  section_id: SectionId,
+  responses: FlatResponses,
+  sectionQuestions: Question[]
+) {
+  // Only send responses that belong to this section.
+  const sectionResponses: FlatResponses = {};
+  for (const q of sectionQuestions) {
+    if (responses[q.id] !== undefined && responses[q.id] !== "") {
+      sectionResponses[q.id] = responses[q.id];
+    }
+  }
+
+  try {
+    await fetch("/api/save-section", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        submission_id,
+        section_id,
+        responses: sectionResponses,
+      }),
+      keepalive: true,
+    });
+  } catch {
+    // Fail silently — localStorage is the source of truth on the client.
+  }
+}
+
 export default function SurveyPage() {
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
-  const [responses, setResponses] = useState<Record<string, ResponseValue>>({});
-  const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [responses, setResponses] = useState<FlatResponses>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [showResumePrompt, setShowResumePrompt] = useState(false);
   const [pendingDraft, setPendingDraft] = useState<Draft | null>(null);
+  const [showingPostSection, setShowingPostSection] = useState<SectionId | null>(null);
 
-  // Stable submission_id for this survey session. Used for server-side idempotency.
+  // Stable submission_id for this survey session.
   const submissionIdRef = useRef<string>("");
   if (!submissionIdRef.current && typeof window !== "undefined") {
     submissionIdRef.current = (crypto as Crypto & { randomUUID: () => string }).randomUUID();
   }
+
+  // Compute the flow of sections to actually render, given current answers.
+  // Re-evaluates when `responses` changes so skip logic is reactive.
+  const visibleSections: SectionMeta[] = useMemo(
+    () => SECTIONS.filter((s) => isSectionVisible(s, responses)),
+    [responses]
+  );
 
   // Hydrate from draft on mount.
   useEffect(() => {
@@ -84,22 +137,31 @@ export default function SurveyPage() {
 
   // Persist on every response or section change.
   useEffect(() => {
-    if (showResumePrompt) return; // don't overwrite draft until user decides
-    if (Object.keys(responses).length === 0 && currentSectionIndex === 0) return;
+    if (showResumePrompt) return;
+    if (
+      Object.keys(responses).length === 0 &&
+      currentSectionIndex === 0 &&
+      !showingPostSection
+    )
+      return;
     saveDraft({
       version: SURVEY_VERSION,
       responses,
       currentSectionIndex,
       submission_id: submissionIdRef.current,
       savedAt: new Date().toISOString(),
+      postSectionShown: showingPostSection ?? undefined,
     });
-  }, [responses, currentSectionIndex, showResumePrompt]);
+  }, [responses, currentSectionIndex, showResumePrompt, showingPostSection]);
 
   function handleResumeDraft() {
     if (!pendingDraft) return;
     setResponses(pendingDraft.responses);
     setCurrentSectionIndex(pendingDraft.currentSectionIndex);
     submissionIdRef.current = pendingDraft.submission_id;
+    if (pendingDraft.postSectionShown) {
+      setShowingPostSection(pendingDraft.postSectionShown as SectionId);
+    }
     setShowResumePrompt(false);
     setPendingDraft(null);
   }
@@ -110,77 +172,107 @@ export default function SurveyPage() {
     setPendingDraft(null);
   }
 
-  const currentSectionId = SECTION_ORDER[currentSectionIndex];
-  const currentSectionMeta = SECTIONS.find((s) => s.id === currentSectionId)!;
-  const currentQuestions = getQuestionsBySection(currentSectionId);
-  const totalSections = SECTION_ORDER.length;
-  const isLastSection = currentSectionIndex === totalSections - 1;
+  // Clamp currentSectionIndex into the visibleSections range.
+  const safeIndex = Math.min(
+    currentSectionIndex,
+    Math.max(0, visibleSections.length - 1)
+  );
+  const currentSectionMeta = visibleSections[safeIndex];
+  const currentSectionId: SectionId | undefined = currentSectionMeta?.id;
+  const allSectionQuestions = currentSectionId
+    ? getQuestionsBySection(currentSectionId)
+    : [];
+  const visibleQuestions = allSectionQuestions.filter((q) =>
+    isQuestionVisible(q, responses)
+  );
+  const totalVisible = visibleSections.length;
+  const isLastSection = safeIndex === totalVisible - 1;
 
   const handleResponseChange = useCallback(
-    (questionId: string, value: string | string[] | number) => {
+    (questionId: string, value: ResponseValue) => {
       setResponses((prev) => ({ ...prev, [questionId]: value }));
-      setValidationErrors((prev) => prev.filter((id) => id !== questionId));
     },
     []
   );
 
-  const validateCurrentSection = useCallback((): boolean => {
-    const errors: string[] = [];
-    for (const question of currentQuestions) {
-      if (!question.required) continue;
-      const response = responses[question.id];
-      if (response === undefined || response === "" || response === null) {
-        errors.push(question.id);
-      } else if (Array.isArray(response) && response.length === 0) {
-        errors.push(question.id);
-      }
-    }
-    setValidationErrors(errors);
-    return errors.length === 0;
-  }, [currentQuestions, responses]);
-
   const handleNext = useCallback(() => {
-    if (!validateCurrentSection()) {
-      const firstError = document.querySelector('[data-has-error="true"]');
-      if (firstError) {
-        firstError.scrollIntoView({ behavior: "smooth", block: "center" });
-      }
+    if (!currentSectionMeta) return;
+
+    // Fire-and-forget partial save before advancing.
+    void postSectionSave(
+      submissionIdRef.current,
+      currentSectionMeta.id,
+      responses,
+      allSectionQuestions
+    );
+
+    // If this section has a post-section info card (crisis resources), show it before advancing.
+    if (currentSectionMeta.postSection === "crisis_resources") {
+      setShowingPostSection(currentSectionMeta.id);
+      window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
 
     if (isLastSection) {
-      handleSubmit();
+      void handleSubmit();
       return;
     }
 
-    setCurrentSectionIndex((prev) => prev + 1);
+    setCurrentSectionIndex(safeIndex + 1);
     window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [validateCurrentSection, isLastSection, currentSectionIndex]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentSectionMeta, responses, allSectionQuestions, isLastSection, safeIndex]);
+
+  const handleContinueFromPostSection = useCallback(() => {
+    setShowingPostSection(null);
+    if (isLastSection) {
+      void handleSubmit();
+      return;
+    }
+    setCurrentSectionIndex(safeIndex + 1);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLastSection, safeIndex]);
 
   const handleBack = useCallback(() => {
-    if (currentSectionIndex > 0) {
-      setCurrentSectionIndex((prev) => prev - 1);
-      setValidationErrors([]);
+    if (showingPostSection) {
+      setShowingPostSection(null);
+      return;
+    }
+    if (safeIndex > 0) {
+      setCurrentSectionIndex(safeIndex - 1);
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
-  }, [currentSectionIndex]);
+  }, [safeIndex, showingPostSection]);
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
     setSubmitError(null);
     try {
-      const groupedResponses: Record<string, Record<string, ResponseValue>> = {};
-      for (const sectionId of SECTION_ORDER) {
-        groupedResponses[sectionId] = {};
-      }
+      // Group responses by section, routing ext sections into sections_ext.
+      const legacy: Record<string, FlatResponses> = {
+        company: {},
+        adhd: {},
+        depression: {},
+        anxiety: {},
+        founder_stress: {},
+      };
+      const sections_ext: Record<string, FlatResponses> = {};
+      const extSet = new Set<string>(EXT_SECTIONS);
+      const legacySet = new Set<string>(LEGACY_SECTION_COLUMNS);
 
-      for (const [questionId, value] of Object.entries(responses)) {
-        for (const sectionId of SECTION_ORDER) {
-          const sectionQuestions = getQuestionsBySection(sectionId);
-          if (sectionQuestions.some((q) => q.id === questionId)) {
-            groupedResponses[sectionId][questionId] = value;
-            break;
+      for (const [qid, value] of Object.entries(responses)) {
+        // Find which section this question belongs to.
+        for (const section of SECTIONS) {
+          const sectionQs = getQuestionsBySection(section.id);
+          if (!sectionQs.some((q) => q.id === qid)) continue;
+          if (legacySet.has(section.id)) {
+            legacy[section.id][qid] = value;
+          } else if (extSet.has(section.id)) {
+            if (!sections_ext[section.id]) sections_ext[section.id] = {};
+            sections_ext[section.id][qid] = value;
           }
+          break;
         }
       }
 
@@ -189,7 +281,14 @@ export default function SurveyPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           submission_id: submissionIdRef.current,
-          responses: groupedResponses,
+          responses: {
+            company: legacy.company,
+            adhd: legacy.adhd,
+            depression: legacy.depression,
+            anxiety: legacy.anxiety,
+            founder_stress: legacy.founder_stress,
+            sections_ext,
+          },
         }),
       });
 
@@ -204,7 +303,6 @@ export default function SurveyPage() {
         );
       }
 
-      // Success — clear the draft so future visits start fresh.
       clearDraft();
       window.location.href = `/results?token=${body.token}`;
     } catch (error) {
@@ -218,63 +316,115 @@ export default function SurveyPage() {
   };
 
   const renderQuestion = (question: Question) => {
-    const hasError = validationErrors.includes(question.id);
-
-    const errorId = `${question.id}-error`;
-    const wrapper = (children: React.ReactNode) => (
-      <div
-        key={question.id}
-        data-has-error={hasError}
-        aria-invalid={hasError || undefined}
-        aria-describedby={hasError ? errorId : undefined}
-        className={`rounded-lg p-4 -mx-4 ${
-          hasError ? "bg-red-50 ring-1 ring-red-200" : ""
-        }`}
-      >
-        {children}
-        {hasError && (
-          <p id={errorId} className="text-sm text-red-700 mt-2" role="alert">
-            This question is required.
-          </p>
-        )}
-      </div>
-    );
-
+    const key = question.id;
     switch (question.type) {
       case "likert4":
       case "likert5":
-        return wrapper(
-          <LikertScale
-            question={question}
-            value={(responses[question.id] as string) || ""}
-            onChange={(val) => handleResponseChange(question.id, val)}
-          />
+      case "likert6_freq":
+      case "likert7":
+      case "yes_no":
+      case "yes_no_sometimes":
+      case "yes_no_prefernot":
+        return (
+          <div key={key}>
+            <LikertScale
+              question={question}
+              value={(responses[question.id] as string) || ""}
+              onChange={(val) => handleResponseChange(question.id, val)}
+            />
+          </div>
         );
       case "single_select":
-        return wrapper(
-          <SingleSelect
-            question={question}
-            value={(responses[question.id] as string) || ""}
-            onChange={(val) => handleResponseChange(question.id, val)}
-          />
+        return (
+          <div key={key}>
+            <SingleSelect
+              question={question}
+              value={(responses[question.id] as string) || ""}
+              onChange={(val) => handleResponseChange(question.id, val)}
+            />
+          </div>
         );
       case "dropdown":
-        return wrapper(
-          <Dropdown
-            question={question}
-            value={(responses[question.id] as string) || ""}
-            onChange={(val) => handleResponseChange(question.id, val)}
-          />
+        return (
+          <div key={key}>
+            <Dropdown
+              question={question}
+              value={(responses[question.id] as string) || ""}
+              onChange={(val) => handleResponseChange(question.id, val)}
+            />
+          </div>
+        );
+      case "scale_0_10":
+        return (
+          <div key={key}>
+            <Scale0to10
+              question={question}
+              value={
+                typeof responses[question.id] === "number"
+                  ? (responses[question.id] as number)
+                  : ""
+              }
+              onChange={(val) => handleResponseChange(question.id, val)}
+            />
+          </div>
+        );
+      case "multi_select":
+        return (
+          <div key={key}>
+            <CheckboxGroup
+              question={question}
+              value={(responses[question.id] as string[]) || []}
+              onChange={(val) => handleResponseChange(question.id, val)}
+            />
+          </div>
+        );
+      case "text":
+        return (
+          <div key={key}>
+            <Textarea
+              question={question}
+              value={(responses[question.id] as string) || ""}
+              onChange={(val) => handleResponseChange(question.id, val)}
+              long={false}
+            />
+          </div>
+        );
+      case "text_long":
+        return (
+          <div key={key}>
+            <Textarea
+              question={question}
+              value={(responses[question.id] as string) || ""}
+              onChange={(val) => handleResponseChange(question.id, val)}
+              long
+            />
+          </div>
+        );
+      case "number_bounded":
+        return (
+          <div key={key}>
+            <NumberBounded
+              question={question}
+              value={
+                typeof responses[question.id] === "number"
+                  ? (responses[question.id] as number)
+                  : ""
+              }
+              onChange={(val) => handleResponseChange(question.id, val)}
+            />
+          </div>
         );
       case "number":
-        return wrapper(
-          <div className="mb-2">
+        return (
+          <div key={key} className="mb-2">
             <label
               htmlFor={question.id}
               className="block text-base font-medium text-gray-900 mb-3"
             >
               {question.text}
-              {question.required && <span className="text-red-500 ml-1">*</span>}
+              {question.required && (
+                <span className="text-red-500 ml-1" aria-hidden="true">*</span>
+              )}
             </label>
             <input
               id={question.id}
@@ -286,11 +436,11 @@ export default function SurveyPage() {
                   : ""
               }
               onChange={(e) => {
-                const val = e.target.value;
-                if (val === "") {
+                const v = e.target.value;
+                if (v === "") {
                   handleResponseChange(question.id, "" as unknown as number);
                 } else {
-                  handleResponseChange(question.id, Number(val));
+                  handleResponseChange(question.id, Number(v));
                 }
               }}
               className="w-32 px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900"
@@ -303,7 +453,7 @@ export default function SurveyPage() {
     }
   };
 
-  // Resume prompt: shown when we detect an in-progress draft.
+  // Resume prompt
   if (showResumePrompt && pendingDraft) {
     const answered = Object.keys(pendingDraft.responses).length;
     const savedDate = new Date(pendingDraft.savedAt).toLocaleString();
@@ -336,78 +486,85 @@ export default function SurveyPage() {
     );
   }
 
+  if (!currentSectionMeta) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <p className="text-gray-600">Loading…</p>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-white">
       <div className="max-w-2xl mx-auto px-4 py-8">
         <ProgressBar
-          currentSection={currentSectionIndex}
-          totalSections={totalSections}
+          currentSection={safeIndex}
+          totalSections={totalVisible}
         />
 
-        <SurveySection
-          title={currentSectionMeta.label}
-          intro={currentSectionMeta.intro}
-        >
-          {currentQuestions.map((question) => renderQuestion(question))}
-        </SurveySection>
+        {showingPostSection === "depression" ? (
+          <CrisisResourcesBlock onContinue={handleContinueFromPostSection} />
+        ) : (
+          <>
+            <SurveySection
+              title={currentSectionMeta.label}
+              intro={currentSectionMeta.intro}
+            >
+              {visibleQuestions.map((question) => renderQuestion(question))}
+              {visibleQuestions.length === 0 && (
+                <p className="text-gray-500 italic">
+                  No questions in this section right now.
+                </p>
+              )}
+            </SurveySection>
 
-        {validationErrors.length > 0 && (
-          <div
-            className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg"
-            role="alert"
-          >
-            <p className="text-sm text-red-700">
-              Please answer all required questions before continuing.
-            </p>
-          </div>
+            {submitError && (
+              <div
+                className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg"
+                role="alert"
+              >
+                <p className="text-sm text-red-700 mb-2">
+                  <strong>We couldn&apos;t save your responses.</strong> {submitError}
+                </p>
+                <p className="text-xs text-red-600">
+                  Your answers are still here — just tap Submit again when you&apos;re ready.
+                </p>
+              </div>
+            )}
+
+            <div className="flex justify-between items-center pt-6 border-t border-gray-200">
+              <button
+                type="button"
+                onClick={handleBack}
+                disabled={safeIndex === 0}
+                className={`min-h-[44px] px-6 py-2.5 rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
+                  safeIndex === 0
+                    ? "text-gray-400 cursor-not-allowed"
+                    : "text-gray-700 hover:bg-gray-100 border border-gray-300"
+                }`}
+              >
+                Back
+              </button>
+              <button
+                type="button"
+                onClick={handleNext}
+                disabled={isSubmitting}
+                aria-busy={isSubmitting}
+                className={`min-h-[44px] px-6 py-2.5 rounded-lg font-medium text-white transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
+                  isSubmitting
+                    ? "bg-indigo-700 cursor-wait opacity-90"
+                    : "bg-indigo-600 hover:bg-indigo-700"
+                }`}
+              >
+                {isSubmitting
+                  ? "Submitting…"
+                  : isLastSection
+                  ? "Submit"
+                  : "Next"}
+              </button>
+            </div>
+          </>
         )}
-
-        {submitError && (
-          <div
-            className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg"
-            role="alert"
-          >
-            <p className="text-sm text-red-700 mb-2">
-              <strong>We couldn&apos;t save your responses.</strong> {submitError}
-            </p>
-            <p className="text-xs text-red-600">
-              Your answers are still here — just tap Submit again when you&apos;re
-              ready.
-            </p>
-          </div>
-        )}
-
-        <div className="flex justify-between items-center pt-6 border-t border-gray-200">
-          <button
-            type="button"
-            onClick={handleBack}
-            disabled={currentSectionIndex === 0}
-            className={`min-h-[44px] px-6 py-2.5 rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
-              currentSectionIndex === 0
-                ? "text-gray-400 cursor-not-allowed"
-                : "text-gray-700 hover:bg-gray-100 border border-gray-300"
-            }`}
-          >
-            Back
-          </button>
-          <button
-            type="button"
-            onClick={handleNext}
-            disabled={isSubmitting}
-            aria-busy={isSubmitting}
-            className={`min-h-[44px] px-6 py-2.5 rounded-lg font-medium text-white transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
-              isSubmitting
-                ? "bg-indigo-700 cursor-wait opacity-90"
-                : "bg-indigo-600 hover:bg-indigo-700"
-            }`}
-          >
-            {isSubmitting
-              ? "Submitting…"
-              : isLastSection
-              ? "Submit"
-              : "Next"}
-          </button>
-        </div>
       </div>
     </div>
   );
