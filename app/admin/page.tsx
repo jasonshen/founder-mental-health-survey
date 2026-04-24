@@ -3,6 +3,7 @@ import { getAllFlags } from "@/lib/flags";
 import { isAdminAuthed } from "@/lib/admin-auth";
 import AdminLoginForm from "./AdminLoginForm";
 import FlagToggle from "./FlagToggle";
+import TestEmailForm from "./TestEmailForm";
 
 export const dynamic = "force-dynamic";
 
@@ -67,8 +68,17 @@ export default async function AdminPage() {
             <div className="text-sm text-gray-500 mb-1">Last submission</div>
             <div className="text-sm font-medium text-gray-900">
               {stats.lastSubmission
-                ? new Date(stats.lastSubmission).toLocaleString()
+                ? new Date(
+                    stats.lastSubmission.slice(0, 10) + "T12:00:00"
+                  ).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                  })
                 : "—"}
+            </div>
+            <div className="text-xs text-gray-400 mt-1">
+              Date-only (privacy)
             </div>
           </div>
         </div>
@@ -104,6 +114,16 @@ export default async function AdminPage() {
               </>
             )}
           </p>
+        </div>
+      </section>
+
+      {/* Test email */}
+      <section className="mb-10">
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">
+          Email smoke test
+        </h2>
+        <div className="bg-gray-50 border border-gray-200 rounded-lg p-5">
+          <TestEmailForm />
         </div>
       </section>
 
