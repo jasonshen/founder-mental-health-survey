@@ -10,14 +10,18 @@ const ResponseValue = z.union([
 
 const ResponseMap = z.record(z.string().max(100), ResponseValue);
 
-// Keys allowed inside sections_ext — matches EXT_SECTIONS in lib/types.ts.
-const ExtSectionId = z.enum([
+// All section ids that can appear in a submission. Mirrors SectionId in lib/types.
+export const AnySectionId = z.enum([
+  "company",
   "life_outlook",
   "ambition",
   "founder_challenges",
   "macro_outlook",
   "cofounder",
+  "depression",
+  "anxiety",
   "burnout",
+  "adhd",
   "autism",
   "dark_triad",
   "social_support",
@@ -25,35 +29,18 @@ const ExtSectionId = z.enum([
   "medication",
   "substance_use",
   "open_ended",
-]);
-
-const LegacySectionId = z.enum([
-  "company",
-  "adhd",
-  "depression",
-  "anxiety",
   "founder_stress",
 ]);
 
-export const AnySectionId = z.union([LegacySectionId, ExtSectionId]);
-
-// Keyed by ext section ids, but every key is optional — partial progress is expected.
-// We use z.string() as the key type (rather than the enum) so Zod doesn't require
-// every key to be present; the server ignores unknown keys when writing to sections_ext.
-const SectionsExtMap = z.record(z.string(), ResponseMap).default({});
+// {sectionId: ResponseMap}. Every section is optional — partial progress is expected.
+// Keyed by z.string() rather than the enum so Zod doesn't require every key;
+// unknown keys are ignored by the server's allowlist lookup.
+const SectionResponses = z.record(z.string(), ResponseMap).default({});
 
 export const SurveySubmissionSchema = z.object({
-  // Client-sent token is now ignored but we still accept it for backward compat.
   token: z.string().optional(),
   submission_id: z.string().uuid().optional(),
-  responses: z.object({
-    company: ResponseMap.default({}),
-    adhd: ResponseMap.default({}),
-    depression: ResponseMap.default({}),
-    anxiety: ResponseMap.default({}),
-    founder_stress: ResponseMap.default({}),
-    sections_ext: SectionsExtMap,
-  }),
+  responses: SectionResponses,
 });
 
 export type SurveySubmissionInput = z.infer<typeof SurveySubmissionSchema>;

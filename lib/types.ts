@@ -41,31 +41,34 @@ export type SectionId =
   | "substance_use"
   | "open_ended";
 
-// Sections stored in their own top-level columns on survey_responses.
-export const LEGACY_SECTION_COLUMNS: SectionId[] = [
-  "company",
-  "adhd",
-  "depression",
-  "anxiety",
-  "founder_stress",
-];
+// Every section maps 1:1 to its own JSONB column on survey_responses.
+// This is an allowlist — dynamic column writes in API routes look up
+// the column name through this map, which is safe because the set of
+// keys is closed and hardcoded.
+export const SECTION_COLUMN: Record<SectionId, string> = {
+  company: "section_company",
+  life_outlook: "section_life_outlook",
+  ambition: "section_ambition",
+  founder_challenges: "section_founder_challenges",
+  macro_outlook: "section_macro_outlook",
+  cofounder: "section_cofounder",
+  depression: "section_depression",
+  anxiety: "section_anxiety",
+  burnout: "section_burnout",
+  adhd: "section_adhd",
+  autism: "section_autism",
+  dark_triad: "section_dark_triad",
+  social_support: "section_social_support",
+  help_seeking: "section_help_seeking",
+  medication: "section_medication",
+  substance_use: "section_substance_use",
+  open_ended: "section_open_ended",
+  founder_stress: "section_founder_stress",
+};
 
-// Sections merged into sections_ext JSONB.
-export const EXT_SECTIONS: SectionId[] = [
-  "life_outlook",
-  "ambition",
-  "founder_challenges",
-  "macro_outlook",
-  "cofounder",
-  "burnout",
-  "autism",
-  "dark_triad",
-  "social_support",
-  "help_seeking",
-  "medication",
-  "substance_use",
-  "open_ended",
-];
+export const ALL_SECTION_IDS: SectionId[] = Object.keys(
+  SECTION_COLUMN
+) as SectionId[];
 
 export type InstrumentId =
   | "PHQ-9"
@@ -117,14 +120,8 @@ export type SurveyResponses = {
 
 export interface SurveySubmission {
   token: string;
-  responses: {
-    company: SurveyResponses;
-    adhd: SurveyResponses;
-    depression: SurveyResponses;
-    anxiety: SurveyResponses;
-    founder_stress: SurveyResponses;
-    sections_ext: Partial<Record<SectionId, SurveyResponses>>;
-  };
+  /** One entry per section that has any answers. Missing sections are treated as NULL in the DB. */
+  responses: Partial<Record<SectionId, SurveyResponses>>;
 }
 
 // ============================================================

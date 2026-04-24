@@ -1,19 +1,11 @@
 import { NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 import { SectionSaveSchema } from "@/lib/schemas";
-import { LEGACY_SECTION_COLUMNS } from "@/lib/types";
+import { SECTION_COLUMN } from "@/lib/types";
 import type { SectionId } from "@/lib/types";
 import { log } from "@/lib/log";
 
 export const dynamic = "force-dynamic";
-
-const LEGACY_COLUMN_FOR: Record<string, string> = {
-  company: "section_company",
-  adhd: "section_adhd",
-  depression: "section_depression",
-  anxiety: "section_anxiety",
-  founder_stress: "section_founder_stress",
-};
 
 export async function POST(request: Request) {
   let body: unknown;
@@ -38,13 +30,18 @@ export async function POST(request: Request) {
   }
 
   const { submission_id, section_id, responses } = parsed.data;
+  const column = SECTION_COLUMN[section_id as SectionId];
+  if (!column) {
+    // Should be impossible — section_id is validated by Zod enum.
+    return NextResponse.json({ error: "Unknown section" }, { status: 400 });
+  }
+
   const supabase = createServerClient();
-  const isLegacy = (LEGACY_SECTION_COLUMNS as string[]).includes(section_id);
 
   // Look up the in-progress row, if any.
   const { data: existing, error: fetchError } = await supabase
     .from("survey_responses")
-    .select("id, sections_completed, sections_ext, completed")
+    .select("id, sections_completed, completed")
     .eq("submission_id", submission_id)
     .maybeSingle();
 
@@ -59,7 +56,6 @@ export async function POST(request: Request) {
     );
   }
 
-  // If the final submit has already landed, refuse further partial writes.
   if (existing?.completed) {
     return NextResponse.json(
       { error: "Submission already finalized." },
@@ -72,29 +68,20 @@ export async function POST(request: Request) {
     ? priorCompleted
     : [...priorCompleted, section_id];
 
-  const nowIso = new Date().toISOString();
-
   const basePayload: Record<string, unknown> = {
+    [column]: responses,
     sections_completed,
     last_section_completed: section_id,
-    updated_at: nowIso,
+    updated_at: new Date().toISOString(),
   };
-
-  if (isLegacy) {
-    basePayload[LEGACY_COLUMN_FOR[section_id]] = responses;
-  } else {
-    const priorExt: Record<string, unknown> =
-      (existing?.sections_ext as Record<string, unknown>) ?? {};
-    basePayload.sections_ext = { ...priorExt, [section_id]: responses };
-  }
 
   if (!existing) {
     // First save for this submission_id — INSERT a partial row.
+    // anonymous_token is nullable (see migration 007); final submit assigns it.
     const insertPayload: Record<string, unknown> = {
       submission_id,
       completed: false,
       scores: null,
-      sections_ext: {},
       sections_completed: [],
       ...basePayload,
     };
@@ -103,7 +90,7 @@ export async function POST(request: Request) {
       .insert(insertPayload);
 
     if (insertError) {
-      // Race: another request INSERTed first. Fall through to UPDATE below.
+      // Race: another request INSERTed first. Fall through to UPDATE.
       if (
         insertError.code === "23505" &&
         insertError.message?.includes("submission_id")

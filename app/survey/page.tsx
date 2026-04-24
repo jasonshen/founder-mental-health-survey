@@ -7,8 +7,6 @@ import {
   type SectionMeta,
 } from "@/lib/questions";
 import {
-  EXT_SECTIONS,
-  LEGACY_SECTION_COLUMNS,
   type Question,
   type ResponseValue,
   type SectionId,
@@ -249,29 +247,15 @@ export default function SurveyPage() {
     setIsSubmitting(true);
     setSubmitError(null);
     try {
-      // Group responses by section, routing ext sections into sections_ext.
-      const legacy: Record<string, FlatResponses> = {
-        company: {},
-        adhd: {},
-        depression: {},
-        anxiety: {},
-        founder_stress: {},
-      };
-      const sections_ext: Record<string, FlatResponses> = {};
-      const extSet = new Set<string>(EXT_SECTIONS);
-      const legacySet = new Set<string>(LEGACY_SECTION_COLUMNS);
-
+      // Group flat {qid: value} into {sectionId: {qid: value}} so the server
+      // can write each section to its own DB column.
+      const grouped: Record<string, FlatResponses> = {};
       for (const [qid, value] of Object.entries(responses)) {
-        // Find which section this question belongs to.
         for (const section of SECTIONS) {
           const sectionQs = getQuestionsBySection(section.id);
           if (!sectionQs.some((q) => q.id === qid)) continue;
-          if (legacySet.has(section.id)) {
-            legacy[section.id][qid] = value;
-          } else if (extSet.has(section.id)) {
-            if (!sections_ext[section.id]) sections_ext[section.id] = {};
-            sections_ext[section.id][qid] = value;
-          }
+          if (!grouped[section.id]) grouped[section.id] = {};
+          grouped[section.id][qid] = value;
           break;
         }
       }
@@ -281,14 +265,7 @@ export default function SurveyPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           submission_id: submissionIdRef.current,
-          responses: {
-            company: legacy.company,
-            adhd: legacy.adhd,
-            depression: legacy.depression,
-            anxiety: legacy.anxiety,
-            founder_stress: legacy.founder_stress,
-            sections_ext,
-          },
+          responses: grouped,
         }),
       });
 

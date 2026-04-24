@@ -1,15 +1,32 @@
 import { NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 import { computeAllScores } from "@/lib/scoring";
-import { SurveySubmissionSchema, type SurveySubmissionInput } from "@/lib/schemas";
+import { SurveySubmissionSchema } from "@/lib/schemas";
 import { generateToken } from "@/lib/token";
 import { log, tokenPrefix } from "@/lib/log";
-
-type SubmissionResponses = SurveySubmissionInput["responses"];
+import { SECTION_COLUMN } from "@/lib/types";
+import type { SectionId, SurveyResponses } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
 const MAX_TOKEN_RETRIES = 5;
+
+/**
+ * Turn the `{sectionId: {qid: value}}` payload into an object keyed by
+ * actual DB column name, ignoring any unknown section ids. The set of
+ * allowed keys is closed (SECTION_COLUMN), so the dynamic property
+ * assignment is safe.
+ */
+function toColumnUpdates(
+  responses: Record<string, SurveyResponses>
+): Record<string, SurveyResponses> {
+  const out: Record<string, SurveyResponses> = {};
+  for (const [sectionId, payload] of Object.entries(responses)) {
+    const column = SECTION_COLUMN[sectionId as SectionId];
+    if (column) out[column] = payload;
+  }
+  return out;
+}
 
 export async function POST(request: Request) {
   let body: unknown;
@@ -34,10 +51,10 @@ export async function POST(request: Request) {
   }
 
   const { responses, submission_id } = parsed.data;
+  const columnUpdates = toColumnUpdates(responses);
   const supabase = createServerClient();
 
-  // Idempotency check: if client retried with the same submission_id and
-  // finalization already completed, return the existing token.
+  // Idempotency + partial-row finalize.
   if (submission_id) {
     const { data: existing } = await supabase
       .from("survey_responses")
@@ -49,16 +66,18 @@ export async function POST(request: Request) {
       log.info("submit_idempotent_return", {
         token: tokenPrefix(existing.anonymous_token),
       });
-      return NextResponse.json({ success: true, token: existing.anonymous_token });
+      return NextResponse.json({
+        success: true,
+        token: existing.anonymous_token,
+      });
     }
 
-    // If a partial row exists (completed=false), finalize it in place.
     if (existing && !existing.completed) {
-      return finalizeExisting(supabase, submission_id, responses);
+      return finalizeExisting(supabase, submission_id, columnUpdates);
     }
   }
 
-  // No prior row — INSERT fresh (backward compat path).
+  // No prior partial row — INSERT fresh.
   let token = "";
   let insertError: { code?: string; message?: string } | null = null;
   for (let attempt = 0; attempt < MAX_TOKEN_RETRIES; attempt++) {
@@ -67,12 +86,7 @@ export async function POST(request: Request) {
     const { error } = await supabase.from("survey_responses").insert({
       anonymous_token: token,
       submission_id: submission_id ?? null,
-      section_company: responses.company,
-      section_adhd: responses.adhd,
-      section_depression: responses.depression,
-      section_anxiety: responses.anxiety,
-      section_founder_stress: responses.founder_stress,
-      sections_ext: responses.sections_ext,
+      ...columnUpdates,
       scores: null,
       completed: false,
     });
@@ -89,22 +103,29 @@ export async function POST(request: Request) {
     }
 
     if (error.code === "23505" && error.message?.includes("submission_id")) {
-      // Another request finalized first, or inserted a partial row concurrently.
       const { data: winner } = await supabase
         .from("survey_responses")
         .select("anonymous_token, completed")
         .eq("submission_id", submission_id!)
         .maybeSingle();
       if (winner?.completed && winner.anonymous_token) {
-        log.info("submit_race_resolved", { token: tokenPrefix(winner.anonymous_token) });
-        return NextResponse.json({ success: true, token: winner.anonymous_token });
+        log.info("submit_race_resolved", {
+          token: tokenPrefix(winner.anonymous_token),
+        });
+        return NextResponse.json({
+          success: true,
+          token: winner.anonymous_token,
+        });
       }
       if (winner && !winner.completed) {
-        return finalizeExisting(supabase, submission_id!, responses);
+        return finalizeExisting(supabase, submission_id!, columnUpdates);
       }
     }
 
-    log.error("submit_db_insert_failed", { code: error.code, message: error.message });
+    log.error("submit_db_insert_failed", {
+      code: error.code,
+      message: error.message,
+    });
     insertError = error;
     break;
   }
@@ -123,28 +144,23 @@ export async function POST(request: Request) {
 async function finalizeExisting(
   supabase: ReturnType<typeof createServerClient>,
   submission_id: string,
-  responses: SubmissionResponses
+  columnUpdates: Record<string, SurveyResponses>
 ) {
-  // Generate token with collision retry, then UPDATE the existing partial row.
   for (let attempt = 0; attempt < MAX_TOKEN_RETRIES; attempt++) {
     const token = generateToken();
     const { error } = await supabase
       .from("survey_responses")
       .update({
         anonymous_token: token,
-        section_company: responses.company,
-        section_adhd: responses.adhd,
-        section_depression: responses.depression,
-        section_anxiety: responses.anxiety,
-        section_founder_stress: responses.founder_stress,
-        sections_ext: responses.sections_ext,
+        ...columnUpdates,
       })
       .eq("submission_id", submission_id)
       .eq("completed", false);
 
     if (!error) {
       log.info("submit_finalized_partial", { token: tokenPrefix(token) });
-      return computeAndMarkComplete(supabase, token, responses);
+      // Fetch the finalized row's responses to compute scores against authoritative state.
+      return computeAndMarkCompleteWithResponses(supabase, token, columnUpdates);
     }
 
     if (error.code === "23505" && error.message?.includes("anonymous_token")) {
@@ -171,13 +187,54 @@ async function finalizeExisting(
 async function computeAndMarkComplete(
   supabase: ReturnType<typeof createServerClient>,
   token: string,
-  responses: SubmissionResponses
+  responses: Record<string, SurveyResponses>
 ) {
   try {
     const scores = computeAllScores({
-      adhd: responses.adhd,
-      depression: responses.depression,
-      anxiety: responses.anxiety,
+      adhd: responses.adhd ?? {},
+      depression: responses.depression ?? {},
+      anxiety: responses.anxiety ?? {},
+    });
+
+    const { error: updateError } = await supabase
+      .from("survey_responses")
+      .update({ scores, completed: true })
+      .eq("anonymous_token", token);
+
+    if (updateError) {
+      log.error("submit_score_update_failed", {
+        token: tokenPrefix(token),
+        code: updateError.code,
+        message: updateError.message,
+      });
+      return NextResponse.json({ success: true, token, scoring_pending: true });
+    }
+
+    log.info("submit_complete", { token: tokenPrefix(token) });
+    return NextResponse.json({ success: true, token });
+  } catch (err) {
+    log.error("submit_scoring_threw", {
+      token: tokenPrefix(token),
+      message: err instanceof Error ? err.message : String(err),
+    });
+    return NextResponse.json({ success: true, token, scoring_pending: true });
+  }
+}
+
+/**
+ * Finalize path — columnUpdates is keyed by DB column, so read scoring
+ * sections directly out of it by their column names.
+ */
+async function computeAndMarkCompleteWithResponses(
+  supabase: ReturnType<typeof createServerClient>,
+  token: string,
+  columnUpdates: Record<string, SurveyResponses>
+) {
+  try {
+    const scores = computeAllScores({
+      adhd: columnUpdates.section_adhd ?? {},
+      depression: columnUpdates.section_depression ?? {},
+      anxiety: columnUpdates.section_anxiety ?? {},
     });
 
     const { error: updateError } = await supabase
