@@ -21,7 +21,9 @@ export async function GET(
   const supabase = createServerClient();
   const { data, error } = await supabase
     .from("survey_responses")
-    .select("scores, section_company, section_founder_stress, created_at, completed")
+    .select(
+      "scores, section_company, section_founder_challenges, section_founder_stress, created_at, completed"
+    )
     .eq("anonymous_token", token)
     .maybeSingle();
 
@@ -55,6 +57,8 @@ export async function GET(
   return NextResponse.json({
     scores: data.scores,
     section_company: data.section_company,
+    section_founder_challenges: data.section_founder_challenges,
+    // Kept for backward compat with any pre-V3 rows still in the DB.
     section_founder_stress: data.section_founder_stress,
     created_at: data.created_at,
   });

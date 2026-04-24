@@ -9,6 +9,34 @@ import type {
 import CrisisBanner from "./CrisisBanner";
 import ResultsCard from "./ResultsCard";
 
+// V3 founder challenges (section_founder_challenges, fc_* keys)
+const CHALLENGE_LABELS: Record<string, string> = {
+  fc_own_way: "Getting in my own way",
+  fc_ic_to_leader: "Evolving from IC to leader",
+  fc_operational_trap: "Operational vs. strategic",
+  fc_fraud: "Feeling like a fraud",
+  fc_accountability: "Holding team accountable",
+  fc_hard_conversations: "Avoiding hard conversations",
+  fc_team_slow: "Team moving too slowly",
+  fc_cofounder_friction: "Cofounder friction",
+  fc_board_conflict: "Board / investor conflict",
+  fc_runway_worry: "Running out of money",
+  fc_next_round: "Raising next round",
+  fc_pivot: "Pivoting the company",
+  fc_growth: "Not growing fast enough",
+  fc_competition: "Competition anxiety",
+};
+
+const CHALLENGE_VALUE_MAP: Record<string, number> = {
+  "Not a challenge for me": 0,
+  "Minor challenge": 1,
+  "Moderate challenge": 2,
+  "Significant challenge": 3,
+  "Major challenge": 4,
+};
+
+// V2 legacy stressors (section_founder_stress, fs_* keys) — kept so
+// any pre-V3 rows still render cleanly if someone opens an old token.
 const STRESS_LABELS: Record<string, string> = {
   fs_runway: "Financial pressure / runway",
   fs_loneliness: "Loneliness & isolation",
@@ -244,17 +272,40 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
     );
   }
 
-  const { scores, section_founder_stress } = data;
+  const { scores, section_founder_challenges, section_founder_stress } = data;
 
-  // Parse stressor data and sort by severity
-  const stressorEntries = Object.entries(section_founder_stress || {})
-    .filter(([key]) => key.startsWith("fs_"))
+  // Prefer V3 founder_challenges. Fall back to V2 founder_stress for
+  // pre-V3 respondents. Whichever has data wins — we don't merge.
+  const challengeEntries = Object.entries(section_founder_challenges || {})
+    .filter(([key]) => key.startsWith("fc_"))
     .map(([key, value]) => ({
       key,
-      label: STRESS_LABELS[key] || key,
-      value: typeof value === "string" ? (STRESS_VALUE_MAP[value] ?? 0) : Number(value),
+      label: CHALLENGE_LABELS[key] || key,
+      value:
+        typeof value === "string" ? (CHALLENGE_VALUE_MAP[value] ?? 0) : Number(value),
     }))
     .sort((a, b) => b.value - a.value);
+
+  const legacyStressorEntries =
+    challengeEntries.length === 0
+      ? Object.entries(section_founder_stress || {})
+          .filter(([key]) => key.startsWith("fs_"))
+          .map(([key, value]) => ({
+            key,
+            label: STRESS_LABELS[key] || key,
+            value:
+              typeof value === "string"
+                ? (STRESS_VALUE_MAP[value] ?? 0)
+                : Number(value),
+          }))
+          .sort((a, b) => b.value - a.value)
+      : [];
+
+  const showChallenges = challengeEntries.length > 0;
+  const shownEntries = showChallenges ? challengeEntries : legacyStressorEntries;
+  const cardTitle = showChallenges
+    ? "Your Top Founder Challenges"
+    : "Your Top Founder Stressors";
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">
@@ -376,11 +427,11 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
         </p>
       </ResultsCard>
 
-      {/* Founder Stress */}
-      <ResultsCard title="Your Top Founder Stressors">
-        {stressorEntries.length > 0 ? (
+      {/* Founder Challenges (V3) or legacy Stressors (V2 fallback) */}
+      <ResultsCard title={cardTitle}>
+        {shownEntries.length > 0 ? (
           <div className="space-y-3">
-            {stressorEntries.map((entry) => (
+            {shownEntries.map((entry) => (
               <div key={entry.key}>
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-sm">{entry.label}</span>
@@ -396,7 +447,7 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
             ))}
           </div>
         ) : (
-          <p className="text-sm text-gray-400">No stressor data available.</p>
+          <p className="text-sm text-gray-400">No challenge data available.</p>
         )}
       </ResultsCard>
 

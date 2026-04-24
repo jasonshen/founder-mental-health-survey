@@ -177,7 +177,9 @@ export interface SubmitResponse {
 export interface ResultsResponse {
   scores: AllScores;
   section_company: SurveyResponses;
-  section_founder_stress: SurveyResponses;
+  section_founder_challenges: SurveyResponses | null;
+  /** Legacy V2 column; null for V3 respondents. */
+  section_founder_stress: SurveyResponses | null;
   created_at: string;
 }
 
