@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Disclosure from "@/components/Disclosure";
 
 export default function ConsentPage() {
   const router = useRouter();
@@ -12,39 +13,41 @@ export default function ConsentPage() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-16">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">
-        Before You Begin
-      </h1>
+      <h1 className="text-3xl font-bold text-gray-900 mb-4">Before you begin</h1>
 
-      <div className="space-y-4 text-gray-700 leading-relaxed mb-8">
-        <p>
-          Thank you for your interest in the Founder Mental Health Survey. Before
-          you proceed, please read the following.
-        </p>
+      <p className="text-gray-700 leading-relaxed mb-4">
+        This is a screening tool, not a diagnosis. It takes about 10 minutes
+        and is fully anonymous. Every question is optional.
+      </p>
+      <p className="text-gray-700 leading-relaxed mb-8">
+        Some questions ask about mood and self-harm. If any of it feels unsafe,
+        you can stop at any time — crisis resources appear where relevant.
+      </p>
 
-        <p>
-          <strong>Purpose:</strong> This survey is a screening tool designed to
-          help startup founders better understand their mental health. It is not
-          a diagnostic tool and does not replace professional medical advice.
-        </p>
+      <div className="space-y-3 mb-10">
+        <Disclosure summary="What you'll be asked">
+          <p>
+            A few demographic questions, validated clinical screeners (PHQ-9,
+            GAD-7, ASRS, AQ-10, MBI-GS), and founder-specific sections on
+            challenges, ambition, cofounder relationship, personality,
+            medication, substance use, and help-seeking history. One optional
+            open-ended reflection at the end.
+          </p>
+          <p>
+            Every item is optional. Skip anything you don&apos;t want to
+            answer.
+          </p>
+        </Disclosure>
 
-        <p>
-          <strong>What to expect:</strong> You will answer questions about your
-          company, mood, anxiety, and founder-specific stressors. The survey
-          takes about 3-5 minutes.
-        </p>
-
-        <p>
-          <strong>Confidentiality:</strong> Your responses are stored
-          anonymously. You will receive a unique token to access your results. No
-          personally identifiable information is collected during the survey.
-        </p>
-
-        <p>
-          <strong>Sensitive topics:</strong> Some questions ask about mood and
-          self-harm. If any questions cause distress, you may stop at any time.
-          Crisis resources are provided in your results if needed.
-        </p>
+        <Disclosure summary="How your responses are handled">
+          <p>
+            Responses are tied to a random access code, not your identity. If
+            you leave an email afterward, it&apos;s stored in a separate table
+            with no link back to your answers. You&apos;ll receive the access
+            code at the end — save it, because it&apos;s the only way back to
+            your results.
+          </p>
+        </Disclosure>
       </div>
 
       <div className="space-y-4 mb-8">
@@ -56,8 +59,8 @@ export default function ConsentPage() {
             className="mt-1 h-4 w-4 rounded border-gray-300 text-gray-900 focus:ring-gray-500"
           />
           <span className="text-gray-700 text-sm">
-            I am currently a founder or co-founder of a startup, or have been in
-            the past.
+            I am currently a founder or co-founder of a startup, or have been
+            in the past.
           </span>
         </label>
 
