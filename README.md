@@ -1,9 +1,10 @@
 # Founder Mental Health Survey
 
-```
-   /\_/\
-  ( o.o )   founder mental health survey
-   > ^ <    "how are you, really?"
+```sql
+-- how are you, really?
+SELECT mood
+  FROM founder
+ WHERE honest = TRUE;
 ```
 
 A confidential, validated screening tool for startup founders. About 10 minutes, fully anonymous.
