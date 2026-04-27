@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FMH — Design Playground v4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --orange: #ff6600;
+    --orange-soft: #fff3eb;
+    --indigo: #4f46e5;
+    --indigo-2: #6366f1;
+    --indigo-soft: #eef2ff;
+    --ink: #111827;
+    --ink-2: #374151;
+    --muted: #6b7280;
+    --muted-2: #9ca3af;
+    --line: #e5e7eb;
+    --line-2: #f3f4f6;
+    --bg: #ffffff;
+    --bg-2: #fafafa;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); color: var(--ink); }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* ─────────── Layout ─────────── */
+  .page {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 24px 24px 64px;
+  }
+
+  /* ─────────── Brand row ─────────── */
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 22px;
+  }
+  .brand-mark {
+    width: 30px;
+    height: 30px;
+    background: var(--indigo);
+    color: #fff;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 11px;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    box-shadow: 0 1px 0 rgba(255, 102, 0, 0.0), inset 0 -2px 0 rgba(0,0,0,0.08);
+  }
+  .brand-name {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    color: var(--ink);
+  }
+  .brand-name .dot {
+    color: var(--orange);
+    margin: 0 6px;
+    font-weight: 700;
+  }
+  .brand-name .meta {
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  /* ─────────── Hero ─────────── */
+  .hero {
+    border-top: 3px solid var(--orange);
+    padding-top: 18px;
+    margin-bottom: 22px;
+  }
+  .eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .eyebrow-dot {
+    display: inline-block;
+    width: 5px; height: 5px;
+    background: var(--orange);
+    border-radius: 50%;
+    vertical-align: middle;
+    margin: -2px 8px 0 0;
+  }
+  h1.title {
+    font-size: clamp(28px, 4.2vw, 38px);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+  }
+  h1.title .accent {
+    color: var(--orange);
+  }
+
+  /* ─────────── Quote stage ─────────── */
+  .stage {
+    margin: 22px 0 18px;
+    border: 1px solid var(--line);
+    background: var(--bg-2);
+    border-radius: 14px;
+    padding: 36px 40px 30px;
+    position: relative;
+    overflow: hidden;
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .stage::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px; height: 56px;
+    background: linear-gradient(180deg, var(--orange) 0%, transparent 100%);
+    border-radius: 0 0 4px 0;
+  }
+  .stage-mark {
+    position: absolute;
+    top: 12px;
+    right: 20px;
+    font-family: 'Source Serif 4', serif;
+    font-size: 56px;
+    line-height: 1;
+    color: var(--orange);
+    opacity: 0.16;
+    font-style: italic;
+    user-select: none;
+  }
+  .stage-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted-2);
+    margin-bottom: 14px;
+  }
+  .quote {
+    font-family: 'Source Serif 4', serif;
+    font-size: clamp(20px, 2.6vw, 26px);
+    line-height: 1.4;
+    font-weight: 400;
+    color: var(--ink);
+    font-style: italic;
+    letter-spacing: -0.005em;
+    min-height: 2.6em;
+  }
+  .quote .word {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.42s ease, transform 0.42s ease;
+  }
+  .quote .word.in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .quote .word.out {
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: opacity 0.32s ease, transform 0.32s ease;
+  }
+  .progress-dots {
+    position: absolute;
+    bottom: 14px;
+    right: 18px;
+    display: flex;
+    gap: 5px;
+  }
+  .pdot {
+    width: 5px; height: 5px;
+    background: var(--line);
+    border-radius: 50%;
+    transition: background 0.4s ease, width 0.4s ease;
+  }
+  .pdot.active {
+    background: var(--orange);
+    width: 16px;
+    border-radius: 3px;
+  }
+
+  /* ─────────── Lede ─────────── */
+  .lede {
+    font-size: 15.5px;
+    color: var(--ink-2);
+    line-height: 1.55;
+    margin-bottom: 16px;
+  }
+
+  /* ─────────── Tagrow ─────────── */
+  .tagrow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .tag {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ink-2);
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    padding: 5px 11px;
+    border-radius: 999px;
+  }
+  .tag.accent {
+    color: var(--orange);
+    background: var(--orange-soft);
+    border-color: rgba(255, 102, 0, 0.2);
+  }
+
+  /* ─────────── CTA ─────────── */
+  .cta-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 36px;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--orange);
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+    padding: 12px 24px;
+    border-radius: 8px;
+    letter-spacing: -0.005em;
+    transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(255,102,0,0.15);
+  }
+  .btn:hover { background: #e85c00; box-shadow: 0 2px 8px rgba(255,102,0,0.25); }
+  .btn:active { transform: translateY(1px); }
+  .btn .arrow { transition: transform 0.2s ease; }
+  .btn:hover .arrow { transform: translateX(3px); }
+  .btn-meta {
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  /* ─────────── Disclosures ─────────── */
+  .disclosures {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 40px;
+  }
+  details {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #fff;
+    overflow: hidden;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+  details[open] {
+    background: var(--bg-2);
+    border-color: var(--line);
+  }
+  details[open] summary {
+    border-bottom: 1px solid var(--line-2);
+  }
+  summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 14px 18px;
+    font-size: 14.5px;
+    font-weight: 500;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    user-select: none;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary:hover { background: var(--line-2); }
+  details[open] summary:hover { background: transparent; }
+  .chev {
+    width: 14px; height: 14px;
+    color: var(--muted-2);
+    transition: transform 0.2s ease, color 0.2s ease;
+  }
+  details[open] .chev {
+    transform: rotate(180deg);
+    color: var(--orange);
+  }
+  .disclosure-body {
+    padding: 14px 18px 18px;
+    font-size: 14.5px;
+    line-height: 1.65;
+    color: var(--ink-2);
+  }
+  .disclosure-body p + p { margin-top: 10px; }
+  .disclosure-body strong { color: var(--ink); font-weight: 600; }
+  .disclosure-body a {
+    color: var(--orange);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255,102,0,0.3);
+    transition: border-color 0.15s ease;
+  }
+  .disclosure-body a:hover { border-bottom-color: var(--orange); }
+  .disclosure-body em {
+    color: var(--ink);
+    font-style: normal;
+    font-weight: 600;
+  }
+
+  /* ─────────── Footer ─────────── */
+  footer {
+    border-top: 1px solid var(--line);
+    padding-top: 18px;
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.7;
+    text-align: center;
+  }
+  footer a {
+    color: var(--ink-2);
+    text-decoration: none;
+    border-bottom: 1px solid var(--line);
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  footer a:hover { color: var(--orange); border-color: var(--orange); }
+
+  /* ─────────── Reduced motion ─────────── */
+  @media (prefers-reduced-motion: reduce) {
+    .quote .word {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+
+  /* ─────────── Mobile tightening ─────────── */
+  @media (max-width: 540px) {
+    .page { padding: 16px 18px 56px; }
+    .brand { margin-bottom: 16px; }
+    .hero { padding-top: 14px; margin-bottom: 16px; }
+    h1.title { font-size: 24px; }
+    .stage {
+      padding: 28px 22px 26px;
+      min-height: 160px;
+      margin: 16px 0 14px;
+    }
+    .stage-mark { font-size: 44px; top: 8px; right: 14px; }
+    .progress-dots { bottom: 12px; right: 14px; }
+    .quote { font-size: 19px; min-height: 2.4em; }
+    .lede { font-size: 14.5px; margin-bottom: 14px; }
+    .tagrow { margin-bottom: 12px; }
+    .cta-row { margin-bottom: 28px; flex-wrap: wrap; gap: 10px; }
+    .btn { padding: 11px 22px; }
+  }
+</style>
+</head>
+<body>
+  <main class="page">
+
+    <header class="brand">
+      <div class="brand-mark">FMH</div>
+      <div class="brand-name">
+        Founder Mental Health
+        <span class="dot">·</span>
+        <span class="meta">2026 research</span>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="eyebrow"><span class="eyebrow-dot"></span>A confidential, anonymous check-in</div>
+      <h1 class="title">The YC Founder Mental Health Survey<span class="accent">.</span></h1>
+    </section>
+
+    <section class="stage" aria-live="polite">
+      <span class="stage-mark" aria-hidden="true">&ldquo;</span>
+      <div class="stage-label">What founders actually said</div>
+      <p class="quote" id="quote"></p>
+      <div class="progress-dots" id="dots" aria-hidden="true"></div>
+    </section>
+
+    <p class="lede">
+      Running a company is one of the most psychologically demanding things a
+      person can do. This survey gives you a clearer picture of how you're
+      actually doing.
+    </p>
+
+    <div class="tagrow">
+      <span class="tag accent">~10 minutes</span>
+      <span class="tag">Anonymous</span>
+      <span class="tag">Results immediately</span>
+      <span class="tag">Validated screeners</span>
+    </div>
+
+    <div class="cta-row">
+      <a href="/consent" class="btn">
+        Take the survey
+        <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+      <span class="btn-meta">No account. No tracking.</span>
+    </div>
+
+    <section class="disclosures">
+      <details>
+        <summary>
+          Why are we doing this?
+          <svg class="chev" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.06l3.71-3.83a.75.75 0 111.08 1.04l-4.25 4.39a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z" clip-rule="evenodd"/></svg>
+        </summary>
+        <div class="disclosure-body">
+          <p>Founders carry a psychological burden that's mostly invisible — to investors, to employees, to family, often to themselves. Cofounder conflict, identity-merge with the company, money pressure, isolation, the relentless self-judgment. Most of it never gets named out loud.</p>
+          <p>This survey exists for two reasons:</p>
+          <p><em>Understanding.</em> We want a clearer, evidence-based picture of how founders are <em>actually</em> doing — not curated, not LinkedIn-polished. Validated clinical instruments (PHQ-9, GAD-7, ASRS, AQ-10, MBI) give us a real signal instead of vibes.</p>
+          <p><em>Normalizing.</em> When you see your own results next to other founders', the loneliest stuff stops feeling so unique. The quotes at the top of this page are real things real founders wrote when reaching out for help. You're not the outlier you think you are.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>
+          What does it measure?
+          <svg class="chev" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.06l3.71-3.83a.75.75 0 111.08 1.04l-4.25 4.39a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z" clip-rule="evenodd"/></svg>
+        </summary>
+        <div class="disclosure-body">
+          <p>Validated clinical screeners for <strong>depression (PHQ-9)</strong>, <strong>anxiety (GAD-7)</strong>, <strong>ADHD (ASRS)</strong>, <strong>autism (AQ-10)</strong>, and <strong>burnout (MBI-GS)</strong>.</p>
+          <p>Plus founder-specific sections: life outlook, ambition, founder-specific challenges, cofounder relationship, personality, social support, help-seeking, medication, and substance use.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>
+          How anonymous is it, really?
+          <svg class="chev" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.06l3.71-3.83a.75.75 0 111.08 1.04l-4.25 4.39a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z" clip-rule="evenodd"/></svg>
+        </summary>
+        <div class="disclosure-body">
+          <p>Your responses are tied to a random access code, not your identity. If you leave an email for the report, it lives in a separate table with <strong>no join key</strong> to your responses — even we can't look you up by email.</p>
+          <p>
+            Don't take our word for it. The
+            <a href="https://github.com/jasonshen/founder-mental-health-survey/tree/main/supabase/migrations" target="_blank" rel="noopener noreferrer">database schema</a>
+            and the full
+            <a href="https://github.com/jasonshen/founder-mental-health-survey" target="_blank" rel="noopener noreferrer">source code on GitHub</a>
+            are open for inspection. The privacy hardening commit is
+            <a href="https://github.com/jasonshen/founder-mental-health-survey/blob/main/supabase/migrations/005_privacy_hardening.sql" target="_blank" rel="noopener noreferrer">005_privacy_hardening.sql</a>.
+          </p>
+        </div>
+      </details>
+
+      <details>
+        <summary>
+          What do I get?
+          <svg class="chev" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.06l3.71-3.83a.75.75 0 111.08 1.04l-4.25 4.39a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z" clip-rule="evenodd"/></svg>
+        </summary>
+        <div class="disclosure-body">
+          <p>Your scores with severity bands, how you compare to the general population, and (when the cohort is large enough) how you compare to other founders who've taken the survey.</p>
+          <p>Optionally leave an email for a detailed report and information on coaching, retreats, and research updates.</p>
+        </div>
+      </details>
+    </section>
+
+    <footer>
+      Created by
+      <a href="https://jasonshen.com" target="_blank" rel="noopener noreferrer">Jason Shen</a>
+      and
+      <a href="https://www.linkedin.com/in/keegan-walden-ph-d-672ab9101/" target="_blank" rel="noopener noreferrer">Keegan Walden</a>
+    </footer>
+  </main>
+
+<script>
+  const QUOTES = [
+    "Desperately want to save my friendship and my company",
+    "Blurting stuff out during high stakes negotiations",
+    "We argue multiple times a week",
+    "How to show up when I have the weakest opinion / voice",
+    "Haven't seen family in a while, don't want to socialize with anyone",
+    "Just want my old self, my old energy level back",
+    "Saying things that are reactive / emotionally charged / raw",
+    "I feel like eventually I'm going to be found out",
+    "Shut down my last startup, and now I have lost the spark",
+    "I feel like I've lost my purpose in life",
+    "My todo list is in a bankruptcy state",
+    "It takes hours to fall asleep",
+    "All I can think about is how our runway gets shorter every day",
+  ];
+
+  function shuffle(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  const order = shuffle(QUOTES);
+  const stagger = 60;
+  const holdMs = 4200;
+  const fadeOutMs = 380;
+  const gapMs = 220;
+
+  const quoteEl = document.getElementById('quote');
+  const dotsEl = document.getElementById('dots');
+
+  order.forEach(() => {
+    const d = document.createElement('span');
+    d.className = 'pdot';
+    dotsEl.appendChild(d);
+  });
+
+  function setActiveDot(i) {
+    [...dotsEl.children].forEach((d, idx) => {
+      d.classList.toggle('active', idx === i);
+    });
+  }
+
+  function renderQuote(text) {
+    quoteEl.innerHTML = '';
+    const words = text.split(' ');
+    words.forEach((w, i) => {
+      const span = document.createElement('span');
+      span.className = 'word';
+      span.textContent = w;
+      span.style.transitionDelay = `${i * stagger}ms`;
+      quoteEl.appendChild(span);
+      if (i < words.length - 1) quoteEl.appendChild(document.createTextNode(' '));
+    });
+    return words.length;
+  }
+
+  function fadeIn() {
+    requestAnimationFrame(() => {
+      quoteEl.querySelectorAll('.word').forEach(w => w.classList.add('in'));
+    });
+  }
+
+  function fadeOut() {
+    quoteEl.querySelectorAll('.word').forEach(w => {
+      w.style.transitionDelay = '0ms';
+      w.classList.remove('in');
+      w.classList.add('out');
+    });
+  }
+
+  let i = 0;
+  function cycle() {
+    const text = order[i];
+    setActiveDot(i);
+    const wordCount = renderQuote(text);
+    fadeIn();
+    const totalIn = wordCount * stagger + 420;
+    setTimeout(() => {
+      fadeOut();
+      setTimeout(() => {
+        i = (i + 1) % order.length;
+        cycle();
+      }, fadeOutMs + gapMs);
+    }, totalIn + holdMs);
+  }
+
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce) {
+    function staticCycle() {
+      const text = order[i];
+      setActiveDot(i);
+      quoteEl.textContent = text;
+      i = (i + 1) % order.length;
+      setTimeout(staticCycle, holdMs);
+    }
+    staticCycle();
+  } else {
+    cycle();
+  }
+</script>
+</body>
+</html>
