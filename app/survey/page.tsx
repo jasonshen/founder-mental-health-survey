@@ -29,6 +29,8 @@ import CrisisResourcesBlock from "@/components/CrisisResourcesBlock";
 // Bump this when the question set changes, to invalidate stale drafts.
 const SURVEY_VERSION = "v3-2026-04";
 const DRAFT_KEY = "fmh_survey_draft";
+// Set on the consent page; consumed (and cleared) once on survey mount.
+const FOUNDER_STATUS_SEED_KEY = "fmh_founder_status_seed";
 
 type FlatResponses = Record<string, ResponseValue>;
 
@@ -124,12 +126,26 @@ export default function SurveyPage() {
     [responses]
   );
 
-  // Hydrate from draft on mount.
+  // Hydrate from draft on mount; otherwise pick up the founder_status
+  // seed from the consent page so it lands in section_company.
   useEffect(() => {
     const draft = loadDraft();
     if (draft && Object.keys(draft.responses).length > 0) {
       setPendingDraft(draft);
       setShowResumePrompt(true);
+      return;
+    }
+
+    try {
+      const seed = window.localStorage.getItem(FOUNDER_STATUS_SEED_KEY);
+      if (seed === "current" || seed === "past") {
+        setResponses((prev) =>
+          prev.founder_status === undefined ? { ...prev, founder_status: seed } : prev
+        );
+      }
+      window.localStorage.removeItem(FOUNDER_STATUS_SEED_KEY);
+    } catch {
+      // localStorage unavailable — proceed without the seed.
     }
   }, []);
 

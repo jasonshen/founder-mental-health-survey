@@ -123,14 +123,13 @@ function severityColor(severity: PHQ9Severity | GAD7Severity): string {
   }
 }
 
-function severityBarWidth(severity: PHQ9Severity | GAD7Severity): string {
-  switch (severity) {
-    case "none": return "20%";
-    case "mild": return "40%";
-    case "moderate": return "60%";
-    case "moderately_severe": return "80%";
-    case "severe": return "100%";
-  }
+// Score-based bar width: percentage of the instrument's max possible score.
+// This means a 0 score shows an empty bar (correctly) and a max score shows
+// a full bar — earlier band-based widths gave a 0 score a misleading 20%
+// fill and made all "severe" scores look identical.
+function scoreBarWidth(score: number, maxScore: number): string {
+  const pct = Math.max(0, Math.min(100, (score / maxScore) * 100));
+  return `${pct}%`;
 }
 
 function severityBarColor(severity: PHQ9Severity | GAD7Severity): string {
@@ -152,6 +151,46 @@ interface CohortData {
   phq9: { percentile: number; mean: number };
   gad7: { percentile: number; mean: number };
   asrs: { percentile: number; above_threshold_pct: number };
+}
+
+function DarkTriadRow({
+  label,
+  value,
+}: {
+  label: string;
+  value: number | null;
+}) {
+  if (value === null) {
+    return (
+      <div>
+        <div className="flex items-center justify-between mb-1">
+          <span className="text-sm font-medium text-gray-800">{label}</span>
+          <span className="text-sm text-gray-400">No answers</span>
+        </div>
+      </div>
+    );
+  }
+  // 1-5 scale → 0-100% bar. Subtract 1 from numerator so a true "1"
+  // (strongly disagree on every item) renders as an empty bar rather
+  // than 20% — same fix we applied to PHQ-9 / GAD-7.
+  const pct = Math.max(0, Math.min(100, ((value - 1) / 4) * 100));
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-1">
+        <span className="text-sm font-medium text-gray-800">{label}</span>
+        <span className="text-sm font-semibold tabular-nums">
+          {value.toFixed(2)}
+          <span className="text-gray-400 font-normal"> / 5</span>
+        </span>
+      </div>
+      <div className="w-full bg-gray-200 rounded-full h-2">
+        <div
+          className="bg-indigo-500 h-2 rounded-full transition-all"
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+    </div>
+  );
 }
 
 function CohortRow({
@@ -431,7 +470,7 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
           <div className="w-full bg-gray-200 rounded-full h-3">
             <div
               className={`h-3 rounded-full transition-all ${severityBarColor(scores.phq9.severity)}`}
-              style={{ width: severityBarWidth(scores.phq9.severity) }}
+              style={{ width: scoreBarWidth(scores.phq9.score, 27) }}
             />
           </div>
         </div>
@@ -458,7 +497,7 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
           <div className="w-full bg-gray-200 rounded-full h-3">
             <div
               className={`h-3 rounded-full transition-all ${severityBarColor(scores.gad7.severity)}`}
-              style={{ width: severityBarWidth(scores.gad7.severity) }}
+              style={{ width: scoreBarWidth(scores.gad7.score, 21) }}
             />
           </div>
         </div>
@@ -475,19 +514,25 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
         </p>
       </ResultsCard>
 
-      {/* ADHD */}
-      <ResultsCard title="ADHD Screening (ASRS)">
+      {/* ADHD traits */}
+      <ResultsCard title="ADHD Traits Screening (ASRS)">
         <div className="mb-3">
           <div className="flex items-center justify-between mb-1">
-            <span className="text-sm text-gray-600">Items flagged</span>
-            <span className="font-semibold text-lg">{scores.asrs.items_flagged}/6</span>
+            <span className="text-sm text-gray-600">
+              Screening items met
+            </span>
+            <span className="font-semibold text-lg">
+              {scores.asrs.items_flagged}/6
+            </span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-3">
             <div
               className={`h-3 rounded-full transition-all ${
                 scores.asrs.above_threshold ? "bg-orange-500" : "bg-green-500"
               }`}
-              style={{ width: `${(scores.asrs.items_flagged / 6) * 100}%` }}
+              style={{
+                width: scoreBarWidth(scores.asrs.items_flagged, 6),
+              }}
             />
           </div>
         </div>
@@ -500,14 +545,97 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
                 : "bg-green-100 text-green-800"
             }`}
           >
-            {scores.asrs.above_threshold ? "Above (4+ items)" : "Below"}
+            {scores.asrs.above_threshold
+              ? "Above (4+ of 6 items met)"
+              : "Below (fewer than 4 items met)"}
           </span>
         </p>
         <p className="text-sm text-gray-500">
-          About {scores.asrs.general_pop_above_threshold_pct}% of the general
-          population meets the threshold for further ADHD evaluation.
+          The ASRS-v1.1 screener flags an item when you answer in a high-frequency
+          range (items 1–3: <em>Sometimes</em> or higher; items 4–6: <em>Often</em>{" "}
+          or higher). Meeting <strong>4 or more out of 6</strong> is the cutoff
+          that suggests further ADHD evaluation may be worthwhile. About{" "}
+          {scores.asrs.general_pop_above_threshold_pct}% of the general
+          population meets this threshold.
         </p>
       </ResultsCard>
+
+      {/* Autism spectrum traits */}
+      {scores.aq10 && scores.aq10.items_answered > 0 && (
+        <ResultsCard title="Autism Spectrum Traits Screening (AQ-10)">
+          <div className="mb-3">
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-sm text-gray-600">Score</span>
+              <span className="font-semibold text-lg">
+                {scores.aq10.score}/10
+              </span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-3">
+              <div
+                className={`h-3 rounded-full transition-all ${
+                  scores.aq10.above_threshold ? "bg-orange-500" : "bg-green-500"
+                }`}
+                style={{ width: scoreBarWidth(scores.aq10.score, 10) }}
+              />
+            </div>
+          </div>
+          <p className="mb-1">
+            Threshold:{" "}
+            <span
+              className={`inline-block px-2 py-0.5 rounded text-sm font-medium ${
+                scores.aq10.above_threshold
+                  ? "bg-orange-100 text-orange-800"
+                  : "bg-green-100 text-green-800"
+              }`}
+            >
+              {scores.aq10.above_threshold
+                ? "At or above (6+ of 10)"
+                : "Below (fewer than 6)"}
+            </span>
+          </p>
+          <p className="text-sm text-gray-500">
+            The AQ-10 awards 1 point per item answered in the autism-trait
+            direction. A score of <strong>6 or higher</strong> is the cutoff
+            commonly used in adult primary care to suggest a referral for full
+            autism assessment. This is a screening tool only, not a diagnosis.
+          </p>
+        </ResultsCard>
+      )}
+
+      {/* Dark Triad personality (Dirty Dozen) */}
+      {scores.darkTriad && scores.darkTriad.items_answered > 0 && (
+        <ResultsCard title="Personality (Dirty Dozen Dark Triad)">
+          <div className="space-y-3 mb-3">
+            <DarkTriadRow
+              label="Machiavellianism"
+              value={scores.darkTriad.machiavellianism}
+            />
+            <DarkTriadRow
+              label="Psychopathy"
+              value={scores.darkTriad.psychopathy}
+            />
+            <DarkTriadRow
+              label="Narcissism"
+              value={scores.darkTriad.narcissism}
+            />
+          </div>
+          {scores.darkTriad.composite !== null && (
+            <p className="text-sm text-gray-700 mb-1">
+              Composite (mean of all 12 items):{" "}
+              <strong>
+                {scores.darkTriad.composite.toFixed(2)}
+              </strong>
+              <span className="text-gray-400"> / 5</span>
+            </p>
+          )}
+          <p className="text-sm text-gray-500">
+            Each subscale is the mean of 4 items rated 1 (strongly disagree) to
+            5 (strongly agree). Higher scores reflect stronger expression of the
+            trait. Dark Triad traits aren&apos;t inherently pathological — modest
+            elevations are common and can be adaptive in entrepreneurial settings.
+          </p>
+        </ResultsCard>
+      )}
 
       {/* Founder Challenges (V3) grouped into themes, or legacy Stressors (V2 fallback) */}
       {hasAnyChallengeData ? (
@@ -594,7 +722,7 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
                 caption={`Founder cohort average: ${cohort.gad7.mean} / 21`}
               />
               <CohortRow
-                label="ADHD (ASRS items flagged)"
+                label="ADHD traits (ASRS items met)"
                 percentile={cohort.asrs.percentile}
                 caption={`${cohort.asrs.above_threshold_pct}% of founders meet the threshold`}
               />
@@ -612,10 +740,12 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
       <div className="mt-8 p-5 bg-indigo-50 border border-indigo-100 rounded-lg">
         <h3 className="font-semibold text-indigo-900 mb-2">What do these scores mean?</h3>
         <ul className="text-sm text-indigo-800 space-y-2">
-          <li><strong>PHQ-9</strong> is a validated depression screener. Scores of 10+ suggest moderate depression worth discussing with a professional.</li>
-          <li><strong>GAD-7</strong> measures generalized anxiety. Scores of 10+ suggest moderate anxiety that may benefit from support.</li>
-          <li><strong>ASRS</strong> screens for ADHD traits. 4+ flagged items suggest further evaluation may be worthwhile — many founders have undiagnosed ADHD.</li>
-          <li><strong>Founder stressors</strong> are common pressure points. High scores here don't mean something is wrong — they mean you're carrying a lot.</li>
+          <li><strong>PHQ-9</strong> is a validated depression screener (0–27). 10+ suggests moderate depression worth discussing with a professional. The bar above shows your score as a fraction of the maximum.</li>
+          <li><strong>GAD-7</strong> measures generalized anxiety (0–21). 10+ suggests moderate anxiety that may benefit from support.</li>
+          <li><strong>ASRS</strong> screens for <strong>ADHD traits</strong>. 4 or more of 6 items meeting their frequency threshold suggests further evaluation may be worthwhile — many founders have undiagnosed ADHD.</li>
+          <li><strong>AQ-10</strong> screens for <strong>autism spectrum traits</strong> (0–10). 6+ is the threshold typically used to recommend a full autism assessment. Trait-level signal — not a diagnosis.</li>
+          <li><strong>Dirty Dozen</strong> measures three Dark Triad traits (Machiavellianism, Psychopathy, Narcissism), each on a 1–5 scale. Modest elevations are common and not inherently pathological.</li>
+          <li><strong>Founder challenges</strong> are common pressure points. High scores don&apos;t mean something is wrong — they mean you&apos;re carrying a lot.</li>
         </ul>
       </div>
 

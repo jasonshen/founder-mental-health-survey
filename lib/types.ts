@@ -159,10 +159,31 @@ export interface ASRSScore {
   general_pop_above_threshold_pct: number;
 }
 
+export interface AQ10Score {
+  /** 0–10. Each item scores 1 if respondent answered in the autism-trait
+   *  direction (agree for non-reversed items, disagree for reversed). */
+  score: number;
+  items_answered: number;
+  /** AQ-10 clinical threshold: ≥6 suggests further evaluation. */
+  above_threshold: boolean;
+}
+
+export interface DarkTriadScore {
+  /** Each subscale: mean of 4 items on a 1–5 Likert. */
+  machiavellianism: number | null;
+  psychopathy: number | null;
+  narcissism: number | null;
+  /** Mean of all 12 items. Useful as an overall composite. */
+  composite: number | null;
+  items_answered: number;
+}
+
 export interface AllScores {
   phq9: PHQ9Score;
   gad7: GAD7Score;
   asrs: ASRSScore;
+  aq10?: AQ10Score;
+  darkTriad?: DarkTriadScore;
 }
 
 // ============================================================

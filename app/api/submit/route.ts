@@ -194,6 +194,8 @@ async function computeAndMarkComplete(
       adhd: responses.adhd ?? {},
       depression: responses.depression ?? {},
       anxiety: responses.anxiety ?? {},
+      autism: responses.autism ?? {},
+      dark_triad: responses.dark_triad ?? {},
     });
 
     const { error: updateError } = await supabase
@@ -235,6 +237,8 @@ async function computeAndMarkCompleteWithResponses(
       adhd: columnUpdates.section_adhd ?? {},
       depression: columnUpdates.section_depression ?? {},
       anxiety: columnUpdates.section_anxiety ?? {},
+      autism: columnUpdates.section_autism ?? {},
+      dark_triad: columnUpdates.section_dark_triad ?? {},
     });
 
     const { error: updateError } = await supabase

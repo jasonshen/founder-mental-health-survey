@@ -19,6 +19,19 @@ export interface SectionMeta {
 // ============================================================
 
 const companyQuestions: Question[] = [
+  // Seeded from the consent page radio. Hidden in the survey UI via
+  // condition: false so we don't double-ask, but the value flows through
+  // to section_company in the DB.
+  {
+    id: "founder_status",
+    section: "company",
+    text: "Are you a current or past founder?",
+    type: "single_select",
+    options: ["current", "past"],
+    required: false,
+    instrument: null,
+    condition: () => false,
+  },
   {
     id: "company_yc_batch",
     section: "company",
@@ -266,7 +279,7 @@ const lifeOutlookQuestions: Question[] = [
     section: "life_outlook",
     text: "How often do you worry about being able to meet normal monthly living expenses?",
     type: "scale_0_10",
-    anchors: { left: "Worry all of the time", right: "Do not ever worry" },
+    anchors: { left: "Never worry", right: "Worry all of the time" },
     required: false,
     instrument: null,
   },
@@ -275,7 +288,7 @@ const lifeOutlookQuestions: Question[] = [
     section: "life_outlook",
     text: "How often do you worry about safety, food, or housing?",
     type: "scale_0_10",
-    anchors: { left: "Worry all of the time", right: "Do not ever worry" },
+    anchors: { left: "Never worry", right: "Worry all of the time" },
     required: false,
     instrument: null,
   },
@@ -630,6 +643,34 @@ const macroOutlookQuestions: Question[] = [
 // ============================================================
 
 const cofounderQuestions: Question[] = [
+  // Demographic context for the primary cofounder relationship.
+  // Asked first so subsequent attitudinal items have shared referent.
+  {
+    id: "cf_gender",
+    section: "cofounder",
+    text: "What is your primary cofounder's gender?",
+    type: "single_select",
+    options: ["Male", "Female", "Non-binary", "Prefer not to say"],
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "cf_role",
+    section: "cofounder",
+    text: "What is your primary cofounder's role?",
+    type: "single_select",
+    options: [
+      "CEO",
+      "CTO",
+      "COO",
+      "CPO / Head of Product",
+      "Head of Design",
+      "Head of Engineering",
+      "Other",
+    ],
+    required: false,
+    instrument: null,
+  },
   {
     id: "cf_aligned_vision",
     section: "cofounder",

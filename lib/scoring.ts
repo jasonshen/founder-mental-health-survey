@@ -5,6 +5,8 @@ import {
   GAD7Score,
   GAD7Severity,
   ASRSScore,
+  AQ10Score,
+  DarkTriadScore,
   SurveyResponses,
 } from "./types";
 import {
@@ -131,6 +133,87 @@ export function scoreASRS(responses: SurveyResponses): ASRSScore {
 }
 
 // ============================================================
+// AQ-10 Scoring (Autism spectrum traits)
+// ============================================================
+
+// Items 1, 7, 8, 10 score 1 point if respondent agrees ("Definitely agree"
+// or "Slightly agree"). Items 2, 3, 4, 5, 6, 9 score 1 point if respondent
+// disagrees ("Definitely disagree" or "Slightly disagree"). Score range 0-10.
+// Threshold ≥6 suggests further evaluation (Allison et al., 2012).
+const AQ_AGREE_DIRECTION = ["Definitely agree", "Slightly agree"];
+const AQ_DISAGREE_DIRECTION = ["Definitely disagree", "Slightly disagree"];
+const AQ_REVERSED_ITEMS = new Set([2, 3, 4, 5, 6, 9]);
+const AQ10_THRESHOLD = 6;
+
+export function scoreAQ10(responses: SurveyResponses): AQ10Score {
+  let score = 0;
+  let answered = 0;
+  for (let i = 1; i <= 10; i++) {
+    const answer = responses[`aq_${i}`];
+    if (typeof answer !== "string" || answer === "") continue;
+    answered++;
+    const reversed = AQ_REVERSED_ITEMS.has(i);
+    const target = reversed ? AQ_DISAGREE_DIRECTION : AQ_AGREE_DIRECTION;
+    if (target.includes(answer)) score++;
+  }
+  return {
+    score,
+    items_answered: answered,
+    above_threshold: score >= AQ10_THRESHOLD,
+  };
+}
+
+// ============================================================
+// Dirty Dozen Dark Triad Scoring
+// ============================================================
+
+const AGREE_5_VALUES: Record<string, number> = {
+  "Strongly disagree": 1,
+  Disagree: 2,
+  "Neither agree nor disagree": 3,
+  Agree: 4,
+  "Strongly agree": 5,
+};
+
+function meanOfItems(
+  responses: SurveyResponses,
+  ids: string[]
+): { mean: number | null; answered: number } {
+  let sum = 0;
+  let count = 0;
+  for (const id of ids) {
+    const raw = responses[id];
+    if (typeof raw !== "string" || raw === "") continue;
+    const v = AGREE_5_VALUES[raw];
+    if (typeof v !== "number") continue;
+    sum += v;
+    count++;
+  }
+  return {
+    mean: count > 0 ? Number((sum / count).toFixed(2)) : null,
+    answered: count,
+  };
+}
+
+export function scoreDarkTriad(responses: SurveyResponses): DarkTriadScore {
+  const mach = meanOfItems(responses, ["dd_m_1", "dd_m_2", "dd_m_3", "dd_m_4"]);
+  const psyc = meanOfItems(responses, ["dd_p_1", "dd_p_2", "dd_p_3", "dd_p_4"]);
+  const narc = meanOfItems(responses, ["dd_n_1", "dd_n_2", "dd_n_3", "dd_n_4"]);
+  const all = meanOfItems(responses, [
+    "dd_m_1", "dd_m_2", "dd_m_3", "dd_m_4",
+    "dd_p_1", "dd_p_2", "dd_p_3", "dd_p_4",
+    "dd_n_1", "dd_n_2", "dd_n_3", "dd_n_4",
+  ]);
+  return {
+    machiavellianism: mach.mean,
+    psychopathy: psyc.mean,
+    narcissism: narc.mean,
+    composite: all.mean,
+    items_answered: all.answered,
+  };
+}
+
+// ============================================================
 // Compute All Scores
 // ============================================================
 
@@ -138,10 +221,14 @@ export function computeAllScores(responses: {
   adhd: SurveyResponses;
   depression: SurveyResponses;
   anxiety: SurveyResponses;
+  autism?: SurveyResponses;
+  dark_triad?: SurveyResponses;
 }): AllScores {
   return {
     phq9: scorePHQ9(responses.depression),
     gad7: scoreGAD7(responses.anxiety),
     asrs: scoreASRS(responses.adhd),
+    aq10: scoreAQ10(responses.autism ?? {}),
+    darkTriad: scoreDarkTriad(responses.dark_triad ?? {}),
   };
 }

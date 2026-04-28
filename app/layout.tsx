@@ -4,7 +4,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Founder Mental Health Survey",
   description:
-    "A confidential screening tool for startup founders. Get your scores on depression, anxiety, and ADHD — plus founder-specific stressors.",
+    "A confidential screening tool for startup founders. Get your scores on depression, anxiety, and ADHD traits — plus founder-specific stressors.",
   robots: { index: true, follow: true },
   openGraph: {
     title: "Founder Mental Health Survey",

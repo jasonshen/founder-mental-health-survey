@@ -45,7 +45,7 @@ export default function HomePage() {
         <Disclosure summary="What does it measure?">
           <p>
             Validated clinical screeners for depression (PHQ-9), anxiety
-            (GAD-7), ADHD (ASRS), autism (AQ-10), and burnout (MBI-GS).
+            (GAD-7), ADHD traits (ASRS), autism spectrum traits (AQ-10), and burnout (MBI-GS).
           </p>
           <p>
             Plus founder-specific sections: life outlook, ambition,

@@ -4,12 +4,29 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Disclosure from "@/components/Disclosure";
 
+// localStorage key the survey reads on mount to seed the company section.
+// Mirrors fmh_survey_draft format in app/survey/page.tsx.
+const FOUNDER_STATUS_SEED_KEY = "fmh_founder_status_seed";
+
+type FounderStatus = "current" | "past";
+
 export default function ConsentPage() {
   const router = useRouter();
   const [agreed, setAgreed] = useState(false);
-  const [isFounder, setIsFounder] = useState(false);
+  const [founderStatus, setFounderStatus] = useState<FounderStatus | "">("");
 
-  const canContinue = agreed && isFounder;
+  const canContinue = agreed && founderStatus !== "";
+
+  function handleStart() {
+    if (founderStatus !== "") {
+      try {
+        window.localStorage.setItem(FOUNDER_STATUS_SEED_KEY, founderStatus);
+      } catch {
+        // Quota / private mode — fail silently; we'll just not seed.
+      }
+    }
+    router.push("/survey");
+  }
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-16">
@@ -50,20 +67,43 @@ export default function ConsentPage() {
         </Disclosure>
       </div>
 
-      <div className="space-y-4 mb-8">
-        <label className="flex items-start gap-3 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={isFounder}
-            onChange={(e) => setIsFounder(e.target.checked)}
-            className="mt-1 h-4 w-4 rounded border-gray-300 text-gray-900 focus:ring-gray-500"
-          />
-          <span className="text-gray-700 text-sm">
-            I am currently a founder or co-founder of a startup, or have been
-            in the past.
-          </span>
-        </label>
+      <fieldset className="mb-6">
+        <legend className="text-sm font-medium text-gray-900 mb-3">
+          Are you a current or past founder?
+        </legend>
+        <div className="space-y-2">
+          <label className="flex items-start gap-3 cursor-pointer">
+            <input
+              type="radio"
+              name="founder_status"
+              value="current"
+              checked={founderStatus === "current"}
+              onChange={() => setFounderStatus("current")}
+              className="mt-1 h-4 w-4 border-gray-300 text-gray-900 focus:ring-gray-500"
+            />
+            <span className="text-gray-700 text-sm">
+              <strong>Current founder.</strong> I&apos;m actively working on a
+              startup right now.
+            </span>
+          </label>
+          <label className="flex items-start gap-3 cursor-pointer">
+            <input
+              type="radio"
+              name="founder_status"
+              value="past"
+              checked={founderStatus === "past"}
+              onChange={() => setFounderStatus("past")}
+              className="mt-1 h-4 w-4 border-gray-300 text-gray-900 focus:ring-gx-500"
+            />
+            <span className="text-gray-700 text-sm">
+              <strong>Past founder.</strong> I&apos;ve founded or co-founded a
+              startup before, but I&apos;m not actively running one now.
+            </span>
+          </label>
+        </div>
+      </fieldset>
 
+      <div className="space-y-4 mb-8">
         <label className="flex items-start gap-3 cursor-pointer">
           <input
             type="checkbox"
@@ -79,7 +119,7 @@ export default function ConsentPage() {
       </div>
 
       <button
-        onClick={() => router.push("/survey")}
+        onClick={handleStart}
         disabled={!canContinue}
         className={`w-full py-3 rounded-lg font-medium text-lg transition-colors ${
           canContinue

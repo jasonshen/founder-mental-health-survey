@@ -1,4 +1,11 @@
-import { scorePHQ9, scoreGAD7, scoreASRS, computeAllScores } from "../scoring";
+import {
+  scorePHQ9,
+  scoreGAD7,
+  scoreASRS,
+  scoreAQ10,
+  scoreDarkTriad,
+  computeAllScores,
+} from "../scoring";
 
 describe("PHQ-9 Scoring", () => {
   it("scores zero for all 'Not at all'", () => {
@@ -226,5 +233,122 @@ describe("computeAllScores", () => {
     expect(scores.phq9.score).toBe(0);
     expect(scores.gad7.score).toBe(0);
     expect(scores.asrs.items_flagged).toBe(0);
+  });
+});
+
+describe("AQ-10 Scoring", () => {
+  it("returns 0 when no items answered", () => {
+    const result = scoreAQ10({});
+    expect(result.score).toBe(0);
+    expect(result.items_answered).toBe(0);
+    expect(result.above_threshold).toBe(false);
+  });
+
+  it("scores all items in autism-trait direction = 10/10", () => {
+    // Items 1, 7, 8, 10 score on agree; items 2, 3, 4, 5, 6, 9 on disagree.
+    const responses: Record<string, string> = {
+      aq_1: "Definitely agree",
+      aq_2: "Definitely disagree",
+      aq_3: "Slightly disagree",
+      aq_4: "Definitely disagree",
+      aq_5: "Slightly disagree",
+      aq_6: "Definitely disagree",
+      aq_7: "Slightly agree",
+      aq_8: "Definitely agree",
+      aq_9: "Definitely disagree",
+      aq_10: "Slightly agree",
+    };
+    const result = scoreAQ10(responses);
+    expect(result.score).toBe(10);
+    expect(result.items_answered).toBe(10);
+    expect(result.above_threshold).toBe(true);
+  });
+
+  it("scores 0 when all answers point away from autism traits", () => {
+    const responses: Record<string, string> = {
+      aq_1: "Definitely disagree",
+      aq_2: "Definitely agree",
+      aq_3: "Slightly agree",
+      aq_4: "Definitely agree",
+      aq_5: "Slightly agree",
+      aq_6: "Definitely agree",
+      aq_7: "Slightly disagree",
+      aq_8: "Definitely disagree",
+      aq_9: "Definitely agree",
+      aq_10: "Slightly disagree",
+    };
+    const result = scoreAQ10(responses);
+    expect(result.score).toBe(0);
+    expect(result.items_answered).toBe(10);
+    expect(result.above_threshold).toBe(false);
+  });
+
+  it("crosses threshold at exactly 6", () => {
+    const responses: Record<string, string> = {};
+    // Six trait-direction answers, four off-direction.
+    for (let i = 1; i <= 6; i++) {
+      const reversed = [2, 3, 4, 5, 6, 9].includes(i);
+      responses[`aq_${i}`] = reversed
+        ? "Definitely disagree"
+        : "Definitely agree";
+    }
+    for (let i = 7; i <= 10; i++) {
+      const reversed = [9].includes(i);
+      responses[`aq_${i}`] = reversed
+        ? "Definitely agree"
+        : "Slightly disagree";
+    }
+    const result = scoreAQ10(responses);
+    expect(result.score).toBe(6);
+    expect(result.above_threshold).toBe(true);
+  });
+});
+
+describe("Dirty Dozen Dark Triad Scoring", () => {
+  it("returns nulls when nothing answered", () => {
+    const result = scoreDarkTriad({});
+    expect(result.machiavellianism).toBeNull();
+    expect(result.psychopathy).toBeNull();
+    expect(result.narcissism).toBeNull();
+    expect(result.composite).toBeNull();
+    expect(result.items_answered).toBe(0);
+  });
+
+  it("computes per-subscale means", () => {
+    const responses: Record<string, string> = {
+      // Machiavellianism: all "Strongly agree" (5)
+      dd_m_1: "Strongly agree",
+      dd_m_2: "Strongly agree",
+      dd_m_3: "Strongly agree",
+      dd_m_4: "Strongly agree",
+      // Psychopathy: all "Disagree" (2)
+      dd_p_1: "Disagree",
+      dd_p_2: "Disagree",
+      dd_p_3: "Disagree",
+      dd_p_4: "Disagree",
+      // Narcissism: mixed -> mean of (4, 4, 3, 3) = 3.5
+      dd_n_1: "Agree",
+      dd_n_2: "Agree",
+      dd_n_3: "Neither agree nor disagree",
+      dd_n_4: "Neither agree nor disagree",
+    };
+    const result = scoreDarkTriad(responses);
+    expect(result.machiavellianism).toBeCloseTo(5);
+    expect(result.psychopathy).toBeCloseTo(2);
+    expect(result.narcissism).toBeCloseTo(3.5);
+    expect(result.items_answered).toBe(12);
+    // Composite: (5*4 + 2*4 + 3.5*4) / 12 = 42/12 = 3.5
+    expect(result.composite).toBeCloseTo(3.5);
+  });
+
+  it("ignores blank items in subscale mean", () => {
+    const responses: Record<string, string> = {
+      dd_m_1: "Strongly agree", // 5
+      dd_m_2: "Agree",           // 4
+      // dd_m_3, dd_m_4 unanswered
+    };
+    const result = scoreDarkTriad(responses);
+    expect(result.machiavellianism).toBeCloseTo(4.5);
+    expect(result.items_answered).toBe(2);
   });
 });
