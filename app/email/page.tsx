@@ -2,20 +2,86 @@
 
 import { useSearchParams } from "next/navigation";
 import { useState, Suspense } from "react";
+import Link from "next/link";
+import PageChrome from "@/components/PageChrome";
+
+function Arrow() {
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2.5}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <line x1="5" y1="12" x2="19" y2="12" />
+      <polyline points="12 5 19 12 12 19" />
+    </svg>
+  );
+}
+
+interface InterestOption {
+  key:
+    | "wantsReport"
+    | "wantsCoaching"
+    | "wantsRetreat"
+    | "wantsPlantMedicine"
+    | "wantsUpdates";
+  title: string;
+  help: string;
+}
+
+const INTERESTS: InterestOption[] = [
+  {
+    key: "wantsReport",
+    title: "Full report of my results",
+    help: "A detailed PDF breakdown of your scores with context and recommendations.",
+  },
+  {
+    key: "wantsCoaching",
+    title: "Coaching resources for founders",
+    help: "Curated list of coaches and therapists who specialize in working with startup founders.",
+  },
+  {
+    key: "wantsRetreat",
+    title: "In-person founder retreat",
+    help: "Small-group retreats designed for founders to rest, reflect, and connect with peers.",
+  },
+  {
+    key: "wantsPlantMedicine",
+    title: "Plant medicine / psychedelic-assisted therapy",
+    help: "Information about legal, clinically supervised psychedelic-assisted therapy programs.",
+  },
+  {
+    key: "wantsUpdates",
+    title: "Research updates",
+    help: "Receive the aggregate findings from this survey when published, plus founder mental health research.",
+  },
+];
 
 function EmailContent() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token") || "";
 
   const [email, setEmail] = useState("");
-  const [wantsReport, setWantsReport] = useState(true);
-  const [wantsCoaching, setWantsCoaching] = useState(false);
-  const [wantsRetreat, setWantsRetreat] = useState(false);
-  const [wantsPlantMedicine, setWantsPlantMedicine] = useState(false);
-  const [wantsUpdates, setWantsUpdates] = useState(false);
+  const [interests, setInterests] = useState<Record<InterestOption["key"], boolean>>({
+    wantsReport: true,
+    wantsCoaching: false,
+    wantsRetreat: false,
+    wantsPlantMedicine: false,
+    wantsUpdates: false,
+  });
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  function toggle(key: InterestOption["key"]) {
+    setInterests((prev) => ({ ...prev, [key]: !prev[key] }));
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -29,11 +95,11 @@ function EmailContent() {
         body: JSON.stringify({
           token,
           email,
-          wants_report: wantsReport,
-          wants_coaching: wantsCoaching,
-          wants_retreat: wantsRetreat,
-          wants_plant_medicine: wantsPlantMedicine,
-          wants_updates: wantsUpdates,
+          wants_report: interests.wantsReport,
+          wants_coaching: interests.wantsCoaching,
+          wants_retreat: interests.wantsRetreat,
+          wants_plant_medicine: interests.wantsPlantMedicine,
+          wants_updates: interests.wantsUpdates,
         }),
       });
 
@@ -53,64 +119,63 @@ function EmailContent() {
 
   if (!token) {
     return (
-      <div className="max-w-2xl mx-auto px-4 py-16 text-center">
-        <p className="text-red-600 text-lg">
-          No token provided. Please check your link.
-        </p>
-      </div>
+      <PageChrome left="FMHS · Stay connected" right="Anonymous">
+        <div className="alert alert-error" role="alert">
+          <p className="alert-h">No token provided.</p>
+          <ul>
+            <li>Please check your link.</li>
+          </ul>
+        </div>
+      </PageChrome>
     );
   }
 
   if (submitted) {
     return (
-      <div className="max-w-2xl mx-auto px-4 py-16 text-center">
-        <h1 className="text-3xl font-bold text-gray-900 mb-4">Thank You!</h1>
-        <p className="text-gray-600 mb-2">
-          Your email has been submitted successfully.
+      <PageChrome left="FMHS · Thank you" right="Anonymous">
+        <h1 className="fmhs-title">
+          Thank you<span className="accent">.</span>
+        </h1>
+        <p className="fmhs-deck">
+          Your email has been submitted.
+          {interests.wantsReport && " We'll send your full report shortly."} We&apos;ll
+          be in touch about the resources you expressed interest in.
         </p>
-        <p className="text-gray-500 text-sm mb-8">
-          {wantsReport && "We'll send your full report shortly. "}
-          We'll be in touch about the resources you expressed interest in.
-        </p>
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-5 mb-6 inline-block text-left max-w-md">
-          <p className="text-sm font-semibold text-amber-900 mb-1">
-            🔑 Your private access code
+
+        <div className="code-chip" style={{ margin: "8px 0 32px" }}>
+          <div className="label">Your private access code</div>
+          <p className="help">
+            We&apos;ve emailed this to you too — save it somewhere safe.
+            It&apos;s the only way back to your results.
           </p>
-          <p className="text-xs text-amber-800 mb-3">
-            We&apos;ve emailed this to you too — save it somewhere safe. It&apos;s the only way back to your results.
-          </p>
-          <code className="block bg-white border border-amber-300 rounded px-3 py-2 text-base font-mono font-semibold">{token}</code>
+          <code>{token}</code>
         </div>
-        <div>
-          <a
-            href={`/results?token=${token}`}
-            className="inline-block px-6 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-700 transition-colors font-medium"
-          >
-            View Your Results
-          </a>
+
+        <div className="cta-row">
+          <Link href={`/results?token=${token}`} className="btn">
+            View your results
+            <Arrow />
+          </Link>
         </div>
-      </div>
+      </PageChrome>
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-16">
-      <h1 className="text-3xl font-bold text-gray-900 mb-2">
-        Stay Connected
+    <PageChrome left="FMHS · Stay connected" right="Anonymous">
+      <h1 className="fmhs-title">
+        Stay connected<span className="accent">.</span>
       </h1>
-      <p className="text-gray-500 mb-8">
+      <p className="fmhs-deck">
         Leave your email to get your full report and learn about resources for
         founder mental health. We respect your privacy and will never share your
         email.
       </p>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="form-stack" style={{ marginTop: 24 }}>
         <div>
-          <label
-            htmlFor="email"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
-            Email Address
+          <label htmlFor="email" className="field-label">
+            Email address<span className="req">*</span>
           </label>
           <input
             type="email"
@@ -118,132 +183,60 @@ function EmailContent() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@example.com"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+            placeholder="founder@startup.com"
+            className="input"
           />
         </div>
 
         <div>
-          <p className="text-sm font-medium text-gray-700 mb-3">
-            I'm interested in: (check all that apply)
-          </p>
-          <div className="space-y-3">
-            <label className="flex items-start gap-3 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={wantsReport}
-                onChange={(e) => setWantsReport(e.target.checked)}
-                className="mt-1 h-4 w-4 rounded border-gray-300 text-gray-900 focus:ring-gray-500"
-              />
-              <div>
-                <span className="text-gray-700 text-sm font-medium">
-                  Full report of my results
-                </span>
-                <p className="text-xs text-gray-400">
-                  A detailed PDF breakdown of your scores with context and
-                  recommendations.
-                </p>
-              </div>
-            </label>
-
-            <label className="flex items-start gap-3 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={wantsCoaching}
-                onChange={(e) => setWantsCoaching(e.target.checked)}
-                className="mt-1 h-4 w-4 rounded border-gray-300 text-gray-900 focus:ring-gray-500"
-              />
-              <div>
-                <span className="text-gray-700 text-sm font-medium">
-                  Coaching resources for founders
-                </span>
-                <p className="text-xs text-gray-400">
-                  Curated list of coaches and therapists who specialize in
-                  working with startup founders.
-                </p>
-              </div>
-            </label>
-
-            <label className="flex items-start gap-3 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={wantsRetreat}
-                onChange={(e) => setWantsRetreat(e.target.checked)}
-                className="mt-1 h-4 w-4 rounded border-gray-300 text-gray-900 focus:ring-gray-500"
-              />
-              <div>
-                <span className="text-gray-700 text-sm font-medium">
-                  In-person founder retreat
-                </span>
-                <p className="text-xs text-gray-400">
-                  Small-group retreats designed for founders to rest, reflect,
-                  and connect with peers.
-                </p>
-              </div>
-            </label>
-
-            <label className="flex items-start gap-3 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={wantsPlantMedicine}
-                onChange={(e) => setWantsPlantMedicine(e.target.checked)}
-                className="mt-1 h-4 w-4 rounded border-gray-300 text-gray-900 focus:ring-gray-500"
-              />
-              <div>
-                <span className="text-gray-700 text-sm font-medium">
-                  Plant medicine / psychedelic-assisted therapy
-                </span>
-                <p className="text-xs text-gray-400">
-                  Information about legal, clinically supervised psychedelic-assisted
-                  therapy programs.
-                </p>
-              </div>
-            </label>
-
-            <label className="flex items-start gap-3 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={wantsUpdates}
-                onChange={(e) => setWantsUpdates(e.target.checked)}
-                className="mt-1 h-4 w-4 rounded border-gray-300 text-gray-900 focus:ring-gray-500"
-              />
-              <div>
-                <span className="text-gray-700 text-sm font-medium">
-                  Research updates
-                </span>
-                <p className="text-xs text-gray-400">
-                  Receive the aggregate findings from this survey when
-                  published, plus founder mental health research.
-                </p>
-              </div>
-            </label>
+          <span className="field-label">
+            I&apos;m interested in (check all that apply)
+          </span>
+          <div className="check-stack">
+            {INTERESTS.map((opt) => {
+              const checked = interests[opt.key];
+              return (
+                <label key={opt.key} className={checked ? "on" : ""}>
+                  <input
+                    type="checkbox"
+                    checked={checked}
+                    onChange={() => toggle(opt.key)}
+                  />
+                  <span>
+                    <span className="check-title">{opt.title}</span>
+                    <span className="check-help">{opt.help}</span>
+                  </span>
+                </label>
+              );
+            })}
           </div>
         </div>
 
-        {error && <p className="text-red-600 text-sm">{error}</p>}
+        {error && (
+          <div className="alert alert-error" role="alert">
+            <p className="alert-h">Something went wrong.</p>
+            <ul>
+              <li>{error}</li>
+            </ul>
+          </div>
+        )}
 
-        <button
-          type="submit"
-          disabled={submitting}
-          className={`w-full py-3 rounded-lg font-medium text-lg transition-colors ${
-            submitting
-              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-              : "bg-gray-900 text-white hover:bg-gray-700 cursor-pointer"
-          }`}
-        >
-          {submitting ? "Submitting..." : "Submit"}
-        </button>
+        <div className="cta-row">
+          <button
+            type="submit"
+            disabled={submitting}
+            aria-disabled={submitting}
+            className="btn"
+          >
+            {submitting ? "Submitting…" : "Submit"}
+            {!submitting && <Arrow />}
+          </button>
+          <Link href={`/results?token=${token}`} className="btn-link">
+            Skip and return to results
+          </Link>
+        </div>
       </form>
-
-      <div className="mt-6 text-center">
-        <a
-          href={`/results?token=${token}`}
-          className="text-sm text-gray-500 hover:text-gray-700 underline"
-        >
-          Skip and return to results
-        </a>
-      </div>
-    </div>
+    </PageChrome>
   );
 }
 
@@ -251,9 +244,9 @@ export default function EmailPage() {
   return (
     <Suspense
       fallback={
-        <div className="max-w-2xl mx-auto px-4 py-16 text-center">
-          <p className="text-gray-500 text-lg">Loading...</p>
-        </div>
+        <PageChrome left="FMHS · Stay connected" right="Loading">
+          <p className="fmhs-deck">Loading…</p>
+        </PageChrome>
       }
     >
       <EmailContent />

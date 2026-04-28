@@ -5,28 +5,35 @@ interface ProgressBarProps {
   totalSections: number;
 }
 
+/**
+ * Progress bar — 3px orange fill on a line track, mono labels in muted gray.
+ * Pads the count to 2 digits so the meter doesn't visually jiggle as the
+ * label widens from "1" to "10".
+ */
 export default function ProgressBar({
   currentSection,
   totalSections,
 }: ProgressBarProps) {
-  const progress = ((currentSection + 1) / totalSections) * 100;
+  const idx = currentSection + 1;
+  const pct = Math.round((idx / totalSections) * 100);
+  const pad = (n: number) => String(n).padStart(2, "0");
 
   return (
-    <div className="w-full mb-8">
-      <div className="flex justify-between items-center mb-2">
-        <span className="text-sm font-medium text-gray-700">
-          Section {currentSection + 1} of {totalSections}
-        </span>
-        <span className="text-sm text-gray-500">
-          {Math.round(progress)}% complete
-        </span>
-      </div>
-      <div className="w-full bg-gray-200 rounded-full h-2.5">
+    <div className="progress" aria-label={`Section ${idx} of ${totalSections}`}>
+      <span>
+        SECTION {pad(idx)} · {pad(totalSections)}
+      </span>
+      <div className="track">
         <div
-          className="bg-indigo-600 h-2.5 rounded-full transition-all duration-300 ease-in-out"
-          style={{ width: `${progress}%` }}
+          className="fill"
+          style={{ width: `${pct}%` }}
+          role="progressbar"
+          aria-valuenow={pct}
+          aria-valuemin={0}
+          aria-valuemax={100}
         />
       </div>
+      <span>{pct}%</span>
     </div>
   );
 }

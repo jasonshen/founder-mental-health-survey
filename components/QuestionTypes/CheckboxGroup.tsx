@@ -10,6 +10,12 @@ interface CheckboxGroupProps {
 
 const EXCLUSIVE_OPTIONS = new Set(["None of the above", "Prefer not to say"]);
 
+/**
+ * CheckboxGroup — multiple-select. Same .scale-opt visual as the radio types,
+ * but with `aria-checked` on `<button>`s rather than radiogroup semantics.
+ * Exclusive options ("None of the above" / "Prefer not to say") clear other
+ * selections when picked, and vice versa.
+ */
 export default function CheckboxGroup({
   question,
   value,
@@ -28,56 +34,39 @@ export default function CheckboxGroup({
     }
 
     if (isExclusive) {
-      // Selecting an exclusive option clears all others.
       onChange([option]);
       return;
     }
 
-    // Selecting a non-exclusive option clears any exclusive selections.
     const next = value.filter((v) => !EXCLUSIVE_OPTIONS.has(v));
     next.push(option);
     onChange(next);
   }
 
   return (
-    <div className="mb-2">
-      <div
-        id={labelId}
-        className="block text-base font-medium text-gray-900 mb-3"
-      >
+    <div>
+      <p id={labelId} className="question">
         {question.text}
         {question.required && (
-          <span className="text-red-500 ml-1" aria-hidden="true">
+          <span className="req" aria-hidden="true">
             *
           </span>
         )}
-      </div>
-      <div
-        role="group"
-        aria-labelledby={labelId}
-        className="flex flex-col gap-2"
-      >
+      </p>
+      <div role="group" aria-labelledby={labelId} className="opt-list">
         {options.map((option) => {
           const checked = value.includes(option);
           return (
-            <label
+            <button
               key={option}
-              className={`flex items-center gap-3 min-h-[44px] px-4 py-3 rounded-lg border cursor-pointer transition-colors focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 ${
-                checked
-                  ? "border-indigo-600 bg-indigo-50"
-                  : "border-gray-300 bg-white hover:border-gray-400"
-              }`}
+              type="button"
+              role="checkbox"
+              aria-checked={checked}
+              onClick={() => toggle(option)}
+              className={`scale-opt ${checked ? "on" : ""}`}
             >
-              <input
-                type="checkbox"
-                name={question.id}
-                value={option}
-                checked={checked}
-                onChange={() => toggle(option)}
-                className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
-              />
-              <span className="text-sm sm:text-base text-gray-800">{option}</span>
-            </label>
+              <span>{option}</span>
+            </button>
           );
         })}
       </div>

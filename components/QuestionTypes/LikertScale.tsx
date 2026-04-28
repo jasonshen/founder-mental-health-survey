@@ -8,6 +8,12 @@ interface LikertScaleProps {
   onChange: (value: string) => void;
 }
 
+/**
+ * Likert (PHQ/GAD-style) — uses the FMHS Style Guide `.scale` grid for ≤4
+ * options (renders as a 4-up button row), and falls back to a vertical
+ * `.opt-list` for longer scales (e.g. AQ-10's 4 options can stay a row,
+ * but an MBI-style 7-point scale renders cleanly stacked).
+ */
 export default function LikertScale({
   question,
   value,
@@ -15,47 +21,38 @@ export default function LikertScale({
 }: LikertScaleProps) {
   const options = question.options || [];
   const labelId = `${question.id}-label`;
+  const useGrid = options.length <= 4;
 
   return (
-    <div className="mb-2">
-      <div
-        id={labelId}
-        className="block text-base font-medium text-gray-900 mb-3"
-      >
+    <div>
+      <p id={labelId} className="question">
         {question.text}
         {question.required && (
-          <span className="text-red-500 ml-1" aria-hidden="true">
+          <span className="req" aria-hidden="true">
             *
           </span>
         )}
-      </div>
+      </p>
       <div
         role="radiogroup"
         aria-labelledby={labelId}
         aria-required={question.required}
-        className="flex flex-col gap-2"
+        className={useGrid ? "scale" : "opt-list"}
       >
-        {options.map((option) => {
+        {options.map((option, i) => {
           const checked = value === option;
           return (
-            <label
+            <button
               key={option}
-              className={`flex items-center gap-2 min-h-[44px] px-4 py-3 sm:py-2 rounded-lg border cursor-pointer transition-colors focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 ${
-                checked
-                  ? "border-indigo-600 bg-indigo-50 text-indigo-800"
-                  : "border-gray-300 bg-white text-gray-700 hover:border-gray-400"
-              }`}
+              type="button"
+              role="radio"
+              aria-checked={checked}
+              onClick={() => onChange(option)}
+              className={`scale-opt ${checked ? "on" : ""}`}
             >
-              <input
-                type="radio"
-                name={question.id}
-                value={option}
-                checked={checked}
-                onChange={() => onChange(option)}
-                className="sr-only"
-              />
-              <span className="text-sm sm:text-base">{option}</span>
-            </label>
+              <span className="n">{i}</span>
+              <span>{option}</span>
+            </button>
           );
         })}
       </div>

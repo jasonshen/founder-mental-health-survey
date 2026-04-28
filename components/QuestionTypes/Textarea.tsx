@@ -19,14 +19,11 @@ export default function Textarea({
   const chars = value?.length ?? 0;
 
   return (
-    <div className="mb-2">
-      <label
-        htmlFor={question.id}
-        className="block text-base font-medium text-gray-900 mb-3"
-      >
+    <div>
+      <label htmlFor={question.id} className="question" style={{ display: "block" }}>
         {question.text}
         {question.required && (
-          <span className="text-red-500 ml-1" aria-hidden="true">
+          <span className="req" aria-hidden="true">
             *
           </span>
         )}
@@ -40,11 +37,11 @@ export default function Textarea({
         }}
         rows={long ? 6 : 3}
         maxLength={maxLength}
-        className="w-full px-3 py-2 text-base border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900"
+        className="textarea"
       />
-      <div className="text-xs text-gray-500 text-right mt-1">
+      <p className="field-help" style={{ textAlign: "right" }}>
         {chars} / {maxLength}
-      </div>
+      </p>
     </div>
   );
 }

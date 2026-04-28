@@ -15,9 +15,9 @@ export default function SurveySection({
 }: SurveySectionProps) {
   return (
     <div className="mb-8">
-      <h2 className="text-2xl font-bold text-gray-900 mb-2">{title}</h2>
-      <p className="text-gray-600 mb-8">{intro}</p>
-      <div className="space-y-8">{children}</div>
+      <h2 className="product-sec-h">{title}</h2>
+      <p className="product-sec-sub">{intro}</p>
+      <div className="form-stack">{children}</div>
     </div>
   );
 }

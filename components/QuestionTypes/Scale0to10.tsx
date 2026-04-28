@@ -10,6 +10,11 @@ interface Scale0to10Props {
 
 const TICKS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
+/**
+ * 0–10 ladder — narrow square cells in a single row (collapses to 6 wide on
+ * narrow screens). Selected cell is solid orange with white digit; rest are
+ * line-bordered white. Anchor labels render below.
+ */
 export default function Scale0to10({
   question,
   value,
@@ -20,24 +25,21 @@ export default function Scale0to10({
   const right = question.anchors?.right ?? "";
 
   return (
-    <div className="mb-2">
-      <div
-        id={labelId}
-        className="block text-base font-medium text-gray-900 mb-3"
-      >
+    <div>
+      <p id={labelId} className="question">
         {question.text}
         {question.required && (
-          <span className="text-red-500 ml-1" aria-hidden="true">
+          <span className="req" aria-hidden="true">
             *
           </span>
         )}
-      </div>
+      </p>
 
       <div
         role="radiogroup"
         aria-labelledby={labelId}
         aria-required={question.required}
-        className="flex flex-wrap justify-between gap-1"
+        className="ladder"
       >
         {TICKS.map((n) => {
           const checked = value === n;
@@ -48,32 +50,24 @@ export default function Scale0to10({
               ? `10, ${right}`
               : `${n} out of 10`;
           return (
-            <label
+            <button
               key={n}
-              className={`flex-1 min-w-[36px] flex items-center justify-center min-h-[44px] px-1 rounded-lg border cursor-pointer transition-colors text-sm font-medium focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 ${
-                checked
-                  ? "border-indigo-600 bg-indigo-600 text-white"
-                  : "border-gray-300 bg-white text-gray-700 hover:border-gray-400"
-              }`}
+              type="button"
+              role="radio"
+              aria-checked={checked}
+              aria-label={anchorLabel}
+              onClick={() => onChange(n)}
+              className={`ladder-opt ${checked ? "on" : ""}`}
             >
-              <input
-                type="radio"
-                name={question.id}
-                value={n}
-                checked={checked}
-                onChange={() => onChange(n)}
-                aria-label={anchorLabel}
-                className="sr-only"
-              />
-              <span>{n}</span>
-            </label>
+              {n}
+            </button>
           );
         })}
       </div>
 
-      <div className="flex justify-between text-xs text-gray-500 mt-2 px-1">
+      <div className="ladder-anchors">
         <span>{left}</span>
-        <span className="text-right">{right}</span>
+        <span>{right}</span>
       </div>
     </div>
   );

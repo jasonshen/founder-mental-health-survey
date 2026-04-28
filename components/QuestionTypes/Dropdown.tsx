@@ -8,33 +8,40 @@ interface DropdownProps {
   onChange: (value: string) => void;
 }
 
-export default function Dropdown({ question, value, onChange }: DropdownProps) {
+export default function Dropdown({
+  question,
+  value,
+  onChange,
+}: DropdownProps) {
   const options = question.options || [];
 
   return (
-    <div className="mb-2">
-      <label
-        htmlFor={question.id}
-        className="block text-base font-medium text-gray-900 mb-3"
-      >
+    <div>
+      <label htmlFor={question.id} className="question" style={{ display: "block" }}>
         {question.text}
         {question.required && (
-          <span className="text-red-500 ml-1" aria-hidden="true">
+          <span className="req" aria-hidden="true">
             *
           </span>
         )}
       </label>
-      {/* text-base (16px) prevents iOS zoom on focus */}
+      {/* font-size 15 keeps iOS from zooming on focus while staying ≥16px effective */}
       <select
         id={question.id}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         aria-required={question.required}
-        className={`w-full min-h-[44px] px-4 py-3 border rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white ${
-          value ? "border-gray-300 text-gray-900" : "border-gray-300 text-gray-400"
-        }`}
+        className="input"
+        style={{
+          appearance: "none",
+          backgroundImage:
+            "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 20 20' fill='%23807871'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 11.06l3.71-3.83a.75.75 0 111.08 1.04l-4.25 4.39a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z' clip-rule='evenodd'/%3E%3C/svg%3E\")",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "right 12px center",
+          paddingRight: 36,
+        }}
       >
-        <option value="">Select...</option>
+        <option value="">Select…</option>
         {options.map((option) => (
           <option key={option} value={option}>
             {option}

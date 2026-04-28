@@ -25,6 +25,7 @@ import CheckboxGroup from "@/components/QuestionTypes/CheckboxGroup";
 import Textarea from "@/components/QuestionTypes/Textarea";
 import NumberBounded from "@/components/QuestionTypes/NumberBounded";
 import CrisisResourcesBlock from "@/components/CrisisResourcesBlock";
+import PageChrome from "@/components/PageChrome";
 
 // Bump this when the question set changes, to invalidate stale drafts.
 const SURVEY_VERSION = "v3-2026-04";
@@ -409,14 +410,11 @@ export default function SurveyPage() {
         );
       case "number":
         return (
-          <div key={key} className="mb-2">
-            <label
-              htmlFor={question.id}
-              className="block text-base font-medium text-gray-900 mb-3"
-            >
+          <div key={key}>
+            <label htmlFor={question.id} className="question" style={{ display: "block" }}>
               {question.text}
               {question.required && (
-                <span className="text-red-500 ml-1" aria-hidden="true">*</span>
+                <span className="req" aria-hidden="true">*</span>
               )}
             </label>
             <input
@@ -436,7 +434,7 @@ export default function SurveyPage() {
                   handleResponseChange(question.id, Number(v));
                 }
               }}
-              className="w-32 px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900"
+              className="input input-narrow"
               min={0}
             />
           </div>
@@ -451,114 +449,100 @@ export default function SurveyPage() {
     const answered = Object.keys(pendingDraft.responses).length;
     const savedDate = new Date(pendingDraft.savedAt).toLocaleString();
     return (
-      <div className="min-h-screen bg-white">
-        <div className="max-w-2xl mx-auto px-4 py-16">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Welcome back</h1>
-          <p className="text-gray-600 mb-6">
-            We saved your progress from {savedDate}. You answered{" "}
-            <strong>{answered}</strong> question{answered === 1 ? "" : "s"} so far.
-          </p>
-          <div className="flex gap-3">
-            <button
-              type="button"
-              onClick={handleResumeDraft}
-              className="px-6 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors"
-            >
-              Resume where I left off
-            </button>
-            <button
-              type="button"
-              onClick={handleDiscardDraft}
-              className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
-            >
-              Start over
-            </button>
-          </div>
+      <PageChrome left="FMHS · Welcome back" right="Anonymous">
+        <h1 className="fmhs-title">
+          Welcome back<span className="accent">.</span>
+        </h1>
+        <p className="fmhs-deck">
+          We saved your progress from {savedDate}. You answered{" "}
+          <strong>{answered}</strong> question{answered === 1 ? "" : "s"} so
+          far.
+        </p>
+        <div className="cta-row">
+          <button type="button" onClick={handleResumeDraft} className="btn">
+            Resume where I left off
+          </button>
+          <button type="button" onClick={handleDiscardDraft} className="btn-link">
+            Start over
+          </button>
         </div>
-      </div>
+      </PageChrome>
     );
   }
 
   if (!currentSectionMeta) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <p className="text-gray-600">Loading…</p>
-      </div>
+      <PageChrome left="FMHS · Survey" right="Loading">
+        <p className="fmhs-deck">Loading…</p>
+      </PageChrome>
     );
   }
 
+  const sectionLabel = `FMHS · Section ${String(safeIndex + 1).padStart(
+    2,
+    "0"
+  )} of ${String(totalVisible).padStart(2, "0")}`;
+
   return (
-    <div className="min-h-screen bg-white">
-      <div className="max-w-2xl mx-auto px-4 py-8">
-        <ProgressBar
-          currentSection={safeIndex}
-          totalSections={totalVisible}
-        />
+    <PageChrome left={sectionLabel} right="Anonymous">
+      <ProgressBar currentSection={safeIndex} totalSections={totalVisible} />
 
-        {showingPostSection === "depression" ? (
-          <CrisisResourcesBlock onContinue={handleContinueFromPostSection} />
-        ) : (
-          <>
-            <SurveySection
-              title={currentSectionMeta.label}
-              intro={currentSectionMeta.intro}
-            >
-              {visibleQuestions.map((question) => renderQuestion(question))}
-              {visibleQuestions.length === 0 && (
-                <p className="text-gray-500 italic">
-                  No questions in this section right now.
-                </p>
-              )}
-            </SurveySection>
-
-            {submitError && (
-              <div
-                className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg"
-                role="alert"
-              >
-                <p className="text-sm text-red-700 mb-2">
-                  <strong>We couldn&apos;t save your responses.</strong> {submitError}
-                </p>
-                <p className="text-xs text-red-600">
-                  Your answers are still here — just tap Submit again when you&apos;re ready.
-                </p>
-              </div>
+      {showingPostSection === "depression" ? (
+        <CrisisResourcesBlock onContinue={handleContinueFromPostSection} />
+      ) : (
+        <>
+          <SurveySection
+            title={currentSectionMeta.label}
+            intro={currentSectionMeta.intro}
+          >
+            {visibleQuestions.map((question) => renderQuestion(question))}
+            {visibleQuestions.length === 0 && (
+              <p className="field-help" style={{ fontStyle: "italic" }}>
+                No questions in this section right now.
+              </p>
             )}
+          </SurveySection>
 
-            <div className="flex justify-between items-center pt-6 border-t border-gray-200">
-              <button
-                type="button"
-                onClick={handleBack}
-                disabled={safeIndex === 0}
-                className={`min-h-[44px] px-6 py-2.5 rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
-                  safeIndex === 0
-                    ? "text-gray-400 cursor-not-allowed"
-                    : "text-gray-700 hover:bg-gray-100 border border-gray-300"
-                }`}
-              >
-                Back
-              </button>
-              <button
-                type="button"
-                onClick={handleNext}
-                disabled={isSubmitting}
-                aria-busy={isSubmitting}
-                className={`min-h-[44px] px-6 py-2.5 rounded-lg font-medium text-white transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
-                  isSubmitting
-                    ? "bg-indigo-700 cursor-wait opacity-90"
-                    : "bg-indigo-600 hover:bg-indigo-700"
-                }`}
-              >
-                {isSubmitting
-                  ? "Submitting…"
-                  : isLastSection
-                  ? "Submit"
-                  : "Next"}
-              </button>
+          {submitError && (
+            <div className="alert alert-error" role="alert">
+              <p className="alert-h">We couldn&apos;t save your responses.</p>
+              <ul>
+                <li>{submitError}</li>
+                <li>
+                  Your answers are still here — just tap Submit again when
+                  you&apos;re ready.
+                </li>
+              </ul>
             </div>
-          </>
-        )}
-      </div>
-    </div>
+          )}
+
+          <div className="nav-row">
+            <button
+              type="button"
+              onClick={handleBack}
+              disabled={safeIndex === 0}
+              aria-disabled={safeIndex === 0}
+              className="btn btn-ghost"
+            >
+              Back
+            </button>
+            <button
+              type="button"
+              onClick={handleNext}
+              disabled={isSubmitting}
+              aria-busy={isSubmitting}
+              aria-disabled={isSubmitting}
+              className="btn"
+            >
+              {isSubmitting
+                ? "Submitting…"
+                : isLastSection
+                ? "Submit"
+                : "Next"}
+            </button>
+          </div>
+        </>
+      )}
+    </PageChrome>
   );
 }

@@ -1,3 +1,1132 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ============================================================
+   FMHS — V5 Research Paper landing styles
+   Ported from "Founder Mental Health Survey - Landing Variations.html"
+   (variant 05, Research Paper). Tokens, typography, and
+   component CSS are global so the V5 page can render with
+   minimal class translation.
+   ============================================================ */
+
+:root {
+  --orange: #ff6600;
+  --orange-deep: #e85c00;
+  --orange-soft: #fff3eb;
+  --orange-tint: #fff8f3;
+  --ink: #14110f;
+  --ink-2: #3a342f;
+  --muted: #807871;
+  --muted-2: #b3aca6;
+  --line: #ece7e2;
+  --line-2: #f5f1ec;
+  --bg: #fdfbf8;
+  --bg-warm: #f8f3ec;
+}
+
+html,
+body {
+  background: var(--bg);
+  color: var(--ink);
+}
+
+body {
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ---------- Variation root: scoped page (V5) ---------- */
+.v {
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 16px;
+  line-height: 1.6;
+}
+.v .page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 56px 32px 72px;
+}
+.v.compact .page {
+  padding: 36px 28px 56px;
+}
+
+/* ---------- Hero ---------- */
+.eyebrow {
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 18px;
+}
+h1.title {
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  margin: 0;
+}
+h1.title.serif {
+  font-family: var(--font-serif), Georgia, serif;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+.title-l {
+  font-size: clamp(32px, 4.6vw, 44px);
+}
+.title-m {
+  font-size: clamp(28px, 4vw, 36px);
+}
+h1.title .accent {
+  color: var(--orange);
+}
+
+/* ---------- Lede & body ---------- */
+.lede {
+  font-size: 16.5px;
+  color: var(--ink-2);
+  line-height: 1.6;
+  margin: 24px 0 24px;
+  text-wrap: pretty;
+  max-width: 60ch;
+}
+
+/* ---------- Quote rail ---------- */
+.quote-rail {
+  margin: 32px 0;
+  padding-left: 18px;
+  border-left: 2px solid var(--orange);
+  min-height: 4.5em;
+}
+.quote-rail .label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 12px;
+  display: block;
+}
+.quote {
+  font-family: var(--font-serif), Georgia, serif;
+  font-style: italic;
+  font-size: clamp(19px, 2.2vw, 23px);
+  line-height: 1.4;
+  color: var(--ink);
+  letter-spacing: -0.005em;
+  min-height: 2.6em;
+  margin: 0;
+}
+.quote .word {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(5px);
+  transition: opacity 0.42s ease, transform 0.42s ease;
+}
+.quote .word.in {
+  opacity: 1;
+  transform: translateY(0);
+}
+.quote .word.out {
+  opacity: 0;
+  transform: translateY(-3px);
+  transition: opacity 0.32s ease, transform 0.32s ease;
+}
+
+/* ---------- Tag row ---------- */
+.tagrow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin: 20px 0 28px;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.tagrow .t {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.tagrow .t::before {
+  content: "";
+  width: 4px;
+  height: 4px;
+  background: var(--orange);
+  border-radius: 50%;
+  display: inline-block;
+}
+.tagrow .t.first {
+  color: var(--orange);
+  font-weight: 600;
+}
+
+/* ---------- CTA ---------- */
+.cta-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin: 28px 0 40px;
+  flex-wrap: wrap;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--orange);
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 15px;
+  padding: 13px 22px;
+  border-radius: 6px;
+  letter-spacing: -0.005em;
+  transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.2s ease;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 1px 0 rgba(255, 102, 0, 0.3),
+    0 2px 12px rgba(255, 102, 0, 0.18);
+}
+.btn:hover {
+  background: var(--orange-deep);
+  box-shadow: 0 1px 0 rgba(255, 102, 0, 0.4),
+    0 4px 16px rgba(255, 102, 0, 0.28);
+}
+.btn:active {
+  transform: translateY(1px);
+}
+.btn .arrow {
+  transition: transform 0.2s ease;
+}
+.btn:hover .arrow {
+  transform: translateX(3px);
+}
+.btn:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+.btn-meta {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* ---------- Sections ---------- */
+.section {
+  margin: 36px 0;
+  padding-top: 28px;
+  border-top: 1px solid var(--line);
+}
+.section h3 {
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 14px;
+}
+.section p {
+  margin: 0 0 12px;
+  color: var(--ink-2);
+  font-size: 15px;
+  line-height: 1.65;
+  text-wrap: pretty;
+}
+.section p strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+.section a {
+  color: var(--ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--orange);
+  transition: color 0.15s ease;
+}
+.section a:hover {
+  color: var(--orange);
+}
+
+/* ---------- Screener pills ---------- */
+.screeners {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+.screener {
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  padding: 4px 10px;
+  background: var(--bg-warm);
+  border-radius: 3px;
+}
+.screener .lab {
+  color: var(--muted);
+  font-weight: 500;
+  margin-left: 6px;
+  letter-spacing: 0;
+}
+
+/* ---------- Page footer (the "Created by" line) ---------- */
+footer.foot {
+  margin-top: 56px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.6;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+footer.foot a {
+  color: var(--ink-2);
+  text-decoration: none;
+  border-bottom: 1px solid var(--line);
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+footer.foot a:hover {
+  color: var(--orange);
+  border-bottom-color: var(--orange);
+}
+
+/* ============================================================
+   V5 Research Paper — variant overrides
+   ============================================================ */
+.v-research {
+  font-family: var(--font-serif), Georgia, serif;
+}
+.v-research .page {
+  max-width: 760px;
+}
+.v-research .label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 64px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--ink);
+}
+.v-research .label-row .left {
+  color: var(--ink);
+}
+.v-research .label-row .tick {
+  color: var(--orange);
+  letter-spacing: 0;
+  font-size: 14px;
+}
+.v-research h1.title {
+  font-family: var(--font-serif), Georgia, serif;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+.v-research .lede,
+.v-research .section p {
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 17px;
+}
+.v-research .quote {
+  font-style: italic;
+}
+.v-research .btn {
+  font-family: var(--font-inter), sans-serif;
+}
+.v-research .section h3,
+.v-research .eyebrow,
+.v-research .tagrow,
+.v-research footer.foot {
+  font-family: var(--font-inter), sans-serif;
+}
+.v-research .screener {
+  font-family: var(--font-inter), sans-serif;
+}
+
+/* V5 specific quote rail: bigger quotes, taller rail, label pinned top, quote centered.
+   Rail is inset from page-right (so the rail box doesn't run all the way to the page edge),
+   but the giant decorative quote floats above on the right and stays fully visible. */
+.v-research .quote-rail {
+  min-height: 9.5em;
+  height: 9.5em;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  padding-top: 0;
+  padding-bottom: 8px;
+  padding-right: 60px;
+  margin: 40px 80px 40px 0;
+  position: relative;
+  overflow: visible;
+}
+.v-research .quote-rail::before {
+  content: "\201D";
+  position: absolute;
+  top: -0.2em;
+  right: 0;
+  left: auto;
+  font-family: var(--font-serif), Georgia, serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: 9em;
+  line-height: 1;
+  color: var(--orange);
+  opacity: 0.14;
+  pointer-events: none;
+  user-select: none;
+}
+.v-research .quote-rail .label {
+  margin-bottom: 18px;
+  align-self: start;
+}
+.v-research .quote {
+  font-size: clamp(22px, 2.6vw, 28px);
+  line-height: 1.45;
+  min-height: 0;
+  max-width: 52ch;
+  align-self: center;
+}
+
+/* Accordions (V5) */
+.acc-list {
+  margin: 36px 0 24px;
+  border-top: 1px solid var(--line);
+}
+.acc {
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+}
+.acc summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 18px 4px;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  user-select: none;
+  transition: color 0.15s ease;
+}
+.acc summary::-webkit-details-marker {
+  display: none;
+}
+.acc summary:hover {
+  color: var(--ink);
+}
+.acc[open] summary {
+  color: var(--ink);
+}
+.acc .chev {
+  color: var(--muted-2);
+  transition: transform 0.2s ease, color 0.2s ease;
+  flex-shrink: 0;
+}
+.acc[open] .chev {
+  transform: rotate(180deg);
+  color: var(--orange);
+}
+.acc-body {
+  padding: 4px 4px 22px;
+}
+.acc-body p {
+  margin: 0 0 12px;
+  color: var(--ink-2);
+  font-size: 15px;
+  line-height: 1.65;
+  text-wrap: pretty;
+}
+.v-research .acc-body p {
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 17px;
+}
+.acc-body p:last-child {
+  margin-bottom: 0;
+}
+.acc-body p strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+.acc-body a {
+  color: var(--ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--orange);
+  transition: color 0.15s ease;
+}
+.acc-body a:hover {
+  color: var(--orange);
+}
+
+/* V5 by-line */
+.v-research .by-line {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--orange);
+  letter-spacing: -0.005em;
+  margin: 8px 0 22px;
+}
+
+/* Insertion caret with handwritten script — used in V5 title */
+.caret-edit {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  vertical-align: baseline;
+}
+.caret-edit .mark {
+  position: absolute;
+  /* Anchor sits at the boundary between "The" and the NBSP; nudge half-NBSP right
+     so the mark centers in the gap between the "e" and the "Y". */
+  left: 0.15em;
+  bottom: 0.95em;
+  transform: translateX(-50%);
+  font-family: var(--font-caveat), cursive;
+  font-size: 0.5em;
+  color: var(--orange);
+  line-height: 1;
+  white-space: nowrap;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  pointer-events: none;
+  text-align: center;
+}
+.caret-edit .mark .word-mark {
+  display: block;
+  transform: rotate(-3deg);
+  margin-bottom: 0.1em;
+}
+.caret-edit .mark .caret-glyph {
+  display: block;
+  font-family: var(--font-inter), sans-serif;
+  font-weight: 700;
+  color: var(--orange);
+  font-size: 0.85em;
+  line-height: 0.6;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quote .word,
+  .inline-quotes {
+    transition: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}
+
+/* ============================================================
+   FMHS Style Guide — components used across consent/survey/results.
+   Same tokens as the V5 landing; adds form, scale, progress,
+   score-card, in-product section heading, and the link button.
+   ============================================================ */
+
+/* Page chrome — generic survey/results page wrap (slightly wider
+   than the V5 landing rail). */
+.fmhs-page {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 56px 32px 72px;
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+}
+.fmhs-page .label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 48px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--ink);
+}
+.fmhs-page .label-row .left {
+  color: var(--ink);
+}
+.fmhs-page .label-row .tick {
+  color: var(--orange);
+  letter-spacing: 0;
+  font-size: 14px;
+}
+
+/* Display title used on the "before you begin" / consent screens. */
+.fmhs-title {
+  font-family: var(--font-serif), Georgia, serif;
+  font-weight: 500;
+  font-size: clamp(28px, 4vw, 36px);
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0 0 14px;
+}
+.fmhs-title .accent {
+  color: var(--orange);
+}
+
+/* Lede / deck for those screens. */
+.fmhs-deck {
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--ink-2);
+  max-width: 60ch;
+  margin: 0 0 24px;
+  text-wrap: pretty;
+}
+.fmhs-deck.short {
+  margin-bottom: 16px;
+}
+
+/* In-product section heading (above each survey section). */
+.product-sec-h {
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin: 0 0 6px;
+}
+.product-sec-sub {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 13.5px;
+  color: var(--muted);
+  margin: 0 0 24px;
+  max-width: 56ch;
+}
+
+/* Tertiary "skip"-style link button. */
+.btn-link {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 14px;
+  color: var(--ink);
+  background: transparent;
+  border: none;
+  text-decoration: none;
+  border-bottom: 1px solid var(--orange);
+  padding: 0 0 1px;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+.btn-link:hover {
+  color: var(--orange);
+}
+.btn-link:disabled {
+  color: var(--muted-2);
+  border-bottom-color: var(--muted-2);
+  cursor: not-allowed;
+}
+
+/* Disabled primary button. */
+.btn:disabled,
+.btn[aria-disabled="true"] {
+  background: var(--muted-2);
+  color: #fff;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+.btn:disabled:hover,
+.btn[aria-disabled="true"]:hover {
+  background: var(--muted-2);
+  box-shadow: none;
+}
+
+/* ---------- Forms ---------- */
+.form-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.field-label {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 10px;
+  display: block;
+}
+.field-label .req {
+  color: var(--orange);
+  margin-left: 4px;
+}
+.field-help {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 12.5px;
+  color: var(--muted);
+  margin: 6px 0 0;
+}
+.input,
+.textarea {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 15px;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 12px 14px;
+  width: 100%;
+  transition: border-color 0.12s ease, outline-color 0.12s ease;
+}
+.input::placeholder,
+.textarea::placeholder {
+  color: var(--muted-2);
+}
+.input:focus,
+.textarea:focus {
+  border-color: var(--orange);
+  outline: 2px solid var(--orange-soft);
+  outline-offset: 0;
+}
+.input.input-narrow {
+  width: 9rem;
+}
+.textarea {
+  resize: vertical;
+  min-height: 96px;
+  line-height: 1.55;
+}
+
+/* Question prompt — appears above scale/options/inputs. */
+.question {
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 19px;
+  line-height: 1.45;
+  color: var(--ink);
+  margin: 0 0 16px;
+  max-width: 60ch;
+  text-wrap: pretty;
+}
+.question .req {
+  color: var(--orange);
+  margin-left: 4px;
+}
+
+/* ---------- Likert / select scales ---------- */
+.scale {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+@media (max-width: 600px) {
+  .scale {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+.scale-opt {
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 4px;
+  padding: 14px 12px;
+  cursor: pointer;
+  transition: border-color 0.12s ease, background 0.12s ease, color 0.12s ease;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 14px;
+  color: var(--ink-2);
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 64px;
+  appearance: none;
+}
+.scale-opt:hover {
+  border-color: var(--ink);
+}
+.scale-opt:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 2px;
+}
+.scale-opt.on {
+  border-color: var(--orange);
+  background: var(--orange-soft);
+  color: var(--ink);
+}
+.scale-opt .n {
+  font-family: var(--font-mono), ui-monospace, Menlo, monospace;
+  font-size: 11px;
+  color: var(--muted);
+}
+.scale-opt.on .n {
+  color: var(--orange);
+}
+
+/* Vertical option list (single-select / checkbox group / longer Likert) */
+.opt-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.opt-list .scale-opt {
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  padding: 12px 14px;
+}
+.opt-list .scale-opt .n {
+  flex-shrink: 0;
+  width: 1.25rem;
+  text-align: center;
+}
+
+/* 0–10 ladder — narrow square cells */
+.ladder {
+  display: grid;
+  grid-template-columns: repeat(11, minmax(0, 1fr));
+  gap: 4px;
+}
+@media (max-width: 600px) {
+  .ladder {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+}
+.ladder-opt {
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 4px;
+  padding: 12px 0;
+  font-family: var(--font-mono), ui-monospace, Menlo, monospace;
+  font-size: 13px;
+  color: var(--ink-2);
+  cursor: pointer;
+  transition: border-color 0.12s ease, background 0.12s ease, color 0.12s ease;
+  text-align: center;
+  appearance: none;
+  min-height: 44px;
+}
+.ladder-opt:hover {
+  border-color: var(--ink);
+}
+.ladder-opt:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 2px;
+}
+.ladder-opt.on {
+  border-color: var(--orange);
+  background: var(--orange);
+  color: #fff;
+}
+.ladder-anchors {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 8px;
+}
+
+/* ---------- Progress bar ---------- */
+.progress {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-family: var(--font-mono), ui-monospace, Menlo, monospace;
+  font-size: 11.5px;
+  color: var(--muted);
+  margin-bottom: 32px;
+}
+.progress .track {
+  flex: 1;
+  height: 3px;
+  background: var(--line);
+  overflow: hidden;
+  border-radius: 2px;
+}
+.progress .fill {
+  height: 100%;
+  background: var(--orange);
+  transition: width 0.25s ease-out;
+}
+
+/* ---------- Crisis / alert blocks ---------- */
+.alert {
+  background: var(--orange-tint);
+  border-left: 2px solid var(--orange);
+  padding: 18px 20px;
+  border-radius: 0 4px 4px 0;
+  margin-bottom: 24px;
+}
+.alert .alert-h {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0 0 8px;
+}
+.alert ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 13.5px;
+  color: var(--ink-2);
+  line-height: 1.7;
+}
+.alert ul li {
+  margin: 0;
+}
+.alert ul li strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+.alert ul li a {
+  color: var(--ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--orange);
+}
+.alert ul li a:hover {
+  color: var(--orange);
+}
+.alert.alert-error {
+  background: #fff3eb;
+  border-left-color: var(--orange-deep);
+}
+
+/* Crisis resource cards (longer block on the post-depression interstitial) */
+.resource-list {
+  list-style: none;
+  margin: 0 0 24px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.resource-list li {
+  background: var(--bg-warm);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 14px 16px;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 14px;
+  color: var(--ink-2);
+}
+.resource-list li strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+.resource-list li a {
+  color: var(--ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--orange);
+}
+.resource-list li a:hover {
+  color: var(--orange);
+}
+
+/* ---------- Score card (results / report) ---------- */
+.score-card {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 24px;
+  align-items: end;
+  padding: 22px 0;
+  border-top: 1px solid var(--line);
+}
+.score-card:last-child {
+  border-bottom: 1px solid var(--line);
+}
+.score-name {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0 0 4px;
+}
+.score-meta {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 12.5px;
+  color: var(--muted);
+  margin: 0;
+}
+.score-meta strong {
+  color: var(--ink-2);
+  font-weight: 600;
+}
+.score-bar {
+  height: 6px;
+  background: var(--line);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 14px;
+  position: relative;
+}
+.score-bar .fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  background: var(--orange);
+}
+.score-bar .marker {
+  position: absolute;
+  top: -4px;
+  width: 2px;
+  height: 14px;
+  background: var(--ink);
+}
+.score-num {
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 36px;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--ink);
+}
+.score-num .of {
+  font-size: 16px;
+  color: var(--muted);
+  margin-left: 4px;
+}
+.score-band {
+  display: inline-block;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin-top: 6px;
+}
+
+/* Light card wrapper (used by ResultsCard et al.) */
+.card {
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 22px 24px;
+  background: #fff;
+  margin-bottom: 14px;
+}
+.card .card-h {
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  color: var(--ink);
+  margin: 0 0 12px;
+}
+.card .card-body {
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+
+/* Access-code chip (results / email confirmation) */
+.code-chip {
+  background: var(--bg-warm);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 14px 16px;
+  display: inline-block;
+}
+.code-chip .label {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.code-chip .help {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 12.5px;
+  color: var(--muted);
+  margin: 0 0 10px;
+}
+.code-chip code {
+  display: block;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 10px 12px;
+  font-family: var(--font-mono), ui-monospace, Menlo, monospace;
+  font-size: 14px;
+  color: var(--ink);
+  font-weight: 500;
+  word-break: break-all;
+}
+
+/* Two-up grid (used in checkbox groupings on email page, etc.) */
+.two-up {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+@media (max-width: 600px) {
+  .two-up {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Form check stack — vertical checkbox/radio choices with description below */
+.check-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.check-stack label {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 14px 16px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: border-color 0.12s ease, background 0.12s ease;
+}
+.check-stack label:hover {
+  border-color: var(--ink);
+}
+.check-stack label.on {
+  border-color: var(--orange);
+  background: var(--orange-soft);
+}
+.check-stack label input {
+  margin-top: 3px;
+  accent-color: var(--orange);
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+.check-stack .check-title {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--ink);
+  display: block;
+  margin-bottom: 2px;
+}
+.check-stack .check-help {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+/* Survey-page nav row */
+.nav-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+}

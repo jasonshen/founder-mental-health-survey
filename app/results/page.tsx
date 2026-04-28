@@ -3,6 +3,7 @@
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import ResultsDisplay from "@/components/ResultsDisplay";
+import PageChrome from "@/components/PageChrome";
 
 function ResultsContent() {
   const searchParams = useSearchParams();
@@ -10,11 +11,14 @@ function ResultsContent() {
 
   if (!token) {
     return (
-      <div className="max-w-2xl mx-auto px-4 py-16 text-center">
-        <p className="text-red-600 text-lg">
-          No token provided. Please check your results link.
-        </p>
-      </div>
+      <PageChrome left="FMHS · Results" right="Anonymous">
+        <div className="alert alert-error" role="alert">
+          <p className="alert-h">No token provided.</p>
+          <ul>
+            <li>Please check your results link, or paste your access code.</li>
+          </ul>
+        </div>
+      </PageChrome>
     );
   }
 
@@ -25,9 +29,9 @@ export default function ResultsPage() {
   return (
     <Suspense
       fallback={
-        <div className="max-w-2xl mx-auto px-4 py-16 text-center">
-          <p className="text-gray-500 text-lg">Loading...</p>
-        </div>
+        <PageChrome left="FMHS · Results" right="Loading">
+          <p className="fmhs-deck">Loading…</p>
+        </PageChrome>
       }
     >
       <ResultsContent />

@@ -17,14 +17,11 @@ export default function NumberBounded({
   const max = question.max ?? 9999;
 
   return (
-    <div className="mb-2">
-      <label
-        htmlFor={question.id}
-        className="block text-base font-medium text-gray-900 mb-3"
-      >
+    <div>
+      <label htmlFor={question.id} className="question" style={{ display: "block" }}>
         {question.text}
         {question.required && (
-          <span className="text-red-500 ml-1" aria-hidden="true">
+          <span className="req" aria-hidden="true">
             *
           </span>
         )}
@@ -47,9 +44,9 @@ export default function NumberBounded({
           const clamped = Math.min(max, Math.max(min, n));
           onChange(clamped);
         }}
-        className="w-32 px-3 py-2 text-base border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900"
+        className="input input-narrow"
       />
-      <p className="text-xs text-gray-500 mt-1">
+      <p className="field-help">
         Range: {min}–{max}
       </p>
     </div>

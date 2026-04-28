@@ -8,6 +8,10 @@ interface SingleSelectProps {
   onChange: (value: string) => void;
 }
 
+/**
+ * SingleSelect — vertical radio list, design-system styled. Selected state
+ * uses orange-soft + orange border; unselected stays line-bordered on white.
+ */
 export default function SingleSelect({
   question,
   value,
@@ -17,45 +21,34 @@ export default function SingleSelect({
   const labelId = `${question.id}-label`;
 
   return (
-    <div className="mb-2">
-      <div
-        id={labelId}
-        className="block text-base font-medium text-gray-900 mb-3"
-      >
+    <div>
+      <p id={labelId} className="question">
         {question.text}
         {question.required && (
-          <span className="text-red-500 ml-1" aria-hidden="true">
+          <span className="req" aria-hidden="true">
             *
           </span>
         )}
-      </div>
+      </p>
       <div
         role="radiogroup"
         aria-labelledby={labelId}
         aria-required={question.required}
-        className="flex flex-col gap-2"
+        className="opt-list"
       >
         {options.map((option) => {
           const checked = value === option;
           return (
-            <label
+            <button
               key={option}
-              className={`flex items-center gap-3 min-h-[44px] px-4 py-3 rounded-lg border cursor-pointer transition-colors focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 ${
-                checked
-                  ? "border-indigo-600 bg-indigo-50"
-                  : "border-gray-300 bg-white hover:border-gray-400"
-              }`}
+              type="button"
+              role="radio"
+              aria-checked={checked}
+              onClick={() => onChange(option)}
+              className={`scale-opt ${checked ? "on" : ""}`}
             >
-              <input
-                type="radio"
-                name={question.id}
-                value={option}
-                checked={checked}
-                onChange={() => onChange(option)}
-                className="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"
-              />
-              <span className="text-sm sm:text-base text-gray-800">{option}</span>
-            </label>
+              <span>{option}</span>
+            </button>
           );
         })}
       </div>
