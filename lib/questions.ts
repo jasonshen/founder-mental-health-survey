@@ -198,8 +198,18 @@ const companyQuestions: Question[] = [
 ];
 
 // ============================================================
-// Section 2: Life Outlook & Flourishing (12 × scale_0_10)
+// Section 2: Outlook (8 flourishing + 2 AI sentiment)
+// Merged from former life_outlook + macro_outlook (AI items only).
+// Stored in section_life_outlook column.
 // ============================================================
+
+const VALENCE_5 = [
+  "Very bad",
+  "Somewhat bad",
+  "Neutral",
+  "Somewhat good",
+  "Very good",
+];
 
 const lifeOutlookQuestions: Question[] = [
   {
@@ -239,33 +249,6 @@ const lifeOutlookQuestions: Question[] = [
     instrument: null,
   },
   {
-    id: "life_good",
-    section: "life_outlook",
-    text: "I always act to promote good in all circumstances, even in difficult and challenging situations.",
-    type: "scale_0_10",
-    anchors: { left: "Not true of me", right: "Completely true of me" },
-    required: false,
-    instrument: null,
-  },
-  {
-    id: "life_delay_gratification",
-    section: "life_outlook",
-    text: "I am always able to give up some happiness now for greater happiness later.",
-    type: "scale_0_10",
-    anchors: { left: "Not true of me", right: "Completely true of me" },
-    required: false,
-    instrument: null,
-  },
-  {
-    id: "life_friendships",
-    section: "life_outlook",
-    text: "I am content with my friendships and relationships.",
-    type: "scale_0_10",
-    anchors: { left: "Strongly disagree", right: "Strongly agree" },
-    required: false,
-    instrument: null,
-  },
-  {
     id: "life_relationships_satisfying",
     section: "life_outlook",
     text: "My relationships are as satisfying as I would want them to be.",
@@ -278,15 +261,6 @@ const lifeOutlookQuestions: Question[] = [
     id: "life_money_worry",
     section: "life_outlook",
     text: "How often do you worry about being able to meet normal monthly living expenses?",
-    type: "scale_0_10",
-    anchors: { left: "Never worry", right: "Worry all of the time" },
-    required: false,
-    instrument: null,
-  },
-  {
-    id: "life_safety_worry",
-    section: "life_outlook",
-    text: "How often do you worry about safety, food, or housing?",
     type: "scale_0_10",
     anchors: { left: "Never worry", right: "Worry all of the time" },
     required: false,
@@ -307,6 +281,26 @@ const lifeOutlookQuestions: Question[] = [
     text: "How would you rate your overall mental health?",
     type: "scale_0_10",
     anchors: { left: "Poor", right: "Excellent" },
+    required: false,
+    instrument: null,
+  },
+  // AI sentiment — folded in from former macro_outlook section.
+  // Note: 5-point likert, not 0-10 like the wellbeing items above.
+  {
+    id: "macro_ai_business",
+    section: "life_outlook",
+    text: "I think AI will be net ___ for my business.",
+    type: "likert5",
+    options: VALENCE_5,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "macro_ai_society",
+    section: "life_outlook",
+    text: "I think AI will be net ___ for society.",
+    type: "likert5",
+    options: VALENCE_5,
     required: false,
     instrument: null,
   },
@@ -588,55 +582,13 @@ const founderChallengeQuestions: Question[] = [
 ];
 
 // ============================================================
-// Section 5: Outlook on AI and Economy (4 items)
+// Section 5 — LEGACY: macro_outlook is no longer populated by the
+// survey. The 2 AI sentiment items moved into life_outlook (the
+// merged "Outlook" section). The 2 economy items were dropped.
+// section_macro_outlook column is preserved for older respondents.
 // ============================================================
 
-const VALENCE_5 = [
-  "Very bad",
-  "Somewhat bad",
-  "Neutral",
-  "Somewhat good",
-  "Very good",
-];
-
-const macroOutlookQuestions: Question[] = [
-  {
-    id: "macro_ai_business",
-    section: "macro_outlook",
-    text: "I think AI will be net ___ for my business.",
-    type: "likert5",
-    options: VALENCE_5,
-    required: false,
-    instrument: null,
-  },
-  {
-    id: "macro_ai_society",
-    section: "macro_outlook",
-    text: "I think AI will be net ___ for society.",
-    type: "likert5",
-    options: VALENCE_5,
-    required: false,
-    instrument: null,
-  },
-  {
-    id: "macro_econ_business",
-    section: "macro_outlook",
-    text: "I think the economy over the next 2 years will be ___ for my business.",
-    type: "likert5",
-    options: VALENCE_5,
-    required: false,
-    instrument: null,
-  },
-  {
-    id: "macro_econ_society",
-    section: "macro_outlook",
-    text: "I think the economy over the next 2 years will be ___ for society.",
-    type: "likert5",
-    options: VALENCE_5,
-    required: false,
-    instrument: null,
-  },
-];
+const macroOutlookQuestions: Question[] = [];
 
 // ============================================================
 // Section 6: Cofounder Relationship Quality (9 items, skip if solo)
@@ -1787,26 +1739,10 @@ export const SECTIONS: SectionMeta[] = [
     intro: "Tell us a bit about yourself and your startup.",
   },
   {
-    id: "life_outlook",
-    label: "Life Outlook & Flourishing",
-    intro:
-      "A few questions about how life is going. Use the 0–10 scale for each — the anchors change per item.",
-  },
-  {
-    id: "ambition",
-    label: "Ambition",
-    intro: "Reflect on how you relate to achievement, goals, and what a successful life looks like.",
-  },
-  {
     id: "founder_challenges",
     label: "Founder-Specific Challenges",
     intro:
       "For each statement, rate how much of a challenge this is for you right now.",
-  },
-  {
-    id: "macro_outlook",
-    label: "Outlook on AI and the Economy",
-    intro: "Your read on the macro forces shaping your work.",
   },
   {
     id: "cofounder",
@@ -1814,6 +1750,24 @@ export const SECTIONS: SectionMeta[] = [
     intro:
       "These questions are about your primary cofounder relationship. If you have multiple cofounders, answer about the one you work most closely with.",
     condition: (r) => !isSoloFounder(r),
+  },
+  {
+    id: "life_outlook",
+    label: "Outlook",
+    intro:
+      "How life is going from where you sit, and how the broader landscape feels. Most use a 0–10 scale; the last two use a 5-point scale.",
+  },
+  {
+    id: "ambition",
+    label: "Ambition",
+    intro: "Reflect on how you relate to achievement, goals, and what a successful life looks like.",
+  },
+  {
+    id: "macro_outlook",
+    label: "Outlook on AI and the Economy (legacy)",
+    intro: "",
+    // Merged into life_outlook. Section hidden; column preserved.
+    condition: () => false,
   },
   {
     id: "depression",

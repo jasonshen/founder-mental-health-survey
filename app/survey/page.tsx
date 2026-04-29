@@ -28,7 +28,7 @@ import CrisisResourcesBlock from "@/components/CrisisResourcesBlock";
 import PageChrome from "@/components/PageChrome";
 
 // Bump this when the question set changes, to invalidate stale drafts.
-const SURVEY_VERSION = "v3-2026-04";
+const SURVEY_VERSION = "v4-2026-04";
 const DRAFT_KEY = "fmh_survey_draft";
 // Set on the consent page; consumed (and cleared) once on survey mount.
 const FOUNDER_STATUS_SEED_KEY = "fmh_founder_status_seed";
