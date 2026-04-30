@@ -10,20 +10,32 @@ const FOUNDER_STATUS_SEED_KEY = "fmh_founder_status_seed";
 
 type FounderStatus = "current" | "past";
 
-function Chev() {
+function Plus() {
   return (
     <svg
-      className="chev"
-      width="14"
-      height="14"
-      viewBox="0 0 20 20"
-      fill="currentColor"
+      className="plus"
+      width="18"
+      height="18"
+      viewBox="0 0 18 18"
       aria-hidden="true"
     >
-      <path
-        fillRule="evenodd"
-        d="M5.23 7.21a.75.75 0 011.06.02L10 11.06l3.71-3.83a.75.75 0 111.08 1.04l-4.25 4.39a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z"
-        clipRule="evenodd"
+      <rect
+        className="plus-h"
+        x="2"
+        y="8"
+        width="14"
+        height="2"
+        rx="1"
+        fill="currentColor"
+      />
+      <rect
+        className="plus-v"
+        x="8"
+        y="2"
+        width="2"
+        height="14"
+        rx="1"
+        fill="currentColor"
       />
     </svg>
   );
@@ -87,8 +99,8 @@ export default function ConsentPage() {
       <div className="acc-list" style={{ marginTop: 24, marginBottom: 32 }}>
         <details className="acc">
           <summary>
+            <Plus />
             <span>What you&apos;ll be asked</span>
-            <Chev />
           </summary>
           <div className="acc-body">
             <p>
@@ -107,8 +119,8 @@ export default function ConsentPage() {
 
         <details className="acc">
           <summary>
+            <Plus />
             <span>How your responses are handled</span>
-            <Chev />
           </summary>
           <div className="acc-body">
             <p>

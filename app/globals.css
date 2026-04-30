@@ -416,7 +416,7 @@ footer.foot a:hover {
   color: var(--muted);
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 14px;
   user-select: none;
   transition: color 0.15s ease;
 }
@@ -429,14 +429,18 @@ footer.foot a:hover {
 .acc[open] summary {
   color: var(--ink);
 }
-.acc .chev {
-  color: var(--muted-2);
-  transition: transform 0.2s ease, color 0.2s ease;
+/* Plus/minus toggle. The vertical bar collapses on open, leaving a "−". */
+.acc .plus {
+  color: var(--orange);
   flex-shrink: 0;
 }
-.acc[open] .chev {
-  transform: rotate(180deg);
-  color: var(--orange);
+.acc .plus .plus-v {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 0.2s ease;
+}
+.acc[open] .plus .plus-v {
+  transform: scaleY(0);
 }
 .acc-body {
   padding: 4px 4px 22px;
