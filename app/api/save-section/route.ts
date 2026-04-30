@@ -29,7 +29,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const { submission_id, section_id, responses } = parsed.data;
+  const { submission_id, section_id, responses, partial } = parsed.data;
   const column = SECTION_COLUMN[section_id as SectionId];
   if (!column) {
     // Should be impossible — section_id is validated by Zod enum.
@@ -64,16 +64,23 @@ export async function POST(request: Request) {
   }
 
   const priorCompleted: string[] = existing?.sections_completed ?? [];
-  const sections_completed = priorCompleted.includes(section_id)
+  // Partial flushes (sendBeacon on tab hide) only update the section's
+  // column. They don't add the section to sections_completed —
+  // "completed" still means the user explicitly clicked Next.
+  const sections_completed = partial
     ? priorCompleted
-    : [...priorCompleted, section_id];
+    : priorCompleted.includes(section_id)
+      ? priorCompleted
+      : [...priorCompleted, section_id];
 
   const basePayload: Record<string, unknown> = {
     [column]: responses,
     sections_completed,
-    last_section_completed: section_id,
     updated_at: new Date().toISOString(),
   };
+  if (!partial) {
+    basePayload.last_section_completed = section_id;
+  }
 
   if (!existing) {
     // First save for this submission_id — INSERT a partial row.

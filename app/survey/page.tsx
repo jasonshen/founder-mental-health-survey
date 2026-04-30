@@ -75,19 +75,31 @@ function clearDraft() {
   }
 }
 
+/**
+ * Pull just the responses that belong to the given section's question set.
+ * Used by both the explicit "Next click" save and the implicit unload flush
+ * so they stay in sync.
+ */
+function buildSectionResponses(
+  responses: FlatResponses,
+  sectionQuestions: Question[]
+): FlatResponses {
+  const out: FlatResponses = {};
+  for (const q of sectionQuestions) {
+    if (responses[q.id] !== undefined && responses[q.id] !== "") {
+      out[q.id] = responses[q.id];
+    }
+  }
+  return out;
+}
+
 async function postSectionSave(
   submission_id: string,
   section_id: SectionId,
   responses: FlatResponses,
   sectionQuestions: Question[]
 ) {
-  // Only send responses that belong to this section.
-  const sectionResponses: FlatResponses = {};
-  for (const q of sectionQuestions) {
-    if (responses[q.id] !== undefined && responses[q.id] !== "") {
-      sectionResponses[q.id] = responses[q.id];
-    }
-  }
+  const sectionResponses = buildSectionResponses(responses, sectionQuestions);
 
   try {
     await fetch("/api/save-section", {
@@ -102,6 +114,41 @@ async function postSectionSave(
     });
   } catch {
     // Fail silently — localStorage is the source of truth on the client.
+  }
+}
+
+/**
+ * Beacon-style partial flush. Fires on tab hide / pagehide so that
+ * mid-section answers reach the DB even if the user closes the tab
+ * before clicking Next. `partial: true` tells the server NOT to mark
+ * the section as completed.
+ */
+function flushPartialBeacon(
+  submission_id: string,
+  section_id: SectionId,
+  responses: FlatResponses,
+  sectionQuestions: Question[]
+) {
+  if (typeof navigator === "undefined" || typeof navigator.sendBeacon !== "function") {
+    return;
+  }
+  const sectionResponses = buildSectionResponses(responses, sectionQuestions);
+  if (Object.keys(sectionResponses).length === 0) return;
+
+  const body = JSON.stringify({
+    submission_id,
+    section_id,
+    responses: sectionResponses,
+    partial: true,
+  });
+  try {
+    // Wrap in a Blob so sendBeacon preserves application/json.
+    navigator.sendBeacon(
+      "/api/save-section",
+      new Blob([body], { type: "application/json" })
+    );
+  } catch {
+    // Best effort — sendBeacon may throw if quota exceeded; we're going away anyway.
   }
 }
 
@@ -202,6 +249,43 @@ export default function SurveyPage() {
   );
   const totalVisible = visibleSections.length;
   const isLastSection = safeIndex === totalVisible - 1;
+
+  // Beacon flush on tab hide / page navigation away. Catches the case
+  // where a respondent fills out half a section and closes the tab
+  // without clicking Next — without this, those answers exist only in
+  // localStorage and are lost if the browser is later cleared.
+  useEffect(() => {
+    if (showResumePrompt) return;
+    if (isSubmitting) return;
+
+    const flush = () => {
+      if (!currentSectionMeta) return;
+      if (!submissionIdRef.current) return;
+      flushPartialBeacon(
+        submissionIdRef.current,
+        currentSectionMeta.id,
+        responses,
+        allSectionQuestions
+      );
+    };
+
+    const onVisibilityChange = () => {
+      if (document.visibilityState === "hidden") flush();
+    };
+
+    window.addEventListener("pagehide", flush);
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    return () => {
+      window.removeEventListener("pagehide", flush);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+    };
+  }, [
+    currentSectionMeta,
+    responses,
+    allSectionQuestions,
+    showResumePrompt,
+    isSubmitting,
+  ]);
 
   const handleResponseChange = useCallback(
     (questionId: string, value: ResponseValue) => {

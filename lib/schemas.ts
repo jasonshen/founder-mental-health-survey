@@ -49,6 +49,10 @@ export const SectionSaveSchema = z.object({
   submission_id: z.string().uuid(),
   section_id: AnySectionId,
   responses: ResponseMap,
+  // When true, this is an in-section flush (e.g., from a sendBeacon
+  // on tab close). Don't add the section to sections_completed —
+  // that flag still means "user clicked Next on this section."
+  partial: z.boolean().optional(),
 });
 
 export type SectionSaveInput = z.infer<typeof SectionSaveSchema>;
