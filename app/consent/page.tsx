@@ -100,10 +100,16 @@ function ConsentInner() {
     if (answeredCohort !== "") seedAndGo(answeredCohort);
   }
 
+  // Slate theme on the consent page when the active cohort is general.
+  // Switches live as the user answers the YC screener.
+  const activeCohort: Cohort = answeredCohort !== "" ? answeredCohort : urlCohort;
+  const theme = activeCohort === "yc" ? "orange" : "slate";
+
   return (
     <PageChrome
       left="FMHS · Before you begin"
       right="Confidential · Anonymous · ~10 min"
+      theme={theme}
     >
       <h1 className="fmhs-title">
         Before you begin<span className="accent">.</span>

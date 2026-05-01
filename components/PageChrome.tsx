@@ -13,12 +13,20 @@ interface PageChromeProps {
   left: ReactNode;
   /** Right label segment, e.g. "Anonymous · ~6 min left". */
   right: ReactNode;
+  /** Accent palette: "orange" (default, YC flow) or "slate" (about + general flow). */
+  theme?: "orange" | "slate";
   children: ReactNode;
 }
 
-export default function PageChrome({ left, right, children }: PageChromeProps) {
+export default function PageChrome({
+  left,
+  right,
+  theme = "orange",
+  children,
+}: PageChromeProps) {
+  const className = theme === "slate" ? "fmhs-page theme-slate" : "fmhs-page";
   return (
-    <div className="fmhs-page">
+    <div className={className}>
       <div className="label-row">
         <span className="left">
           {left} <span className="tick">●</span>

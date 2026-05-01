@@ -60,7 +60,7 @@ function ScreenerList() {
 
 export default function AboutPage() {
   return (
-    <div className="v v-research">
+    <div className="v v-research theme-slate">
       <div className="page">
         <div className="label-row">
           <span className="left">

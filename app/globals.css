@@ -25,6 +25,18 @@
   --bg-warm: #f8f3ec;
 }
 
+/* Slate-blue accent variant — used on the about page and the
+   general-cohort survey flow. Overrides the orange tokens within
+   the .theme-slate scope so all components that reference
+   var(--orange*) automatically restyle without per-element changes.
+   The YC-cohort flow keeps the original orange palette. */
+.theme-slate {
+  --orange: #2f4a7a;
+  --orange-deep: #1e3458;
+  --orange-soft: #eef2f9;
+  --orange-tint: #f6f8fc;
+}
+
 html,
 body {
   background: var(--bg);
@@ -899,7 +911,7 @@ footer.foot a:hover {
   color: var(--orange);
 }
 .alert.alert-error {
-  background: #fff3eb;
+  background: var(--orange-soft);
   border-left-color: var(--orange-deep);
 }
 

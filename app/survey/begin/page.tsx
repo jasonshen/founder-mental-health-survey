@@ -537,12 +537,23 @@ export default function SurveyPage() {
     }
   };
 
+  // Slate accent for the general cohort; orange for YC (or pre-cohort).
+  // Reads from responses.cohort, which is hydrated from the localStorage
+  // seed on mount. Defaults to orange if cohort isn't set yet.
+  const theme: "orange" | "slate" =
+    responses.cohort === "general" ? "slate" : "orange";
+
   // Resume prompt
   if (showResumePrompt && pendingDraft) {
     const answered = Object.keys(pendingDraft.responses).length;
     const savedDate = new Date(pendingDraft.savedAt).toLocaleString();
+    // Resume prompt fires before the cohort is restored from the draft —
+    // pull cohort directly from the pending draft so the theme is right.
+    const draftCohort = pendingDraft.responses.cohort;
+    const resumeTheme: "orange" | "slate" =
+      draftCohort === "general" ? "slate" : "orange";
     return (
-      <PageChrome left="FMHS · Welcome back" right="Anonymous">
+      <PageChrome left="FMHS · Welcome back" right="Anonymous" theme={resumeTheme}>
         <h1 className="fmhs-title">
           Welcome back<span className="accent">.</span>
         </h1>
@@ -565,7 +576,7 @@ export default function SurveyPage() {
 
   if (!currentSectionMeta) {
     return (
-      <PageChrome left="FMHS · Survey" right="Loading">
+      <PageChrome left="FMHS · Survey" right="Loading" theme={theme}>
         <p className="fmhs-deck">Loading…</p>
       </PageChrome>
     );
@@ -577,7 +588,7 @@ export default function SurveyPage() {
   )} of ${String(totalVisible).padStart(2, "0")}`;
 
   return (
-    <PageChrome left={sectionLabel} right="Anonymous">
+    <PageChrome left={sectionLabel} right="Anonymous" theme={theme}>
       <ProgressBar currentSection={safeIndex} totalSections={totalVisible} />
 
       {showingPostSection === "depression" ? (
