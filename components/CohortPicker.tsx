@@ -72,11 +72,11 @@ export default function CohortPicker() {
           marginBottom: 12,
         }}
       >
-        <Link href="/yc" className="btn">
+        <Link href="/consent?cohort=yc" className="btn">
           Yes — YC alum
           <Arrow />
         </Link>
-        <Link href="/survey" className="btn btn-ghost">
+        <Link href="/consent?cohort=general" className="btn btn-ghost">
           No — general founder
           <Arrow />
         </Link>
