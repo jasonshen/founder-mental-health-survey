@@ -1,25 +1,6 @@
 import Link from "next/link";
 import AuthorPair from "@/components/AuthorPair";
-
-function Arrow() {
-  return (
-    <svg
-      className="arrow"
-      width="14"
-      height="14"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2.5}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <line x1="5" y1="12" x2="19" y2="12" />
-      <polyline points="12 5 19 12 12 19" />
-    </svg>
-  );
-}
+import CohortPicker from "@/components/CohortPicker";
 
 function Plus() {
   return (
@@ -80,23 +61,7 @@ export default function AboutPage() {
           dimensions of ambition, motivation, and relationships.
         </p>
 
-        <div className="cta-row" style={{ marginTop: 32 }}>
-          <Link href="/yc" className="btn">
-            YC founders survey
-            <Arrow />
-          </Link>
-          <Link href="/survey" className="btn btn-ghost">
-            General founders survey
-            <Arrow />
-          </Link>
-        </div>
-        <p
-          className="btn-meta"
-          style={{ marginTop: 12, display: "block" }}
-        >
-          Two versions of the same instrument. Pick whichever fits — the
-          consent screen will help you find the right one.
-        </p>
+        <CohortPicker />
 
         <div className="acc-list" style={{ marginTop: 40 }}>
           <details className="acc" open>
