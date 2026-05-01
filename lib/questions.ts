@@ -32,35 +32,51 @@ const companyQuestions: Question[] = [
     instrument: null,
     condition: () => false,
   },
+  // Seeded from the consent page YC screener + URL hint. Hidden — flows
+  // into section_company so the API can pull it for the top-level cohort
+  // column on survey_responses (see app/api/submit/route.ts).
+  {
+    id: "cohort",
+    section: "company",
+    text: "Cohort (set by consent screener)",
+    type: "single_select",
+    options: ["yc", "general"],
+    required: false,
+    instrument: null,
+    condition: () => false,
+  },
   {
     id: "company_yc_batch",
     section: "company",
     text: "What Y Combinator batch were you?",
     type: "dropdown",
     options: [
-      "X26 (Summer 2026)",
-      "S26 (Spring 2026)",
+      "X26 (Spring 2026)",
+      "S26 (Summer 2026)",
       "W26 (Winter 2026)",
       "F25 (Fall 2025)",
-      "X25 (Summer 2025)",
-      "S25 (Spring 2025)",
+      "X25 (Spring 2025)",
+      "S25 (Summer 2025)",
       "W25 (Winter 2025)",
       "F24 (Fall 2024)",
-      "X24 (Summer 2024)",
+      "X24 (Spring 2024)",
       "W24 (Winter 2024)",
-      "X23 (Summer 2023)",
+      "X23 (Spring 2023)",
       "W23 (Winter 2023)",
-      "X22 (Summer 2022)",
+      "X22 (Spring 2022)",
       "W22 (Winter 2022)",
-      "X21 (Summer 2021)",
+      "X21 (Spring 2021)",
       "W21 (Winter 2021)",
-      "X20 (Summer 2020)",
+      "X20 (Spring 2020)",
       "W20 (Winter 2020)",
       "Earlier than 2020",
       "Not a YC company",
     ],
     required: false,
     instrument: null,
+    // Only ask the YC batch question when the respondent identified as YC
+    // at consent. General-cohort respondents skip it entirely.
+    condition: (r) => r["cohort"] === "yc",
   },
   {
     id: "company_year_founded",
@@ -198,20 +214,21 @@ const companyQuestions: Question[] = [
 ];
 
 // ============================================================
-// Section 2: Outlook (8 flourishing + 2 AI sentiment)
-// Merged from former life_outlook + macro_outlook (AI items only).
+// Section 2: Life Outlook (9 items: 4 well-being + 3 domain + 2 frustration)
 // Stored in section_life_outlook column.
+// Redesigned 2026-05-01 — see
+// docs/survey-design-rationale-life-ambition-burnout.md
 // ============================================================
 
-const VALENCE_5 = [
-  "Very bad",
-  "Somewhat bad",
-  "Neutral",
-  "Somewhat good",
-  "Very good",
-];
-
+// Life Outlook is now a unified 9-item instrument: 4 well-being anchors,
+// 3 domain ratings, and 2 founder-specific need-frustration items.
+// All items are 0-10 for cross-comparability. The macro_ai items and
+// life_money_worry were removed in the 2026-05-01 redesign — see
+// docs/survey-design-rationale-life-ambition-burnout.md for the rationale.
 const lifeOutlookQuestions: Question[] = [
+  // ────────────────────────────────────────────────────────────
+  // Block A1 — Hedonic & eudaimonic well-being (4 items)
+  // ────────────────────────────────────────────────────────────
   {
     id: "life_satisfaction",
     section: "life_outlook",
@@ -248,21 +265,16 @@ const lifeOutlookQuestions: Question[] = [
     required: false,
     instrument: null,
   },
+
+  // ────────────────────────────────────────────────────────────
+  // Block A2 — Domain satisfaction (3 items)
+  // ────────────────────────────────────────────────────────────
   {
     id: "life_relationships_satisfying",
     section: "life_outlook",
     text: "My relationships are as satisfying as I would want them to be.",
     type: "scale_0_10",
     anchors: { left: "Strongly disagree", right: "Strongly agree" },
-    required: false,
-    instrument: null,
-  },
-  {
-    id: "life_money_worry",
-    section: "life_outlook",
-    text: "How often do you worry about being able to meet normal monthly living expenses?",
-    type: "scale_0_10",
-    anchors: { left: "Never worry", right: "Worry all of the time" },
     required: false,
     instrument: null,
   },
@@ -284,30 +296,39 @@ const lifeOutlookQuestions: Question[] = [
     required: false,
     instrument: null,
   },
-  // AI sentiment — folded in from former macro_outlook section.
-  // Note: 5-point likert, not 0-10 like the wellbeing items above.
+
+  // ────────────────────────────────────────────────────────────
+  // Block A3 — Founder-specific need frustration (2 items, NEW)
+  // Single-item proxies for autonomy- and relatedness-frustration in
+  // the founder role. Pair with MBI exhaustion/cynicism to attribute
+  // burnout to its upstream pathway (Van den Broeck 2016; Cardon 2024).
+  // ────────────────────────────────────────────────────────────
   {
-    id: "macro_ai_business",
+    id: "life_have_to",
     section: "life_outlook",
-    text: "I think AI will be net ___ for my business.",
-    type: "likert5",
-    options: VALENCE_5,
+    text: "Most of what I do as a founder feels like 'I have to' rather than 'I want to.'",
+    type: "scale_0_10",
+    anchors: { left: "Strongly disagree", right: "Strongly agree" },
     required: false,
     instrument: null,
   },
   {
-    id: "macro_ai_society",
+    id: "life_alone",
     section: "life_outlook",
-    text: "I think AI will be net ___ for society.",
-    type: "likert5",
-    options: VALENCE_5,
+    text: "I feel alone carrying the weight of this company.",
+    type: "scale_0_10",
+    anchors: { left: "Strongly disagree", right: "Strongly agree" },
     required: false,
     instrument: null,
   },
 ];
 
 // ============================================================
-// Section 3: Ambition (5 Hirschi/Spurk + 7 custom Ambition Breadth)
+// Section 3: Ambition (16 items: 3 drive + 2 breadth/identity
+//                       + 4 aspirations + 7 regulation)
+// Stored in section_ambition column.
+// Redesigned 2026-05-01 — see
+// docs/survey-design-rationale-life-ambition-burnout.md
 // ============================================================
 
 const AGREE_5 = [
@@ -318,8 +339,27 @@ const AGREE_5 = [
   "Strongly agree",
 ];
 
+const IMPORTANCE_5 = [
+  "Not at all important",
+  "Slightly important",
+  "Moderately important",
+  "Very important",
+  "Extremely important",
+];
+
+// Ambition is a 16-item instrument organized into four blocks:
+// drive intensity (Hirschi/Spurk), breadth & identity, aspiration
+// content (Kasser-Ryan), and regulation type (Deci-Ryan PLOC). The
+// regulation block is the analytical centerpiece for the Deep Ambition
+// research project — it captures the introjected→identified→integrated
+// shift that the project is built around. See
+// docs/survey-design-rationale-life-ambition-burnout.md.
 const ambitionQuestions: Question[] = [
-  // 3A — Hirschi/Spurk core
+  // ────────────────────────────────────────────────────────────
+  // Block B1 — Drive intensity (Hirschi/Spurk core, 3 items)
+  // Trimmed from the 5-item validated scale; the 3-item subset retains
+  // α ≈ .85 and frees room for the regulation block below.
+  // ────────────────────────────────────────────────────────────
   {
     id: "amb_ambitious",
     section: "ambition",
@@ -347,25 +387,12 @@ const ambitionQuestions: Question[] = [
     required: false,
     instrument: null,
   },
-  {
-    id: "amb_outstanding_results",
-    section: "ambition",
-    text: "For me it is very important to achieve outstanding results in my life.",
-    type: "likert5",
-    options: AGREE_5,
-    required: false,
-    instrument: null,
-  },
-  {
-    id: "amb_great_things",
-    section: "ambition",
-    text: "For me it is very important to accomplish great things.",
-    type: "likert5",
-    options: AGREE_5,
-    required: false,
-    instrument: null,
-  },
-  // 3B — Ambition Breadth (custom)
+
+  // ────────────────────────────────────────────────────────────
+  // Block B2 — Ambition breadth & identity (2 items)
+  // Multi-domain breadth is a Deep Ambition protective factor;
+  // identity-work entanglement predicts identity collapse on failure.
+  // ────────────────────────────────────────────────────────────
   {
     id: "amb_multi_domain",
     section: "ambition",
@@ -385,47 +412,122 @@ const ambitionQuestions: Question[] = [
     instrument: null,
     reverseCoded: true,
   },
+
+  // ────────────────────────────────────────────────────────────
+  // Block B3 — Aspiration content (Kasser-Ryan importance, 4 items, NEW)
+  // Importance-only short form of the Aspiration Index. Captures the
+  // intrinsic/extrinsic ratio that Niemiec et al. 2009 showed predicts
+  // well-being independently of attainment (β = .77 vs β = .00).
+  // Score: intrinsic_score = mean(asp_helping, asp_self_knowledge);
+  // extrinsic_score = mean(asp_financial, asp_admiration);
+  // aspiration_ratio = intrinsic_score - extrinsic_score.
+  // ────────────────────────────────────────────────────────────
   {
-    id: "amb_one_vs_many",
+    id: "asp_helping",
     section: "ambition",
-    text: "I would rather be excellent at one thing than very good at several things.",
+    text: "How important to you is the following: Helping others improve their lives.",
     type: "likert5",
-    options: AGREE_5,
-    required: false,
-    instrument: null,
-    reverseCoded: true,
-  },
-  {
-    id: "amb_beyond_company",
-    section: "ambition",
-    text: "I measure my life by more than the success of my company.",
-    type: "likert5",
-    options: AGREE_5,
-    required: false,
-    instrument: null,
-  },
-  {
-    id: "amb_sacrifices",
-    section: "ambition",
-    text: "I have made deliberate sacrifices in non-work domains (health, relationships, creative pursuits) to succeed in my work.",
-    type: "likert5",
-    options: AGREE_5,
+    options: IMPORTANCE_5,
     required: false,
     instrument: null,
   },
   {
-    id: "amb_outside_career",
+    id: "asp_self_knowledge",
     section: "ambition",
-    text: "My version of a successful life includes achievements outside of my career.",
+    text: "How important to you is the following: Knowing and accepting who I really am.",
+    type: "likert5",
+    options: IMPORTANCE_5,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "asp_financial",
+    section: "ambition",
+    text: "How important to you is the following: Being financially successful.",
+    type: "likert5",
+    options: IMPORTANCE_5,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "asp_admiration",
+    section: "ambition",
+    text: "How important to you is the following: Being admired and recognized by many people.",
+    type: "likert5",
+    options: IMPORTANCE_5,
+    required: false,
+    instrument: null,
+  },
+
+  // ────────────────────────────────────────────────────────────
+  // Block B4 — Regulation type (Deci-Ryan PLOC continuum, 7 items, NEW)
+  // The full continuum from amotivation through intrinsic motivation,
+  // with external regulation split into approach (rewards) and avoidance
+  // (consequences) poles. Identified and integrated are kept separate
+  // for descriptive richness but should be combined into an autonomous-
+  // regulation composite for predictive modeling.
+  // RAI = -3·external_avoid - 3·external_approach - 2·introjected
+  //       + 1·identified + 2·integrated + 3·intrinsic
+  // (amotivation reported separately).
+  // ────────────────────────────────────────────────────────────
+  {
+    id: "reg_external_avoid",
+    section: "ambition",
+    text: "I am working on my company because other people (investors, peers, family) expect me to, and there would be real consequences if I quit.",
     type: "likert5",
     options: AGREE_5,
     required: false,
     instrument: null,
   },
   {
-    id: "amb_worth_it",
+    id: "reg_external_approach",
     section: "ambition",
-    text: "The sacrifices I'm making now for my company will be worth it.",
+    text: "I am working on my company because of the rewards it can bring me — money, status, recognition.",
+    type: "likert5",
+    options: AGREE_5,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "reg_introjected",
+    section: "ambition",
+    text: "I am working on my company because I would feel guilty or like a failure if I quit.",
+    type: "likert5",
+    options: AGREE_5,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "reg_identified",
+    section: "ambition",
+    text: "I am working on my company because I genuinely value what we're building, regardless of how it turns out.",
+    type: "likert5",
+    options: AGREE_5,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "reg_integrated",
+    section: "ambition",
+    text: "I am working on my company because it's an expression of who I am at my core — coherent with my other values and the rest of my life.",
+    type: "likert5",
+    options: AGREE_5,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "reg_intrinsic",
+    section: "ambition",
+    text: "I am working on my company because I find the work itself genuinely enjoyable.",
+    type: "likert5",
+    options: AGREE_5,
+    required: false,
+    instrument: null,
+  },
+  {
+    id: "reg_amotivation",
+    section: "ambition",
+    text: "I am working on my company because — honestly, I'm not sure why anymore.",
     type: "likert5",
     options: AGREE_5,
     required: false,
@@ -1755,12 +1857,13 @@ export const SECTIONS: SectionMeta[] = [
     id: "life_outlook",
     label: "Outlook",
     intro:
-      "How life is going from where you sit, and how the broader landscape feels. Most use a 0–10 scale; the last two use a 5-point scale.",
+      "How life is going from where you sit — overall well-being, key life domains, and the felt experience of running this company. All items use a 0–10 scale.",
   },
   {
     id: "ambition",
     label: "Ambition",
-    intro: "Reflect on how you relate to achievement, goals, and what a successful life looks like.",
+    intro:
+      "Reflect on what you're driving toward — how hard, what kind of success matters most to you, and what's motivating the work day-to-day.",
   },
   {
     id: "macro_outlook",

@@ -28,6 +28,20 @@ function toColumnUpdates(
   return out;
 }
 
+/**
+ * Pull the `cohort` value out of section_company so it can be written to
+ * the dedicated top-level `cohort` column. Returns null if missing or
+ * malformed — the column is nullable and treated as "yc" by analytics
+ * for backwards compatibility (pre-cohort-split rows).
+ */
+function extractCohort(
+  responses: Record<string, SurveyResponses>
+): "yc" | "general" | null {
+  const company = responses.company as Record<string, unknown> | undefined;
+  const value = company?.cohort;
+  return value === "yc" || value === "general" ? value : null;
+}
+
 export async function POST(request: Request) {
   let body: unknown;
   try {
@@ -52,6 +66,7 @@ export async function POST(request: Request) {
 
   const { responses, submission_id } = parsed.data;
   const columnUpdates = toColumnUpdates(responses);
+  const cohort = extractCohort(responses);
   const supabase = createServerClient();
 
   // Idempotency + partial-row finalize.
@@ -73,7 +88,7 @@ export async function POST(request: Request) {
     }
 
     if (existing && !existing.completed) {
-      return finalizeExisting(supabase, submission_id, columnUpdates);
+      return finalizeExisting(supabase, submission_id, columnUpdates, cohort);
     }
   }
 
@@ -86,6 +101,7 @@ export async function POST(request: Request) {
     const { error } = await supabase.from("survey_responses").insert({
       anonymous_token: token,
       submission_id: submission_id ?? null,
+      cohort,
       ...columnUpdates,
       scores: null,
       completed: false,
@@ -118,7 +134,7 @@ export async function POST(request: Request) {
         });
       }
       if (winner && !winner.completed) {
-        return finalizeExisting(supabase, submission_id!, columnUpdates);
+        return finalizeExisting(supabase, submission_id!, columnUpdates, cohort);
       }
     }
 
@@ -144,16 +160,21 @@ export async function POST(request: Request) {
 async function finalizeExisting(
   supabase: ReturnType<typeof createServerClient>,
   submission_id: string,
-  columnUpdates: Record<string, SurveyResponses>
+  columnUpdates: Record<string, SurveyResponses>,
+  cohort: "yc" | "general" | null
 ) {
   for (let attempt = 0; attempt < MAX_TOKEN_RETRIES; attempt++) {
     const token = generateToken();
+    // Only set cohort on update if we have a non-null value — preserves
+    // any cohort already written by an earlier save-section call.
+    const updatePayload: Record<string, unknown> = {
+      anonymous_token: token,
+      ...columnUpdates,
+    };
+    if (cohort) updatePayload.cohort = cohort;
     const { error } = await supabase
       .from("survey_responses")
-      .update({
-        anonymous_token: token,
-        ...columnUpdates,
-      })
+      .update(updatePayload)
       .eq("submission_id", submission_id)
       .eq("completed", false);
 

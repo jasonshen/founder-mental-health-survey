@@ -1,14 +1,17 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import PageChrome from "@/components/PageChrome";
 
-// localStorage key the survey reads on mount to seed the company section.
-// Mirrors fmh_survey_draft format in app/survey/page.tsx.
+// localStorage keys the survey reads on mount to seed section_company.
+// Mirrors fmh_survey_draft format in app/survey/begin/page.tsx.
 const FOUNDER_STATUS_SEED_KEY = "fmh_founder_status_seed";
+const COHORT_SEED_KEY = "fmh_cohort_seed";
 
 type FounderStatus = "current" | "past";
+type Cohort = "yc" | "general";
+type YcAnswer = "yes" | "no";
 
 function Plus() {
   return (
@@ -19,24 +22,8 @@ function Plus() {
       viewBox="0 0 18 18"
       aria-hidden="true"
     >
-      <rect
-        className="plus-h"
-        x="2"
-        y="8"
-        width="14"
-        height="2"
-        rx="1"
-        fill="currentColor"
-      />
-      <rect
-        className="plus-v"
-        x="8"
-        y="2"
-        width="2"
-        height="14"
-        rx="1"
-        fill="currentColor"
-      />
+      <rect className="plus-h" x="2" y="8" width="14" height="2" rx="1" fill="currentColor" />
+      <rect className="plus-v" x="8" y="2" width="2" height="14" rx="1" fill="currentColor" />
     </svg>
   );
 }
@@ -60,22 +47,57 @@ function Arrow() {
   );
 }
 
-export default function ConsentPage() {
+function ConsentInner() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // URL hint: which landing sent the user here. Defaults to "general"
+  // if missing or invalid — the YC screener question below is what
+  // actually decides the cohort.
+  const urlCohort: Cohort = searchParams.get("cohort") === "yc" ? "yc" : "general";
+
   const [agreed, setAgreed] = useState(false);
   const [founderStatus, setFounderStatus] = useState<FounderStatus | "">("");
+  const [ycAnswer, setYcAnswer] = useState<YcAnswer | "">("");
 
-  const canContinue = agreed && founderStatus !== "";
+  // Cohort the user actually selected (yes → yc, no → general).
+  // Mismatch with urlCohort triggers the switch prompt below.
+  const answeredCohort: Cohort | "" =
+    ycAnswer === "yes" ? "yc" : ycAnswer === "no" ? "general" : "";
+  const isMismatch = answeredCohort !== "" && answeredCohort !== urlCohort;
+
+  const canContinue = agreed && founderStatus !== "" && ycAnswer !== "";
+
+  function seedAndGo(cohort: Cohort) {
+    try {
+      if (founderStatus !== "") {
+        window.localStorage.setItem(FOUNDER_STATUS_SEED_KEY, founderStatus);
+      }
+      window.localStorage.setItem(COHORT_SEED_KEY, cohort);
+    } catch {
+      // Quota / private mode — fail silently; survey will just fall back.
+    }
+    router.push("/survey/begin");
+  }
+
+  function handleStayHere() {
+    // User chose to stay despite mismatch — honor their YC answer.
+    if (answeredCohort !== "") seedAndGo(answeredCohort);
+  }
+
+  function handleSwitch() {
+    // User accepted the switch — go to the matching landing.
+    if (answeredCohort === "yc") {
+      router.push("/yc");
+    } else if (answeredCohort === "general") {
+      router.push("/survey");
+    }
+  }
 
   function handleStart() {
-    if (founderStatus !== "") {
-      try {
-        window.localStorage.setItem(FOUNDER_STATUS_SEED_KEY, founderStatus);
-      } catch {
-        // Quota / private mode — fail silently; we'll just not seed.
-      }
-    }
-    router.push("/survey");
+    if (!canContinue) return;
+    if (isMismatch) return; // Mismatch prompt is showing — user must choose.
+    if (answeredCohort !== "") seedAndGo(answeredCohort);
   }
 
   return (
@@ -174,6 +196,117 @@ export default function ConsentPage() {
         </div>
       </fieldset>
 
+      <fieldset style={{ border: "none", padding: 0, margin: "0 0 28px" }}>
+        <legend className="field-label" style={{ float: "none", marginBottom: 14 }}>
+          Have you ever been part of Y Combinator (any batch)?
+          <span className="req">*</span>
+        </legend>
+        <div className="check-stack">
+          <label className={ycAnswer === "yes" ? "on" : ""}>
+            <input
+              type="radio"
+              name="yc_alum"
+              value="yes"
+              checked={ycAnswer === "yes"}
+              onChange={() => setYcAnswer("yes")}
+            />
+            <span>
+              <span className="check-title">Yes — current or alum.</span>
+              <span className="check-help">
+                I&apos;ve been through a YC batch (X, S, W, or F).
+              </span>
+            </span>
+          </label>
+          <label className={ycAnswer === "no" ? "on" : ""}>
+            <input
+              type="radio"
+              name="yc_alum"
+              value="no"
+              checked={ycAnswer === "no"}
+              onChange={() => setYcAnswer("no")}
+            />
+            <span>
+              <span className="check-title">No.</span>
+              <span className="check-help">
+                I&apos;m a founder but not part of YC.
+              </span>
+            </span>
+          </label>
+        </div>
+      </fieldset>
+
+      {isMismatch && answeredCohort === "yc" && (
+        <div
+          className="alert"
+          role="status"
+          style={{
+            border: "1px solid var(--ink-3)",
+            padding: 16,
+            marginBottom: 24,
+            borderRadius: 4,
+          }}
+        >
+          <p className="alert-h" style={{ marginTop: 0 }}>
+            Looks like you&apos;ve been through YC.
+          </p>
+          <p style={{ marginBottom: 12 }}>
+            We have a YC-specific version of this survey that captures batch
+            info — your data adds the most value there. Want to switch?
+          </p>
+          <div className="cta-row">
+            <button type="button" className="btn" onClick={handleSwitch}>
+              Switch to the YC survey
+              <Arrow />
+            </button>
+            <button
+              type="button"
+              className="btn-link"
+              onClick={handleStayHere}
+              disabled={!canContinue}
+              aria-disabled={!canContinue}
+            >
+              Stay on this one
+            </button>
+          </div>
+        </div>
+      )}
+
+      {isMismatch && answeredCohort === "general" && (
+        <div
+          className="alert"
+          role="status"
+          style={{
+            border: "1px solid var(--ink-3)",
+            padding: 16,
+            marginBottom: 24,
+            borderRadius: 4,
+          }}
+        >
+          <p className="alert-h" style={{ marginTop: 0 }}>
+            This version is tailored for YC founders.
+          </p>
+          <p style={{ marginBottom: 12 }}>
+            We have a general founders version that&apos;s a better fit if
+            you&apos;re not a YC alum. Want to switch?
+          </p>
+          <div className="cta-row">
+            <button type="button" className="btn" onClick={handleSwitch}>
+              Switch to the general survey
+              <Arrow />
+            </button>
+            <button
+              type="button"
+              className="btn-link"
+              onClick={handleStayHere}
+              disabled={!canContinue}
+              aria-disabled={!canContinue}
+            >
+              Stay on this one
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="check-stack" style={{ marginBottom: 32 }}>
         <label className={agreed ? "on" : ""}>
           <input
@@ -190,19 +323,30 @@ export default function ConsentPage() {
         </label>
       </div>
 
-      <div className="cta-row">
-        <button
-          type="button"
-          className="btn"
-          onClick={handleStart}
-          disabled={!canContinue}
-          aria-disabled={!canContinue}
-        >
-          Begin the survey
-          <Arrow />
-        </button>
-        <span className="btn-meta">No account · No tracking</span>
-      </div>
+      {!isMismatch && (
+        <div className="cta-row">
+          <button
+            type="button"
+            className="btn"
+            onClick={handleStart}
+            disabled={!canContinue}
+            aria-disabled={!canContinue}
+          >
+            Begin the survey
+            <Arrow />
+          </button>
+          <span className="btn-meta">No account · No tracking</span>
+        </div>
+      )}
     </PageChrome>
+  );
+}
+
+export default function ConsentPage() {
+  // useSearchParams requires a Suspense boundary in App Router.
+  return (
+    <Suspense fallback={null}>
+      <ConsentInner />
+    </Suspense>
   );
 }

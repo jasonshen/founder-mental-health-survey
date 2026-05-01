@@ -36,6 +36,15 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Unknown section" }, { status: 400 });
   }
 
+  // Pull cohort out of the company section's payload (set when section_id
+  // is "company"). For all other section saves it stays null and the
+  // existing cohort column value is preserved.
+  let cohort: "yc" | "general" | null = null;
+  if (section_id === "company") {
+    const v = (responses as Record<string, unknown>).cohort;
+    if (v === "yc" || v === "general") cohort = v;
+  }
+
   const supabase = createServerClient();
 
   // Look up the in-progress row, if any.
@@ -80,6 +89,12 @@ export async function POST(request: Request) {
   };
   if (!partial) {
     basePayload.last_section_completed = section_id;
+  }
+  // Only write cohort when this save actually carries one (i.e., the
+  // company section). Skip otherwise so we don't clobber the value on
+  // unrelated section saves.
+  if (cohort) {
+    basePayload.cohort = cohort;
   }
 
   if (!existing) {

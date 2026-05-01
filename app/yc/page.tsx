@@ -2,6 +2,7 @@ import Link from "next/link";
 import AuthorPair from "@/components/AuthorPair";
 import QuoteRotator from "@/components/QuoteRotator";
 
+/* Arrow icon used inside the primary CTA. */
 function Arrow() {
   return (
     <svg
@@ -22,6 +23,9 @@ function Arrow() {
   );
 }
 
+/* Plus/minus toggle on accordion summaries. The vertical bar collapses
+   to scaleY(0) when the parent <details> is open, leaving the
+   horizontal bar — i.e., "+" becomes "−". */
 function Plus() {
   return (
     <svg
@@ -31,8 +35,24 @@ function Plus() {
       viewBox="0 0 18 18"
       aria-hidden="true"
     >
-      <rect className="plus-h" x="2" y="8" width="14" height="2" rx="1" fill="currentColor" />
-      <rect className="plus-v" x="8" y="2" width="2" height="14" rx="1" fill="currentColor" />
+      <rect
+        className="plus-h"
+        x="2"
+        y="8"
+        width="14"
+        height="2"
+        rx="1"
+        fill="currentColor"
+      />
+      <rect
+        className="plus-v"
+        x="8"
+        y="2"
+        width="2"
+        height="14"
+        rx="1"
+        fill="currentColor"
+      />
     </svg>
   );
 }
@@ -59,7 +79,7 @@ function ScreenerList() {
   );
 }
 
-export default function GeneralLandingPage() {
+export default function YcLandingPage() {
   return (
     <div className="v v-research">
       <div className="page">
@@ -71,12 +91,22 @@ export default function GeneralLandingPage() {
         </div>
 
         <h1 className="title title-l serif">
-          The Founder Mental Health Survey<span className="accent">.</span>
+          <span style={{ whiteSpace: "nowrap" }}>
+            The
+            <span className="caret-edit" aria-label="unofficial">
+              <span className="mark">
+                <span className="word-mark">unofficial</span>
+                <span className="caret-glyph">∧</span>
+              </span>
+            </span>
+            {" "}YC
+          </span>{" "}
+          Founder Community Mental Health Survey<span className="accent">.</span>
         </h1>
 
         <p className="lede" style={{ marginTop: 28 }}>
-          An anonymous community survey of mental health &amp; well-being for
-          startup founders everywhere. Validated clinical screeners (PHQ-9,
+          An anonymous community survey of mental health &amp; well-being by YC
+          founders, for YC founders. Validated clinical screeners (PHQ-9,
           GAD-7, ASRS, AQ-10, MBI-GS) plus founder-specific dimensions of
           ambition, personality, and relationships.
         </p>
@@ -90,7 +120,7 @@ export default function GeneralLandingPage() {
         </div>
 
         <div className="cta-row">
-          <Link href="/consent?cohort=general" className="btn">
+          <Link href="/consent?cohort=yc" className="btn">
             Begin the survey
             <Arrow />
           </Link>
@@ -116,9 +146,9 @@ export default function GeneralLandingPage() {
                 outlier you think you are.
               </p>
               <p>
-                Aggregate results will be published openly so the founder
-                community has a clearer picture of what mental health and
-                well-being actually look like at this stage.
+                The overall community results will be shared back on Bookface,
+                helping everyone get a better snapshot of what it&apos;s like
+                right now as a YC founder.
               </p>
             </div>
           </details>
@@ -165,15 +195,15 @@ export default function GeneralLandingPage() {
         </div>
 
         <p className="fmhs-deck short" style={{ marginTop: 32, fontSize: 14, color: "var(--ink-2)" }}>
-          Y Combinator alum? We have a{" "}
-          <Link href="/yc">YC-specific version</Link> that captures batch info.
+          Not a YC founder? Take the{" "}
+          <Link href="/survey">general founders version</Link> instead.
         </p>
 
         <footer className="foot">
           <span>
             <AuthorPair />
           </span>
-          <span>Founder Mental Health Survey · 2026</span>
+          <span>YC Founder Mental Health Survey · 2026</span>
         </footer>
       </div>
     </div>
