@@ -8,40 +8,13 @@ import {
   confirmationEmailText,
 } from "@/lib/emails/confirmation";
 import { log } from "@/lib/log";
-import type { AllScores } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
 const Body = z.object({
   to: z.string().email(),
+  cohort: z.enum(["yc", "general"]).optional(),
 });
-
-const SAMPLE_SCORES: AllScores = {
-  phq9: {
-    score: 8,
-    severity: "mild",
-    general_pop_band_pct: 24,
-    suicidal_ideation_flagged: false,
-  },
-  gad7: {
-    score: 11,
-    severity: "moderate",
-    general_pop_band_pct: 12,
-  },
-  asrs: {
-    items_flagged: 4,
-    above_threshold: true,
-    general_pop_above_threshold_pct: 8,
-  },
-};
-
-function baseUrl(): string {
-  const explicit = process.env.NEXT_PUBLIC_APP_URL;
-  if (explicit) return explicit.replace(/\/$/, "");
-  const vercel = process.env.VERCEL_URL;
-  if (vercel) return `https://${vercel}`;
-  return "http://localhost:3000";
-}
 
 export async function POST(request: Request) {
   if (!(await isAdminAuthed())) {
@@ -57,31 +30,19 @@ export async function POST(request: Request) {
     );
   }
 
-  const token = "FMH-TEST";
-  const resultsUrl = `${baseUrl()}/results/${token}`;
+  const cohort = parsed.data.cohort ?? "yc";
   const interests = {
-    report: true,
-    coaching: false,
+    coaching: true,
     retreat: false,
-    plantMedicine: false,
-    updates: false,
+    plantMedicine: true,
+    updates: true,
   };
 
   const result = await sendEmail({
     to: parsed.data.to,
-    subject: `[TEST] ${confirmationEmailSubject()}`,
-    html: confirmationEmailHtml({
-      token,
-      resultsUrl,
-      scores: SAMPLE_SCORES,
-      interests,
-    }),
-    text: confirmationEmailText({
-      token,
-      resultsUrl,
-      scores: SAMPLE_SCORES,
-      interests,
-    }),
+    subject: `[TEST] ${confirmationEmailSubject(cohort)}`,
+    html: confirmationEmailHtml({ cohort, interests }),
+    text: confirmationEmailText({ cohort, interests }),
   });
 
   if (!result.sent) {

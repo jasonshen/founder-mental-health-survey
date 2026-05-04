@@ -8,23 +8,8 @@ import {
   confirmationEmailText,
   confirmationEmailSubject,
 } from "@/lib/emails/confirmation";
-import type { AllScores } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
-
-function resolveBaseUrl(request: Request): string {
-  const envUrl =
-    process.env.NEXT_PUBLIC_APP_URL ||
-    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined);
-  if (envUrl) return envUrl.replace(/\/$/, "");
-  // Fallback: derive from the request URL.
-  try {
-    const u = new URL(request.url);
-    return `${u.protocol}//${u.host}`;
-  } catch {
-    return "";
-  }
-}
 
 export async function POST(request: Request) {
   let body: unknown;
@@ -52,10 +37,13 @@ export async function POST(request: Request) {
   const token = data.token.toUpperCase();
   const supabase = createServerClient();
 
-  // Verify token exists in survey_responses AND grab scores for the email.
+  // Verify token exists in survey_responses AND grab cohort for the email.
+  // We deliberately do NOT pull scores here — the confirmation email no longer
+  // includes survey content; including scores would re-create the email↔response
+  // linkage we promise respondents we don't keep.
   const { data: survey, error: surveyError } = await supabase
     .from("survey_responses")
-    .select("anonymous_token, scores")
+    .select("anonymous_token, cohort")
     .eq("anonymous_token", token)
     .maybeSingle();
 
@@ -80,10 +68,10 @@ export async function POST(request: Request) {
 
   // PRIVACY: we intentionally do NOT store the token alongside the email.
   // email_contacts must not be joinable to survey_responses — that's the
-  // structural guarantee we make to respondents. The token only lives in
-  // the scores lookup above and in the confirmation email we're about
-  // to send. After this request, the link between email and responses
-  // exists nowhere on our servers. See migration 005_privacy_hardening.sql.
+  // structural guarantee we make to respondents. The token is used only to
+  // verify the response exists; it is not echoed back in the confirmation
+  // email (or in any later report email), so respondents who lose their
+  // token cannot recover it from us. See migration 005_privacy_hardening.sql.
   const { error: insertError } = await supabase.from("email_contacts").insert({
     email: data.email,
     wants_report: data.wants_report,
@@ -110,32 +98,24 @@ export async function POST(request: Request) {
 
   // Fire confirmation email (don't block the response on send success or failure —
   // the user has already seen "Thanks for leaving your email" in the UI).
-  if (survey.scores) {
-    const baseUrl = resolveBaseUrl(request);
-    const resultsUrl = `${baseUrl}/results/${token}`;
-    const emailArgs = {
-      token,
-      resultsUrl,
-      scores: survey.scores as AllScores,
-      interests: {
-        report: data.wants_report,
-        coaching: data.wants_coaching,
-        retreat: data.wants_retreat,
-        plantMedicine: data.wants_plant_medicine,
-        updates: data.wants_updates,
-      },
-    };
+  const cohort = (survey.cohort as "yc" | "general" | null) ?? null;
+  const emailArgs = {
+    cohort,
+    interests: {
+      coaching: data.wants_coaching,
+      retreat: data.wants_retreat,
+      plantMedicine: data.wants_plant_medicine,
+      updates: data.wants_updates,
+    },
+  };
 
-    // Await the send but swallow failures — send errors are logged in sendEmail.
-    await sendEmail({
-      to: data.email,
-      subject: confirmationEmailSubject(),
-      html: confirmationEmailHtml(emailArgs),
-      text: confirmationEmailText(emailArgs),
-    });
-  } else {
-    log.warn("email_sent_skipped_no_scores", { token: tokenPrefix(token) });
-  }
+  // Await the send but swallow failures — send errors are logged in sendEmail.
+  await sendEmail({
+    to: data.email,
+    subject: confirmationEmailSubject(cohort),
+    html: confirmationEmailHtml(emailArgs),
+    text: confirmationEmailText(emailArgs),
+  });
 
   return NextResponse.json({ success: true });
 }

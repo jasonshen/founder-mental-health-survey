@@ -26,20 +26,19 @@ function Arrow() {
 
 interface InterestOption {
   key:
-    | "wantsReport"
+    | "wantsReportAndUpdates"
     | "wantsCoaching"
     | "wantsRetreat"
-    | "wantsPlantMedicine"
-    | "wantsUpdates";
+    | "wantsPlantMedicine";
   title: string;
   help: string;
 }
 
 const INTERESTS: InterestOption[] = [
   {
-    key: "wantsReport",
-    title: "Full report of my results",
-    help: "A detailed PDF breakdown of your scores with context and recommendations.",
+    key: "wantsReportAndUpdates",
+    title: "My full report and research updates",
+    help: "A detailed analysis of your responses sent in about 2 weeks, plus aggregate findings from the survey and ongoing founder mental health research. The report lives at your anonymous results URL — you'll need your saved access code (or a bookmark) to view it.",
   },
   {
     key: "wantsCoaching",
@@ -56,11 +55,6 @@ const INTERESTS: InterestOption[] = [
     title: "Plant medicine / psychedelic-assisted therapy",
     help: "Information about legal, clinically supervised psychedelic-assisted therapy programs.",
   },
-  {
-    key: "wantsUpdates",
-    title: "Research updates",
-    help: "Receive the aggregate findings from this survey when published, plus founder mental health research.",
-  },
 ];
 
 function EmailContent() {
@@ -69,11 +63,10 @@ function EmailContent() {
 
   const [email, setEmail] = useState("");
   const [interests, setInterests] = useState<Record<InterestOption["key"], boolean>>({
-    wantsReport: true,
+    wantsReportAndUpdates: true,
     wantsCoaching: false,
     wantsRetreat: false,
     wantsPlantMedicine: false,
-    wantsUpdates: false,
   });
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -95,11 +88,15 @@ function EmailContent() {
         body: JSON.stringify({
           token,
           email,
-          wants_report: interests.wantsReport,
+          // The "Full report + research updates" checkbox sets both flags
+          // server-side; the analytics layer still tracks them separately so
+          // we can split out who specifically asked for ongoing updates vs.
+          // their own report if that distinction ever matters again.
+          wants_report: interests.wantsReportAndUpdates,
           wants_coaching: interests.wantsCoaching,
           wants_retreat: interests.wantsRetreat,
           wants_plant_medicine: interests.wantsPlantMedicine,
-          wants_updates: interests.wantsUpdates,
+          wants_updates: interests.wantsReportAndUpdates,
         }),
       });
 
@@ -138,15 +135,18 @@ function EmailContent() {
         </h1>
         <p className="fmhs-deck">
           Your email has been submitted.
-          {interests.wantsReport && " We'll send your full report shortly."} We&apos;ll
-          be in touch about the resources you expressed interest in.
+          {interests.wantsReportAndUpdates &&
+            " We'll send your detailed report in about 2 weeks."}{" "}
+          We&apos;ll be in touch about the resources you expressed interest in.
         </p>
 
         <div className="code-chip" style={{ margin: "8px 0 32px" }}>
           <div className="label">Your private access code</div>
           <p className="help">
-            We&apos;ve emailed this to you too — save it somewhere safe.
-            It&apos;s the only way back to your results.
+            Save this somewhere safe or bookmark your results page — your
+            responses are anonymous, so we don&apos;t store this code with your
+            email. It&apos;s the only way back to your results, including the
+            detailed report when it&apos;s ready.
           </p>
           <code>{token}</code>
         </div>
@@ -167,9 +167,9 @@ function EmailContent() {
         Stay connected<span className="accent">.</span>
       </h1>
       <p className="fmhs-deck">
-        Leave your email to get your full report and learn about resources for
-        founder mental health. We respect your privacy and will never share your
-        email.
+        Leave your email to get your detailed report (sent in about 2 weeks)
+        and learn about resources for founder mental health. We respect your
+        privacy and will never share your email.
       </p>
 
       <form onSubmit={handleSubmit} className="form-stack" style={{ marginTop: 24 }}>

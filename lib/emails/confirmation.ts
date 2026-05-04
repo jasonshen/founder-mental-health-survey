@@ -1,11 +1,8 @@
-import type { AllScores } from "../types";
+type Cohort = "yc" | "general" | null | undefined;
 
 interface Args {
-  token: string;
-  resultsUrl: string;
-  scores: AllScores;
+  cohort: Cohort;
   interests: {
-    report: boolean;
     coaching: boolean;
     retreat: boolean;
     plantMedicine: boolean;
@@ -13,24 +10,15 @@ interface Args {
   };
 }
 
-const PHQ9_LABELS: Record<string, string> = {
-  none: "None / Minimal",
-  mild: "Mild",
-  moderate: "Moderate",
-  moderately_severe: "Moderately Severe",
-  severe: "Severe",
-};
-
-const GAD7_LABELS: Record<string, string> = {
-  none: "None / Minimal",
-  mild: "Mild",
-  moderate: "Moderate",
-  severe: "Severe",
-};
+// NULL cohort = pre-cohort-split respondent; treat as YC per migration 009.
+function surveyName(cohort: Cohort): string {
+  return cohort === "general"
+    ? "Founder Mental Health Survey"
+    : "YC Founder Mental Health Survey";
+}
 
 function interestList(i: Args["interests"]): string[] {
   const list: string[] = [];
-  if (i.report) list.push("Full report");
   if (i.coaching) list.push("Coaching resources");
   if (i.retreat) list.push("In-person retreat");
   if (i.plantMedicine) list.push("Plant medicine / psychedelic-assisted therapy");
@@ -38,17 +26,12 @@ function interestList(i: Args["interests"]): string[] {
   return list;
 }
 
-export function confirmationEmailSubject(): string {
-  return "Your Founder Mental Health Survey results";
+export function confirmationEmailSubject(cohort: Cohort): string {
+  return `Thanks for taking the ${surveyName(cohort)}`;
 }
 
-export function confirmationEmailHtml({
-  token,
-  resultsUrl,
-  scores,
-  interests,
-}: Args): string {
-  const crisis = scores.phq9.suicidal_ideation_flagged;
+export function confirmationEmailHtml({ cohort, interests }: Args): string {
+  const name = surveyName(cohort);
   const interestsL = interestList(interests);
 
   return `<!doctype html>
@@ -56,7 +39,7 @@ export function confirmationEmailHtml({
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Your Founder Mental Health Survey results</title>
+<title>Thanks for taking the ${name}</title>
 </head>
 <body style="margin:0;padding:0;background:#f5f5f4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;color:#111;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f5f5f4;padding:32px 16px;">
@@ -64,53 +47,28 @@ export function confirmationEmailHtml({
 <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="background:#ffffff;border:1px solid #e5e5e5;border-radius:12px;padding:32px;max-width:560px;">
 <tr><td>
 
-<h1 style="margin:0 0 8px 0;font-size:22px;font-weight:700;color:#111;">Your results</h1>
-<p style="margin:0 0 24px 0;color:#525252;font-size:14px;">Thanks for taking the Founder Mental Health Survey. Here's your raw scores.</p>
+<h1 style="margin:0 0 16px 0;font-size:22px;font-weight:700;color:#111;">Thanks for taking the ${name}.</h1>
 
-${
-  crisis
-    ? `
-<div style="background:#fef3c7;border-left:4px solid #f59e0b;padding:16px;border-radius:8px;margin-bottom:24px;">
-  <p style="margin:0 0 8px 0;font-weight:600;color:#78350f;">If you're having thoughts of self-harm, please reach out:</p>
-  <p style="margin:0;color:#78350f;font-size:14px;">
-    <strong>988 Suicide &amp; Crisis Lifeline</strong> — call or text <strong>988</strong><br>
-    <strong>Crisis Text Line</strong> — text <strong>HOME</strong> to <strong>741741</strong>
+<p style="margin:0 0 16px 0;font-size:15px;line-height:1.6;color:#262626;">
+We'll send you a more detailed report in the next 2 weeks.
+</p>
+
+<div style="margin:24px 0;padding:16px 18px;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;">
+  <p style="margin:0 0 8px 0;font-size:14px;font-weight:600;color:#78350f;">Save your access code or bookmark your results page.</p>
+  <p style="margin:0;font-size:13px;line-height:1.6;color:#92400e;">
+    Your responses are anonymous. Your email and your survey responses live in separate database tables with no join key, so we can't look up your results from this email address. The access code (and the results URL it unlocks) shown at the end of the survey is the only way back. If you didn't save it, please retake the survey.
   </p>
-</div>`
-    : ""
-}
-
-<h2 style="margin:24px 0 12px 0;font-size:15px;font-weight:600;color:#111;border-bottom:1px solid #e5e5e5;padding-bottom:8px;">Depression (PHQ-9)</h2>
-<p style="margin:0 0 4px 0;font-size:14px;color:#111;"><strong>Score:</strong> ${scores.phq9.score} / 27</p>
-<p style="margin:0;font-size:14px;color:#525252;"><strong>Severity:</strong> ${PHQ9_LABELS[scores.phq9.severity] ?? scores.phq9.severity}</p>
-
-<h2 style="margin:24px 0 12px 0;font-size:15px;font-weight:600;color:#111;border-bottom:1px solid #e5e5e5;padding-bottom:8px;">Anxiety (GAD-7)</h2>
-<p style="margin:0 0 4px 0;font-size:14px;color:#111;"><strong>Score:</strong> ${scores.gad7.score} / 21</p>
-<p style="margin:0;font-size:14px;color:#525252;"><strong>Severity:</strong> ${GAD7_LABELS[scores.gad7.severity] ?? scores.gad7.severity}</p>
-
-<h2 style="margin:24px 0 12px 0;font-size:15px;font-weight:600;color:#111;border-bottom:1px solid #e5e5e5;padding-bottom:8px;">ADHD (ASRS-v1.1 Part A)</h2>
-<p style="margin:0 0 4px 0;font-size:14px;color:#111;"><strong>Items flagged:</strong> ${scores.asrs.items_flagged} / 6</p>
-<p style="margin:0;font-size:14px;color:#525252;"><strong>Threshold:</strong> ${scores.asrs.above_threshold ? "Above (4+ items) — further evaluation may be worthwhile" : "Below"}</p>
-
-<div style="margin:32px 0;padding:20px;background:#f5f5f4;border-radius:8px;text-align:center;">
-  <a href="${resultsUrl}" style="display:inline-block;background:#111;color:#ffffff;text-decoration:none;font-weight:500;padding:12px 24px;border-radius:8px;font-size:14px;">View your full results</a>
 </div>
 
-<div style="margin:24px 0;padding:16px;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;">
-  <p style="margin:0 0 8px 0;font-size:13px;font-weight:600;color:#78350f;">🔑 Your private access code</p>
-  <p style="margin:0 0 12px 0;font-size:12px;color:#92400e;line-height:1.5;">
-    This code is the only way to access your results. Your email and your responses live in separate database tables with no join key, so even we can't look them up by email. Save this email, or copy the code somewhere safe.
-  </p>
-  <div style="background:#ffffff;border:1px solid #fde68a;border-radius:6px;padding:10px 12px;text-align:center;">
-    <code style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:16px;font-weight:600;letter-spacing:0.5px;color:#111;">${token}</code>
-  </div>
-</div>
+<p style="margin:0 0 24px 0;font-size:14px;line-height:1.6;color:#525252;">
+When the detailed report is ready, we'll send a follow-up email letting you know it's live — that email won't contain your code either, so you'll need your saved access code or bookmark to view it.
+</p>
 
 ${
   interestsL.length > 0
     ? `
-<p style="margin:0 0 8px 0;font-size:13px;color:#525252;">You asked about:</p>
-<ul style="margin:0 0 24px 0;padding-left:20px;font-size:13px;color:#525252;">
+<p style="margin:24px 0 8px 0;font-size:14px;color:#262626;">You also asked about:</p>
+<ul style="margin:0 0 16px 0;padding-left:20px;font-size:14px;color:#262626;line-height:1.7;">
 ${interestsL.map((i) => `<li>${i}</li>`).join("")}
 </ul>
 <p style="margin:0 0 24px 0;font-size:13px;color:#737373;">We'll be in touch about these separately.</p>`
@@ -129,27 +87,24 @@ This survey is a screening tool for informational purposes only. It does not con
 </html>`;
 }
 
-export function confirmationEmailText({
-  token,
-  resultsUrl,
-  scores,
-}: Args): string {
-  const crisis = scores.phq9.suicidal_ideation_flagged
-    ? `\nIF YOU'RE IN CRISIS:\n988 Suicide & Crisis Lifeline — call or text 988\nCrisis Text Line — text HOME to 741741\n\n`
-    : "";
+export function confirmationEmailText({ cohort, interests }: Args): string {
+  const name = surveyName(cohort);
+  const interestsL = interestList(interests);
+  const interestsBlock =
+    interestsL.length > 0
+      ? `\nYou also asked about:\n${interestsL.map((i) => `- ${i}`).join("\n")}\n\nWe'll be in touch about these separately.\n`
+      : "";
 
-  return `Your Founder Mental Health Survey results
-${crisis}
-Depression (PHQ-9): ${scores.phq9.score} / 27 — ${PHQ9_LABELS[scores.phq9.severity] ?? scores.phq9.severity}
-Anxiety (GAD-7): ${scores.gad7.score} / 21 — ${GAD7_LABELS[scores.gad7.severity] ?? scores.gad7.severity}
-ADHD (ASRS): ${scores.asrs.items_flagged} / 6 items flagged — ${scores.asrs.above_threshold ? "Above threshold" : "Below threshold"}
+  return `Thanks for taking the ${name}.
 
-View your full results: ${resultsUrl}
+We'll send you a more detailed report in the next 2 weeks.
 
-YOUR PRIVATE ACCESS CODE: ${token}
-This code is the only way to access your results. Your email and your responses live in separate tables with no join key, so even we can't look them up by email. Save this email or copy the code somewhere safe.
+SAVE YOUR ACCESS CODE OR BOOKMARK YOUR RESULTS PAGE
+Your responses are anonymous. Your email and your survey responses live in separate database tables with no join key, so we can't look up your results from this email address. The access code (and the results URL it unlocks) shown at the end of the survey is the only way back. If you didn't save it, please retake the survey.
 
+When the detailed report is ready, we'll send a follow-up email letting you know it's live — that email won't contain your code either, so you'll need your saved access code or bookmark to view it.
+${interestsBlock}
 ---
-This survey is a screening tool, not a medical diagnosis.
+This survey is a screening tool for informational purposes only. It does not constitute a medical diagnosis. If you're concerned about your mental health, please consult a licensed clinician.
 `;
 }
