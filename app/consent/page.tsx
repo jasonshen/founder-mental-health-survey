@@ -219,7 +219,7 @@ function ConsentInner() {
             <span>
               <span className="check-title">Yes — current or alum.</span>
               <span className="check-help">
-                I&apos;ve been through a YC batch (X, S, W, or F).
+                I&apos;ve been through a YC batch (W, S, P, or F).
               </span>
             </span>
           </label>
