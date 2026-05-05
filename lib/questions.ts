@@ -45,11 +45,33 @@ const companyQuestions: Question[] = [
     instrument: null,
     condition: () => false,
   },
-  // company_yc_batch was removed 2026-05-05. Specific batch + the other
-  // demographic columns (year founded, role, gender, ethnicity, industry,
-  // funding band, team size) get close to uniquely identifying respondents
-  // in small batches, and per-batch n was never going to support inferential
-  // analysis. company_year_founded covers the era-comparison signal.
+  // We dropped the specific YC batch (W/S/P/F season) on 2026-05-05 — combining
+  // batch with the other demographic columns put respondents close to uniquely
+  // identifiable in small cohorts. We still ask the YEAR they went through, since
+  // a year groups 4 batches together and stays useful as an era variable without
+  // the same fingerprinting risk.
+  {
+    id: "company_yc_year",
+    section: "company",
+    text: "What year did you go through Y Combinator?",
+    type: "dropdown",
+    options: [
+      "2026",
+      "2025",
+      "2024",
+      "2023",
+      "2022",
+      "2021",
+      "2020",
+      "2019",
+      "2018",
+      "2017",
+      "Earlier than 2017",
+    ],
+    required: false,
+    instrument: null,
+    condition: (r) => r["cohort"] === "yc",
+  },
   {
     id: "company_year_founded",
     section: "company",
