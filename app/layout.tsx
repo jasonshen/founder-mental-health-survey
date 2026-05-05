@@ -43,7 +43,7 @@ const jetBrainsMono = JetBrains_Mono({
 // served from /public so browsers that prefer a smaller or larger
 // favicon can pick the right one.
 const SHARE_DESCRIPTION =
-  "Anonymous. ~10 min. Founder-specific stressors plus clinically validated depression, anxiety, burnout measures. By YC founders, for YC founders. Compare your results to your peers.";
+  "Anonymous. ~10 min. Startup-specific stressors plus clinically validated measures. Made by YC founders, for YC founders.";
 
 export const metadata: Metadata = {
   title: "The Founder Mental Health Survey",
