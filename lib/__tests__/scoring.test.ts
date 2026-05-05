@@ -139,7 +139,7 @@ describe("ASRS Scoring (ADHD)", () => {
   it("flags all 6 items at maximum", () => {
     const responses: Record<string, string> = {};
     for (let i = 1; i <= 6; i++) {
-      responses[`asrs_${i}`] = "Very Often";
+      responses[`asrs_${i}`] = "Very often";
     }
     const result = scoreASRS(responses);
     expect(result.items_flagged).toBe(6);
@@ -165,7 +165,7 @@ describe("ASRS Scoring (ADHD)", () => {
     responses["asrs_3"] = "Never";
     responses["asrs_4"] = "Sometimes";
     responses["asrs_5"] = "Often";
-    responses["asrs_6"] = "Very Often";
+    responses["asrs_6"] = "Very often";
     const result = scoreASRS(responses);
     expect(result.items_flagged).toBe(2);
   });
@@ -174,7 +174,7 @@ describe("ASRS Scoring (ADHD)", () => {
     const responses: Record<string, string> = {};
     responses["asrs_1"] = "Sometimes";
     responses["asrs_2"] = "Often";
-    responses["asrs_3"] = "Very Often";
+    responses["asrs_3"] = "Very often";
     responses["asrs_4"] = "Often";
     responses["asrs_5"] = "Never";
     responses["asrs_6"] = "Never";

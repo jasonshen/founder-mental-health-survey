@@ -99,10 +99,14 @@ export function scoreGAD7(responses: SurveyResponses): GAD7Score {
 // ASRS-v1.1 Part A Scoring (ADHD)
 // ============================================================
 
-// Questions 1-3: flagged if "Sometimes", "Often", or "Very Often"
-// Questions 4-6: flagged if "Often" or "Very Often"
-const ASRS_Q1_3_FLAGGED = ["Sometimes", "Often", "Very Often"];
-const ASRS_Q4_6_FLAGGED = ["Often", "Very Often"];
+// Questions 1-3: flagged if "Sometimes", "Often", or "Very often"
+// Questions 4-6: flagged if "Often" or "Very often"
+// String casing must match ASRS_OPTIONS in lib/questions.ts ("Very often",
+// lowercase 'o') exactly — JS string equality is case-sensitive, so a
+// "Very Often" entry here would silently drop every respondent's
+// highest-frequency answer.
+const ASRS_Q1_3_FLAGGED = ["Sometimes", "Often", "Very often"];
+const ASRS_Q4_6_FLAGGED = ["Often", "Very often"];
 const ASRS_THRESHOLD = 4;
 
 export function scoreASRS(responses: SurveyResponses): ASRSScore {
