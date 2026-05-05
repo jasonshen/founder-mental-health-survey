@@ -133,24 +133,27 @@ const MBI_FREQ_VALUES: Record<string, number> = {
 //   < 40%           → red    (poor)
 // Pass inverted=true for metrics where high indicates a problem (need-frustration,
 // exhaustion, controlled regulation) so the labels swap (high → red, low → green).
+// Muted 3-band palette. Mid band uses amber to match the PHQ-9 / GAD-7
+// "mild" severity color so all results-page bars share a single tonal
+// system instead of switching to blue for non-clinical instruments.
 function bandColor(
   value: number | null,
   min: number,
   max: number,
   inverted = false
 ): string {
-  if (value === null || max === min) return "bg-gray-300";
+  if (value === null || max === min) return "bg-gray-200";
   const ratio = (value - min) / (max - min);
   const high = ratio >= 0.8;
   const low = ratio < 0.4;
   if (inverted) {
-    if (high) return "bg-rose-400";
-    if (low) return "bg-emerald-400";
-    return "bg-blue-400";
+    if (high) return "bg-rose-300";
+    if (low) return "bg-emerald-300";
+    return "bg-amber-300";
   }
-  if (high) return "bg-emerald-400";
-  if (low) return "bg-rose-400";
-  return "bg-blue-400";
+  if (high) return "bg-emerald-300";
+  if (low) return "bg-rose-300";
+  return "bg-amber-300";
 }
 
 function meanOf(
@@ -220,11 +223,11 @@ function scoreBarWidth(score: number, maxScore: number): string {
 
 function severityBarColor(severity: PHQ9Severity | GAD7Severity): string {
   switch (severity) {
-    case "none": return "bg-emerald-400";
-    case "mild": return "bg-amber-400";
-    case "moderate": return "bg-orange-400";
-    case "moderately_severe": return "bg-rose-400";
-    case "severe": return "bg-rose-500";
+    case "none": return "bg-emerald-300";
+    case "mild": return "bg-amber-300";
+    case "moderate": return "bg-orange-300";
+    case "moderately_severe": return "bg-rose-300";
+    case "severe": return "bg-rose-400";
   }
 }
 
@@ -364,7 +367,7 @@ function CohortRow({
       </div>
       <div className="w-full bg-gray-200 rounded-full h-2 mb-1">
         <div
-          className="bg-indigo-400 h-2 rounded-full transition-all"
+          className="bg-indigo-300 h-2 rounded-full transition-all"
           style={{ width: `${percentile}%` }}
         />
       </div>
