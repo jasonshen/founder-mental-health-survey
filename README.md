@@ -112,7 +112,7 @@ Every section maps 1:1 to its own JSONB column on `survey_responses` (e.g. `sect
 The consent page (`app/consent/page.tsx`) reads the URL hint, asks the YC screener question, and writes the resulting cohort (`yc` or `general`) into `localStorage` keys consumed by `app/survey/begin/page.tsx`. The cohort flows through `/api/save-section` and `/api/submit` into the top-level `cohort` column. Confirmation email subject and per-cohort percentile lookups branch on this value.
 
 ### Skip logic
-Declarative predicates on `Question` and `SectionMeta` in [`lib/questions.ts`](lib/questions.ts) and helpers in [`lib/conditions.ts`](lib/conditions.ts). Examples: solo founders skip the cofounder section entirely; AUDIT-C alcohol follow-ups appear only if alcohol frequency ≥ Monthly; therapy follow-ups only show when "Have you ever worked with a therapist?" = Yes; YC batch dropdown only renders for the YC cohort.
+Declarative predicates on `Question` and `SectionMeta` in [`lib/questions.ts`](lib/questions.ts) and helpers in [`lib/conditions.ts`](lib/conditions.ts). Examples: solo founders skip the cofounder section entirely; AUDIT-C alcohol follow-ups appear only if alcohol frequency ≥ Monthly; therapy follow-ups only show when "Have you ever worked with a therapist?" = Yes.
 
 ### Reverse-coded items
 Marked with `reverseCoded: true` in `Question` metadata. The survey UI presents them unmarked; reversal happens at the analysis layer, not the survey layer.

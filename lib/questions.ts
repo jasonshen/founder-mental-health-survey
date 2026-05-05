@@ -45,45 +45,11 @@ const companyQuestions: Question[] = [
     instrument: null,
     condition: () => false,
   },
-  {
-    id: "company_yc_batch",
-    section: "company",
-    text: "What Y Combinator batch were you?",
-    type: "dropdown",
-    options: [
-      "S26 (Summer 2026)",
-      "P26 (Spring 2026)",
-      "W26 (Winter 2026)",
-      "F25 (Fall 2025)",
-      "S25 (Summer 2025)",
-      "P25 (Spring 2025)",
-      "W25 (Winter 2025)",
-      "F24 (Fall 2024)",
-      "S24 (Summer 2024)",
-      "W24 (Winter 2024)",
-      "S23 (Summer 2023)",
-      "W23 (Winter 2023)",
-      "S22 (Summer 2022)",
-      "W22 (Winter 2022)",
-      "S21 (Summer 2021)",
-      "W21 (Winter 2021)",
-      "S20 (Summer 2020)",
-      "W20 (Winter 2020)",
-      "S19 (Summer 2019)",
-      "W19 (Winter 2019)",
-      "S18 (Summer 2018)",
-      "W18 (Winter 2018)",
-      "S17 (Summer 2017)",
-      "W17 (Winter 2017)",
-      "Earlier than 2017",
-      "Not a YC company",
-    ],
-    required: false,
-    instrument: null,
-    // Only ask the YC batch question when the respondent identified as YC
-    // at consent. General-cohort respondents skip it entirely.
-    condition: (r) => r["cohort"] === "yc",
-  },
+  // company_yc_batch was removed 2026-05-05. Specific batch + the other
+  // demographic columns (year founded, role, gender, ethnicity, industry,
+  // funding band, team size) get close to uniquely identifying respondents
+  // in small batches, and per-batch n was never going to support inferential
+  // analysis. company_year_founded covers the era-comparison signal.
   {
     id: "company_year_founded",
     section: "company",
