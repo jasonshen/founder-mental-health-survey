@@ -5,6 +5,7 @@ import type {
   ResultsResponse,
   PHQ9Severity,
   GAD7Severity,
+  SurveyResponses,
 } from "@/lib/types";
 import CrisisBanner from "./CrisisBanner";
 import ResultsCard from "./ResultsCard";
@@ -93,6 +94,61 @@ const STRESS_VALUE_MAP: Record<string, number> = {
   "Very much": 3,
   "Extremely": 4,
 };
+
+// Likert / frequency lookups used by the new cards (cofounder, ambition, burnout).
+// Mirror the option arrays in lib/questions.ts.
+const AGREE_5_VALUES: Record<string, number> = {
+  "Strongly disagree": 1,
+  Disagree: 2,
+  "Neither agree nor disagree": 3,
+  Agree: 4,
+  "Strongly agree": 5,
+};
+
+const IMPORTANCE_5_VALUES: Record<string, number> = {
+  "Not at all important": 1,
+  "Slightly important": 2,
+  "Moderately important": 3,
+  "Very important": 4,
+  "Extremely important": 5,
+};
+
+const MBI_FREQ_VALUES: Record<string, number> = {
+  Never: 0,
+  "A few times a year": 1,
+  "Once a month or less": 2,
+  "A few times a month": 3,
+  "Once a week": 4,
+  "A few times a week": 5,
+  "Every day": 6,
+};
+
+function meanOf(
+  responses: SurveyResponses | null | undefined,
+  ids: string[],
+  map?: Record<string, number>
+): { mean: number | null; answered: number } {
+  if (!responses) return { mean: null, answered: 0 };
+  let sum = 0;
+  let count = 0;
+  for (const id of ids) {
+    const raw = responses[id];
+    if (raw === undefined || raw === null || raw === "") continue;
+    const n =
+      typeof raw === "number"
+        ? raw
+        : typeof raw === "string" && map
+          ? map[raw]
+          : Number(raw);
+    if (!Number.isFinite(n)) continue;
+    sum += n as number;
+    count++;
+  }
+  return {
+    mean: count > 0 ? Number((sum / count).toFixed(2)) : null,
+    answered: count,
+  };
+}
 
 function formatPHQ9Severity(severity: PHQ9Severity): string {
   switch (severity) {
@@ -189,6 +245,60 @@ function DarkTriadRow({
           style={{ width: `${pct}%` }}
         />
       </div>
+    </div>
+  );
+}
+
+// Generic mean-on-a-scale row, used by the new cards. `value` and `max`
+// are interpreted on the natural scale of the underlying items
+// (e.g. value 3.4 / max 5 for likert5; value 7.2 / max 10 for 0-10 scales).
+// `min` defaults to 0; pass 1 for likert5 so a true minimum renders as an
+// empty bar instead of 20%.
+function MeanRow({
+  label,
+  value,
+  min = 0,
+  max,
+  caption,
+  color = "bg-indigo-500",
+  decimals = 1,
+}: {
+  label: string;
+  value: number | null;
+  min?: number;
+  max: number;
+  caption?: string;
+  color?: string;
+  decimals?: number;
+}) {
+  if (value === null) {
+    return (
+      <div>
+        <div className="flex items-center justify-between mb-1">
+          <span className="text-sm font-medium text-gray-800">{label}</span>
+          <span className="text-sm text-gray-400">No answers</span>
+        </div>
+        {caption && <p className="text-xs text-gray-400 mt-0.5">{caption}</p>}
+      </div>
+    );
+  }
+  const pct = Math.max(0, Math.min(100, ((value - min) / (max - min)) * 100));
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-1">
+        <span className="text-sm font-medium text-gray-800">{label}</span>
+        <span className="text-sm font-semibold tabular-nums">
+          {value.toFixed(decimals)}
+          <span className="text-gray-400 font-normal"> / {max}</span>
+        </span>
+      </div>
+      <div className="w-full bg-gray-200 rounded-full h-2 mb-1">
+        <div
+          className={`${color} h-2 rounded-full transition-all`}
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+      {caption && <p className="text-xs text-gray-500">{caption}</p>}
     </div>
   );
 }
@@ -352,11 +462,19 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
     );
   }
 
-  const { scores, section_founder_challenges, section_founder_stress } = data;
+  const {
+    scores,
+    section_founder_challenges,
+    section_founder_stress,
+    section_cofounder,
+    section_life_outlook,
+    section_ambition,
+    section_burnout,
+  } = data;
 
-  // Score each V3 challenge item (0-4). Missing answers are skipped,
-  // not counted as zero — otherwise a respondent who left items blank
-  // would look like they rated them "Not a challenge".
+  // ─────────────────────────────────────────────────────────
+  // Founder Challenges (V3, fc_*) → grouped themes
+  // ─────────────────────────────────────────────────────────
   const itemScores: Record<string, number> = {};
   for (const [key, raw] of Object.entries(section_founder_challenges || {})) {
     if (!key.startsWith("fc_")) continue;
@@ -365,9 +483,6 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
       typeof raw === "string" ? CHALLENGE_VALUE_MAP[raw] : Number(raw);
     if (Number.isFinite(n)) itemScores[key] = n;
   }
-
-  // Roll up into themes. Each theme shows its average severity plus
-  // the single highest-rated item in that theme as a subhead.
   const challengeGroups = CHALLENGE_GROUPS.map((group) => {
     const answered = group.items
       .map((id) => ({ id, value: itemScores[id] }))
@@ -393,7 +508,7 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
   });
   const hasAnyChallengeData = challengeGroups.some((g) => g.answered > 0);
 
-  // Pre-V3 legacy fallback — unchanged.
+  // Pre-V3 legacy fallback for older tokens.
   const legacyStressorEntries = !hasAnyChallengeData
     ? Object.entries(section_founder_stress || {})
         .filter(([key]) => key.startsWith("fs_"))
@@ -407,6 +522,114 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
         }))
         .sort((a, b) => b.value - a.value)
     : [];
+
+  // ─────────────────────────────────────────────────────────
+  // Cofounder Relationship (8 likert5 + 1 scale 0-10)
+  // ─────────────────────────────────────────────────────────
+  const cf = section_cofounder ?? null;
+  const cfOverall = cf && typeof cf["cf_overall_health"] === "number"
+    ? (cf["cf_overall_health"] as number)
+    : cf && typeof cf["cf_overall_health"] === "string" && cf["cf_overall_health"] !== ""
+      ? Number(cf["cf_overall_health"])
+      : null;
+  const cfAlignment = meanOf(cf, ["cf_aligned_vision", "cf_quality_standards"], AGREE_5_VALUES);
+  const cfTrustSafety = meanOf(
+    cf,
+    ["cf_trust_do", "cf_honest_doubts", "cf_difficult_topics"],
+    AGREE_5_VALUES
+  );
+  const cfConflictRoles = meanOf(
+    cf,
+    ["cf_work_through", "cf_roles", "cf_fair_division"],
+    AGREE_5_VALUES
+  );
+  const hasCofounderData =
+    cfOverall !== null ||
+    cfAlignment.answered > 0 ||
+    cfTrustSafety.answered > 0 ||
+    cfConflictRoles.answered > 0;
+
+  // ─────────────────────────────────────────────────────────
+  // Life Outlook (9 items, all 0-10 scale_0_10)
+  // ─────────────────────────────────────────────────────────
+  const lo = section_life_outlook ?? null;
+  const loWellbeing = meanOf(lo, [
+    "life_satisfaction",
+    "life_happy",
+    "life_worthwhile",
+    "life_purpose",
+  ]);
+  const loDomains = meanOf(lo, [
+    "life_relationships_satisfying",
+    "life_physical_health",
+    "life_mental_health",
+  ]);
+  const loFrustration = meanOf(lo, ["life_have_to", "life_alone"]);
+  const hasLifeOutlookData =
+    loWellbeing.answered > 0 || loDomains.answered > 0 || loFrustration.answered > 0;
+
+  // ─────────────────────────────────────────────────────────
+  // Ambition (drive intensity + Deci-Ryan PLOC + Kasser-Ryan)
+  // ─────────────────────────────────────────────────────────
+  const amb = section_ambition ?? null;
+  const ambDrive = meanOf(
+    amb,
+    ["amb_ambitious", "amb_strive", "amb_challenging_goals"],
+    AGREE_5_VALUES
+  );
+  const regAutonomous = meanOf(
+    amb,
+    ["reg_identified", "reg_integrated", "reg_intrinsic"],
+    AGREE_5_VALUES
+  );
+  const regControlled = meanOf(
+    amb,
+    ["reg_external_avoid", "reg_external_approach", "reg_introjected"],
+    AGREE_5_VALUES
+  );
+  const aspIntrinsic = meanOf(
+    amb,
+    ["asp_helping", "asp_self_knowledge"],
+    IMPORTANCE_5_VALUES
+  );
+  const aspExtrinsic = meanOf(
+    amb,
+    ["asp_financial", "asp_admiration"],
+    IMPORTANCE_5_VALUES
+  );
+  const hasAmbitionData =
+    ambDrive.answered > 0 ||
+    regAutonomous.answered > 0 ||
+    regControlled.answered > 0 ||
+    aspIntrinsic.answered > 0 ||
+    aspExtrinsic.answered > 0;
+
+  // ─────────────────────────────────────────────────────────
+  // Burnout (MBI-GS, 7-pt frequency 0-6)
+  // Efficacy items are reverseCoded for analysis, but we display
+  // their raw mean labelled "Professional Efficacy" (higher = better)
+  // since that matches respondents' lived reading of the items.
+  // ─────────────────────────────────────────────────────────
+  const bu = section_burnout ?? null;
+  const buExhaustion = meanOf(
+    bu,
+    ["mbi_exhaust_1", "mbi_exhaust_2", "mbi_exhaust_3"],
+    MBI_FREQ_VALUES
+  );
+  const buCynicism = meanOf(
+    bu,
+    ["mbi_cynicism_1", "mbi_cynicism_2", "mbi_cynicism_3"],
+    MBI_FREQ_VALUES
+  );
+  const buEfficacy = meanOf(
+    bu,
+    ["mbi_efficacy_1", "mbi_efficacy_2", "mbi_efficacy_3"],
+    MBI_FREQ_VALUES
+  );
+  const hasBurnoutData =
+    buExhaustion.answered > 0 ||
+    buCynicism.answered > 0 ||
+    buEfficacy.answered > 0;
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">
@@ -455,10 +678,202 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
           </button>
         </div>
         <p className="text-xs text-amber-700 mt-3">
-          Tip: if you leave your email on the next page, we&apos;ll also send
-          this code to you — so you have a backup.
+          Tip: bookmark this page — it&apos;s also the only way back, since the
+          confirmation email doesn&apos;t contain your code.
         </p>
       </div>
+
+      {/* ──────────────────────────────────────────────────────────
+          Cards below render in the same order as the survey itself,
+          so respondents see them in the order they answered them:
+          founder challenges → cofounder → life outlook → ambition →
+          PHQ-9 → GAD-7 → MBI burnout → ASRS → AQ-10 → Dark Triad.
+          ────────────────────────────────────────────────────────── */}
+
+      {/* Founder Challenges (V3) grouped into themes, or legacy Stressors (V2 fallback) */}
+      {hasAnyChallengeData ? (
+        <ResultsCard title="Your Founder Challenges">
+          <div className="space-y-5">
+            {challengeGroups.map((group) => (
+              <div key={group.id}>
+                <div className="flex items-center justify-between mb-1">
+                  <div>
+                    <span className="text-sm font-semibold text-gray-900">
+                      {group.label}
+                    </span>
+                    <span className="text-xs text-gray-500 ml-2">
+                      {group.description}
+                    </span>
+                  </div>
+                  <span className="text-sm text-gray-400 tabular-nums">
+                    {group.answered > 0 ? group.avg.toFixed(1) : "—"}/4
+                  </span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2 mb-1">
+                  <div
+                    className="bg-indigo-500 h-2 rounded-full transition-all"
+                    style={{ width: `${(group.avg / 4) * 100}%` }}
+                  />
+                </div>
+                {group.topItem && group.topItem.value > 0 ? (
+                  <p className="text-xs text-gray-500">
+                    Biggest challenge: <span className="text-gray-700">{group.topItem.label}</span>
+                    <span className="text-gray-400"> ({group.topItem.value}/4)</span>
+                  </p>
+                ) : group.answered === 0 ? (
+                  <p className="text-xs text-gray-400 italic">No answers in this theme.</p>
+                ) : null}
+              </div>
+            ))}
+          </div>
+        </ResultsCard>
+      ) : legacyStressorEntries.length > 0 ? (
+        <ResultsCard title="Your Top Founder Stressors">
+          <div className="space-y-3">
+            {legacyStressorEntries.map((entry) => (
+              <div key={entry.key}>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-sm">{entry.label}</span>
+                  <span className="text-sm text-gray-400">{entry.value}/4</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div
+                    className="bg-indigo-500 h-2 rounded-full transition-all"
+                    style={{ width: `${(entry.value / 4) * 100}%` }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </ResultsCard>
+      ) : null}
+
+      {/* Cofounder Relationship — skipped for solo founders, so empty section means nothing to show */}
+      {hasCofounderData && (
+        <ResultsCard title="Cofounder Relationship">
+          <div className="space-y-4 mb-3">
+            <MeanRow
+              label="Overall relationship health"
+              value={cfOverall}
+              max={10}
+              caption="Your single 0–10 rating from the end of the section."
+              color="bg-emerald-500"
+            />
+            <MeanRow
+              label="Alignment (vision & standards)"
+              value={cfAlignment.mean}
+              min={1}
+              max={5}
+              decimals={2}
+            />
+            <MeanRow
+              label="Trust & psychological safety"
+              value={cfTrustSafety.mean}
+              min={1}
+              max={5}
+              decimals={2}
+            />
+            <MeanRow
+              label="Conflict navigation, roles & fairness"
+              value={cfConflictRoles.mean}
+              min={1}
+              max={5}
+              decimals={2}
+            />
+          </div>
+          <p className="text-sm text-gray-500">
+            Subscale scores are means of the underlying agreement items
+            (1 = strongly disagree, 5 = strongly agree). Higher is better.
+          </p>
+        </ResultsCard>
+      )}
+
+      {/* Life Outlook (the merged "Outlook" section — all 0-10 items) */}
+      {hasLifeOutlookData && (
+        <ResultsCard title="Outlook">
+          <div className="space-y-4 mb-3">
+            <MeanRow
+              label="Well-being (satisfaction · happiness · purpose)"
+              value={loWellbeing.mean}
+              max={10}
+              decimals={1}
+            />
+            <MeanRow
+              label="Life domains (relationships · physical · mental)"
+              value={loDomains.mean}
+              max={10}
+              decimals={1}
+            />
+            <MeanRow
+              label="Need-frustration (founder role)"
+              value={loFrustration.mean}
+              max={10}
+              decimals={1}
+              caption="Higher = more frustration. Mean of two items: 'I have to' vs 'I want to', and 'I feel alone carrying this'."
+              color="bg-rose-500"
+            />
+          </div>
+          <p className="text-sm text-gray-500">
+            All items are on a 0–10 scale. Well-being and life-domain bars
+            read as &quot;higher is better&quot;; the need-frustration bar is
+            inverted — high values flag autonomy/relatedness strain in the
+            founder role.
+          </p>
+        </ResultsCard>
+      )}
+
+      {/* Ambition — drive intensity + Deci-Ryan regulation + Kasser-Ryan aspirations */}
+      {hasAmbitionData && (
+        <ResultsCard title="Ambition">
+          <div className="space-y-4 mb-3">
+            <MeanRow
+              label="Drive intensity"
+              value={ambDrive.mean}
+              min={1}
+              max={5}
+              decimals={2}
+              caption="Mean of three Hirschi/Spurk items (ambitious · strive · challenging goals)."
+            />
+            <MeanRow
+              label="Autonomous regulation"
+              value={regAutonomous.mean}
+              min={1}
+              max={5}
+              decimals={2}
+              caption="Identified · integrated · intrinsic — doing the work because it fits who you are."
+              color="bg-emerald-500"
+            />
+            <MeanRow
+              label="Controlled regulation"
+              value={regControlled.mean}
+              min={1}
+              max={5}
+              decimals={2}
+              caption="External avoidance · external approach · introjected — doing it because of consequences, rewards, or guilt."
+              color="bg-rose-500"
+            />
+            <MeanRow
+              label="Intrinsic aspirations (helping · self-knowledge)"
+              value={aspIntrinsic.mean}
+              min={1}
+              max={5}
+              decimals={2}
+            />
+            <MeanRow
+              label="Extrinsic aspirations (financial · admiration)"
+              value={aspExtrinsic.mean}
+              min={1}
+              max={5}
+              decimals={2}
+            />
+          </div>
+          <p className="text-sm text-gray-500">
+            The autonomous-vs-controlled split is the analytical centerpiece —
+            high autonomous + low controlled is the Self-Determination Theory
+            profile that predicts well-being independent of attainment.
+          </p>
+        </ResultsCard>
+      )}
 
       {/* Depression */}
       <ResultsCard title="Depression Screening (PHQ-9)">
@@ -513,6 +928,43 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
           range.
         </p>
       </ResultsCard>
+
+      {/* Burnout (MBI-GS) */}
+      {hasBurnoutData && (
+        <ResultsCard title="Burnout (MBI-GS)">
+          <div className="space-y-4 mb-3">
+            <MeanRow
+              label="Emotional exhaustion"
+              value={buExhaustion.mean}
+              max={6}
+              decimals={1}
+              caption="How often you feel drained / used up / tired by work."
+              color="bg-rose-500"
+            />
+            <MeanRow
+              label="Cynicism (depersonalization)"
+              value={buCynicism.mean}
+              max={6}
+              decimals={1}
+              caption="How often interest, enthusiasm, and meaning have eroded."
+              color="bg-rose-500"
+            />
+            <MeanRow
+              label="Professional efficacy"
+              value={buEfficacy.mean}
+              max={6}
+              decimals={1}
+              caption="How often you feel good at, exhilarated by, or accomplished in your work — higher is better."
+              color="bg-emerald-500"
+            />
+          </div>
+          <p className="text-sm text-gray-500">
+            MBI-GS scales each run 0 (Never) to 6 (Every day). High
+            exhaustion + high cynicism + low efficacy is the burnout
+            signature; isolated high exhaustion is more often plain overwork.
+          </p>
+        </ResultsCard>
+      )}
 
       {/* ADHD traits */}
       <ResultsCard title="ADHD Traits Screening (ASRS)">
@@ -637,68 +1089,6 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
         </ResultsCard>
       )}
 
-      {/* Founder Challenges (V3) grouped into themes, or legacy Stressors (V2 fallback) */}
-      {hasAnyChallengeData ? (
-        <ResultsCard title="Your Founder Challenges">
-          <div className="space-y-5">
-            {challengeGroups.map((group) => (
-              <div key={group.id}>
-                <div className="flex items-center justify-between mb-1">
-                  <div>
-                    <span className="text-sm font-semibold text-gray-900">
-                      {group.label}
-                    </span>
-                    <span className="text-xs text-gray-500 ml-2">
-                      {group.description}
-                    </span>
-                  </div>
-                  <span className="text-sm text-gray-400 tabular-nums">
-                    {group.answered > 0 ? group.avg.toFixed(1) : "—"}/4
-                  </span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2 mb-1">
-                  <div
-                    className="bg-indigo-500 h-2 rounded-full transition-all"
-                    style={{ width: `${(group.avg / 4) * 100}%` }}
-                  />
-                </div>
-                {group.topItem && group.topItem.value > 0 ? (
-                  <p className="text-xs text-gray-500">
-                    Biggest challenge: <span className="text-gray-700">{group.topItem.label}</span>
-                    <span className="text-gray-400"> ({group.topItem.value}/4)</span>
-                  </p>
-                ) : group.answered === 0 ? (
-                  <p className="text-xs text-gray-400 italic">No answers in this theme.</p>
-                ) : null}
-              </div>
-            ))}
-          </div>
-        </ResultsCard>
-      ) : legacyStressorEntries.length > 0 ? (
-        <ResultsCard title="Your Top Founder Stressors">
-          <div className="space-y-3">
-            {legacyStressorEntries.map((entry) => (
-              <div key={entry.key}>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm">{entry.label}</span>
-                  <span className="text-sm text-gray-400">{entry.value}/4</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div
-                    className="bg-indigo-500 h-2 rounded-full transition-all"
-                    style={{ width: `${(entry.value / 4) * 100}%` }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </ResultsCard>
-      ) : (
-        <ResultsCard title="Your Founder Challenges">
-          <p className="text-sm text-gray-400">No challenge data available.</p>
-        </ResultsCard>
-      )}
-
       {/* Founder cohort comparison — only shown when flag is on */}
       {cohort && (
         <div className="mt-8">
@@ -740,12 +1130,16 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
       <div className="mt-8 p-5 bg-indigo-50 border border-indigo-100 rounded-lg">
         <h3 className="font-semibold text-indigo-900 mb-2">What do these scores mean?</h3>
         <ul className="text-sm text-indigo-800 space-y-2">
-          <li><strong>PHQ-9</strong> is a validated depression screener (0–27). 10+ suggests moderate depression worth discussing with a professional. The bar above shows your score as a fraction of the maximum.</li>
+          <li><strong>Founder challenges</strong> are common pressure points. High scores don&apos;t mean something is wrong — they mean you&apos;re carrying a lot.</li>
+          <li><strong>Cofounder relationship</strong> subscales come from the agreement items at the end of that section. The 0–10 overall reading is your single subjective rating; the subscales help locate where strain (if any) is concentrated.</li>
+          <li><strong>Outlook</strong> bundles well-being, life domains, and founder-specific need-frustration. Need-frustration items are inverted — high values flag autonomy/relatedness strain in the role.</li>
+          <li><strong>Ambition</strong> separates how hard you&apos;re pushing (drive intensity) from <em>why</em> (autonomous vs controlled regulation, intrinsic vs extrinsic aspirations). The motivational profile predicts well-being more than how hard you push.</li>
+          <li><strong>PHQ-9</strong> is a validated depression screener (0–27). 10+ suggests moderate depression worth discussing with a professional.</li>
           <li><strong>GAD-7</strong> measures generalized anxiety (0–21). 10+ suggests moderate anxiety that may benefit from support.</li>
+          <li><strong>MBI-GS</strong> measures burnout across exhaustion, cynicism, and professional efficacy on 0–6 frequency scales. The full burnout signature is high exhaustion + high cynicism + low efficacy.</li>
           <li><strong>ASRS</strong> screens for <strong>ADHD traits</strong>. 4 or more of 6 items meeting their frequency threshold suggests further evaluation may be worthwhile — many founders have undiagnosed ADHD.</li>
           <li><strong>AQ-10</strong> screens for <strong>autism spectrum traits</strong> (0–10). 6+ is the threshold typically used to recommend a full autism assessment. Trait-level signal — not a diagnosis.</li>
           <li><strong>Dirty Dozen</strong> measures three Dark Triad traits (Machiavellianism, Psychopathy, Narcissism), each on a 1–5 scale. Modest elevations are common and not inherently pathological.</li>
-          <li><strong>Founder challenges</strong> are common pressure points. High scores don&apos;t mean something is wrong — they mean you&apos;re carrying a lot.</li>
         </ul>
       </div>
 

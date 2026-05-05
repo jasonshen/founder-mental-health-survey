@@ -199,6 +199,10 @@ export interface ResultsResponse {
   scores: AllScores;
   section_company: SurveyResponses;
   section_founder_challenges: SurveyResponses | null;
+  section_cofounder: SurveyResponses | null;
+  section_life_outlook: SurveyResponses | null;
+  section_ambition: SurveyResponses | null;
+  section_burnout: SurveyResponses | null;
   /** Legacy V2 column; null for V3 respondents. */
   section_founder_stress: SurveyResponses | null;
   created_at: string;
