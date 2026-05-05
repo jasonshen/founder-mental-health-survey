@@ -69,12 +69,16 @@ const CHALLENGE_GROUPS: Array<{
   },
 ];
 
+// Reverse-coded 2026-05-05: low challenge → high score so the bar fills
+// toward green when the founder is doing well. Displayed as X / 5
+// (zero-indexed 5-point scale; values 1-5 line up with the green/blue/red
+// banding used elsewhere on the page).
 const CHALLENGE_VALUE_MAP: Record<string, number> = {
-  "Not a challenge for me": 0,
-  "Minor challenge": 1,
-  "Moderate challenge": 2,
-  "Significant challenge": 3,
-  "Major challenge": 4,
+  "Not a challenge for me": 5,
+  "Minor challenge": 4,
+  "Moderate challenge": 3,
+  "Significant challenge": 2,
+  "Major challenge": 1,
 };
 
 // V2 legacy stressors (section_founder_stress, fs_* keys) — kept so
@@ -122,6 +126,32 @@ const MBI_FREQ_VALUES: Record<string, number> = {
   "A few times a week": 5,
   "Every day": 6,
 };
+
+// Standardized 3-band color picker for "mean on a scale" bars.
+//   ≥ 80% of range  → green  (good)
+//   40% – 80%       → blue   (mid)
+//   < 40%           → red    (poor)
+// Pass inverted=true for metrics where high indicates a problem (need-frustration,
+// exhaustion, controlled regulation) so the labels swap (high → red, low → green).
+function bandColor(
+  value: number | null,
+  min: number,
+  max: number,
+  inverted = false
+): string {
+  if (value === null || max === min) return "bg-gray-400";
+  const ratio = (value - min) / (max - min);
+  const high = ratio >= 0.8;
+  const low = ratio < 0.4;
+  if (inverted) {
+    if (high) return "bg-rose-500";
+    if (low) return "bg-emerald-500";
+    return "bg-blue-500";
+  }
+  if (high) return "bg-emerald-500";
+  if (low) return "bg-rose-500";
+  return "bg-blue-500";
+}
 
 function meanOf(
   responses: SurveyResponses | null | undefined,
@@ -229,6 +259,9 @@ function DarkTriadRow({
   // 1-5 scale → 0-100% bar. Subtract 1 from numerator so a true "1"
   // (strongly disagree on every item) renders as an empty bar rather
   // than 20% — same fix we applied to PHQ-9 / GAD-7.
+  // Dark Triad bars are intentionally neutral grey: the score reflects
+  // a personality trait that isn't inherently good or bad, so the page
+  // shouldn't editorialize via color.
   const pct = Math.max(0, Math.min(100, ((value - 1) / 4) * 100));
   return (
     <div>
@@ -241,7 +274,7 @@ function DarkTriadRow({
       </div>
       <div className="w-full bg-gray-200 rounded-full h-2">
         <div
-          className="bg-indigo-500 h-2 rounded-full transition-all"
+          className="bg-gray-700 h-2 rounded-full transition-all"
           style={{ width: `${pct}%` }}
         />
       </div>
@@ -260,7 +293,7 @@ function MeanRow({
   min = 0,
   max,
   caption,
-  color = "bg-indigo-500",
+  inverted = false,
   decimals = 1,
 }: {
   label: string;
@@ -268,7 +301,8 @@ function MeanRow({
   min?: number;
   max: number;
   caption?: string;
-  color?: string;
+  /** True when high values indicate a problem — flips the green/red mapping. */
+  inverted?: boolean;
   decimals?: number;
 }) {
   if (value === null) {
@@ -283,6 +317,7 @@ function MeanRow({
     );
   }
   const pct = Math.max(0, Math.min(100, ((value - min) / (max - min)) * 100));
+  const color = bandColor(value, min, max, inverted);
   return (
     <div>
       <div className="flex items-center justify-between mb-1">
@@ -494,16 +529,15 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
       answered.length > 0
         ? answered.reduce((sum, x) => sum + x.value, 0) / answered.length
         : 0;
-    const topItem = answered.length
-      ? answered.reduce((best, x) => (x.value > best.value ? x : best))
+    // Reverse-coded: lowest value = highest reported challenge.
+    const worst = answered.length
+      ? answered.reduce((acc, x) => (x.value < acc.value ? x : acc))
       : null;
     return {
       ...group,
       answered: answered.length,
       avg,
-      topItem: topItem
-        ? { label: CHALLENGE_LABELS[topItem.id] ?? topItem.id, value: topItem.value }
-        : null,
+      worst: worst ? { label: CHALLENGE_LABELS[worst.id] ?? worst.id } : null,
     };
   });
   const hasAnyChallengeData = challengeGroups.some((g) => g.answered > 0);
@@ -532,22 +566,34 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
     : cf && typeof cf["cf_overall_health"] === "string" && cf["cf_overall_health"] !== ""
       ? Number(cf["cf_overall_health"])
       : null;
-  const cfAlignment = meanOf(cf, ["cf_aligned_vision", "cf_quality_standards"], AGREE_5_VALUES);
-  const cfTrustSafety = meanOf(
+  // Four cofounder subscales (renamed 2026-05-05). Each pairs two of the
+  // eight likert items; together they exhaust the section's likert content.
+  const cfCompatibleVision = meanOf(
     cf,
-    ["cf_trust_do", "cf_honest_doubts", "cf_difficult_topics"],
+    ["cf_aligned_vision", "cf_quality_standards"],
     AGREE_5_VALUES
   );
-  const cfConflictRoles = meanOf(
+  const cfCalibratedTeamwork = meanOf(
     cf,
-    ["cf_work_through", "cf_roles", "cf_fair_division"],
+    ["cf_roles", "cf_fair_division"],
+    AGREE_5_VALUES
+  );
+  const cfProductiveConflict = meanOf(
+    cf,
+    ["cf_work_through", "cf_difficult_topics"],
+    AGREE_5_VALUES
+  );
+  const cfSupportiveTrust = meanOf(
+    cf,
+    ["cf_trust_do", "cf_honest_doubts"],
     AGREE_5_VALUES
   );
   const hasCofounderData =
     cfOverall !== null ||
-    cfAlignment.answered > 0 ||
-    cfTrustSafety.answered > 0 ||
-    cfConflictRoles.answered > 0;
+    cfCompatibleVision.answered > 0 ||
+    cfCalibratedTeamwork.answered > 0 ||
+    cfProductiveConflict.answered > 0 ||
+    cfSupportiveTrust.answered > 0;
 
   // ─────────────────────────────────────────────────────────
   // Life Outlook (9 items, all 0-10 scale_0_10)
@@ -694,38 +740,52 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
       {hasAnyChallengeData ? (
         <ResultsCard title="Your Founder Challenges">
           <div className="space-y-5">
-            {challengeGroups.map((group) => (
-              <div key={group.id}>
-                <div className="flex items-center justify-between mb-1">
-                  <div>
-                    <span className="text-sm font-semibold text-gray-900">
-                      {group.label}
-                    </span>
-                    <span className="text-xs text-gray-500 ml-2">
-                      {group.description}
+            {challengeGroups.map((group) => {
+              const filled = group.answered > 0
+                ? Math.max(0, Math.min(100, ((group.avg - 1) / 4) * 100))
+                : 0;
+              const color =
+                group.answered > 0
+                  ? bandColor(group.avg, 1, 5, false)
+                  : "bg-gray-300";
+              return (
+                <div key={group.id}>
+                  <div className="flex items-center justify-between mb-1">
+                    <div>
+                      <span className="text-sm font-semibold text-gray-900">
+                        {group.label}
+                      </span>
+                      <span className="text-xs text-gray-500 ml-2">
+                        {group.description}
+                      </span>
+                    </div>
+                    <span className="text-sm text-gray-400 tabular-nums">
+                      {group.answered > 0 ? group.avg.toFixed(1) : "—"} / 5
                     </span>
                   </div>
-                  <span className="text-sm text-gray-400 tabular-nums">
-                    {group.answered > 0 ? group.avg.toFixed(1) : "—"}/4
-                  </span>
+                  <div className="w-full bg-gray-200 rounded-full h-2 mb-1">
+                    <div
+                      className={`${color} h-2 rounded-full transition-all`}
+                      style={{ width: `${filled}%` }}
+                    />
+                  </div>
+                  {group.worst ? (
+                    <p className="text-xs text-gray-500">
+                      Biggest challenge:{" "}
+                      <span className="text-gray-700">{group.worst.label}</span>
+                    </p>
+                  ) : group.answered === 0 ? (
+                    <p className="text-xs text-gray-400 italic">No answers in this theme.</p>
+                  ) : null}
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2 mb-1">
-                  <div
-                    className="bg-indigo-500 h-2 rounded-full transition-all"
-                    style={{ width: `${(group.avg / 4) * 100}%` }}
-                  />
-                </div>
-                {group.topItem && group.topItem.value > 0 ? (
-                  <p className="text-xs text-gray-500">
-                    Biggest challenge: <span className="text-gray-700">{group.topItem.label}</span>
-                    <span className="text-gray-400"> ({group.topItem.value}/4)</span>
-                  </p>
-                ) : group.answered === 0 ? (
-                  <p className="text-xs text-gray-400 italic">No answers in this theme.</p>
-                ) : null}
-              </div>
-            ))}
+              );
+            })}
           </div>
+          <p className="text-sm text-gray-500 mt-4">
+            Reverse-coded: <strong>higher = better</strong>. 5 / 5 means
+            you reported no challenge in that theme; 1 / 5 means you marked
+            every item there as a major challenge.
+          </p>
         </ResultsCard>
       ) : legacyStressorEntries.length > 0 ? (
         <ResultsCard title="Your Top Founder Stressors">
@@ -757,28 +817,38 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
               value={cfOverall}
               max={10}
               caption="Your single 0–10 rating from the end of the section."
-              color="bg-emerald-500"
             />
             <MeanRow
-              label="Alignment (vision & standards)"
-              value={cfAlignment.mean}
+              label="Compatible Vision"
+              value={cfCompatibleVision.mean}
               min={1}
               max={5}
               decimals={2}
+              caption="Aligned on direction and shared standards for quality."
             />
             <MeanRow
-              label="Trust & psychological safety"
-              value={cfTrustSafety.mean}
+              label="Calibrated Teamwork"
+              value={cfCalibratedTeamwork.mean}
               min={1}
               max={5}
               decimals={2}
+              caption="Clear roles & decision rights, fair division of labor."
             />
             <MeanRow
-              label="Conflict navigation, roles & fairness"
-              value={cfConflictRoles.mean}
+              label="Productive Conflict"
+              value={cfProductiveConflict.mean}
               min={1}
               max={5}
               decimals={2}
+              caption="Working through disagreement, raising hard topics without damage."
+            />
+            <MeanRow
+              label="Supportive Trust"
+              value={cfSupportiveTrust.mean}
+              min={1}
+              max={5}
+              decimals={2}
+              caption="Reliability and the freedom to be honest about doubts and mistakes."
             />
           </div>
           <p className="text-sm text-gray-500">
@@ -809,8 +879,8 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
               value={loFrustration.mean}
               max={10}
               decimals={1}
+              inverted
               caption="Higher = more frustration. Mean of two items: 'I have to' vs 'I want to', and 'I feel alone carrying this'."
-              color="bg-rose-500"
             />
           </div>
           <p className="text-sm text-gray-500">
@@ -841,7 +911,6 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
               max={5}
               decimals={2}
               caption="Identified · integrated · intrinsic — doing the work because it fits who you are."
-              color="bg-emerald-500"
             />
             <MeanRow
               label="Controlled regulation"
@@ -849,8 +918,8 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
               min={1}
               max={5}
               decimals={2}
+              inverted
               caption="External avoidance · external approach · introjected — doing it because of consequences, rewards, or guilt."
-              color="bg-rose-500"
             />
             <MeanRow
               label="Intrinsic aspirations (helping · self-knowledge)"
@@ -938,16 +1007,16 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
               value={buExhaustion.mean}
               max={6}
               decimals={1}
+              inverted
               caption="How often you feel drained / used up / tired by work."
-              color="bg-rose-500"
             />
             <MeanRow
               label="Cynicism (depersonalization)"
               value={buCynicism.mean}
               max={6}
               decimals={1}
+              inverted
               caption="How often interest, enthusiasm, and meaning have eroded."
-              color="bg-rose-500"
             />
             <MeanRow
               label="Professional efficacy"
@@ -955,7 +1024,6 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
               max={6}
               decimals={1}
               caption="How often you feel good at, exhilarated by, or accomplished in your work — higher is better."
-              color="bg-emerald-500"
             />
           </div>
           <p className="text-sm text-gray-500">
@@ -979,9 +1047,7 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
           </div>
           <div className="w-full bg-gray-200 rounded-full h-3">
             <div
-              className={`h-3 rounded-full transition-all ${
-                scores.asrs.above_threshold ? "bg-orange-500" : "bg-green-500"
-              }`}
+              className="h-3 rounded-full transition-all bg-gray-700"
               style={{
                 width: scoreBarWidth(scores.asrs.items_flagged, 6),
               }}
@@ -990,13 +1056,7 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
         </div>
         <p className="mb-1">
           Threshold:{" "}
-          <span
-            className={`inline-block px-2 py-0.5 rounded text-sm font-medium ${
-              scores.asrs.above_threshold
-                ? "bg-orange-100 text-orange-800"
-                : "bg-green-100 text-green-800"
-            }`}
-          >
+          <span className="inline-block px-2 py-0.5 rounded text-sm font-medium bg-gray-100 text-gray-700">
             {scores.asrs.above_threshold
               ? "Above (4+ of 6 items met)"
               : "Below (fewer than 4 items met)"}
@@ -1024,22 +1084,14 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
             </div>
             <div className="w-full bg-gray-200 rounded-full h-3">
               <div
-                className={`h-3 rounded-full transition-all ${
-                  scores.aq10.above_threshold ? "bg-orange-500" : "bg-green-500"
-                }`}
+                className="h-3 rounded-full transition-all bg-gray-700"
                 style={{ width: scoreBarWidth(scores.aq10.score, 10) }}
               />
             </div>
           </div>
           <p className="mb-1">
             Threshold:{" "}
-            <span
-              className={`inline-block px-2 py-0.5 rounded text-sm font-medium ${
-                scores.aq10.above_threshold
-                  ? "bg-orange-100 text-orange-800"
-                  : "bg-green-100 text-green-800"
-              }`}
-            >
+            <span className="inline-block px-2 py-0.5 rounded text-sm font-medium bg-gray-100 text-gray-700">
               {scores.aq10.above_threshold
                 ? "At or above (6+ of 10)"
                 : "Below (fewer than 6)"}
