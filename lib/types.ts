@@ -20,17 +20,13 @@ export type QuestionType =
   | "text_long";
 
 export type SectionId =
-  // V2 existing columns
   | "company"
   | "adhd"
   | "depression"
   | "anxiety"
-  | "founder_stress"
-  // V3 new sections (stored in sections_ext JSONB)
   | "life_outlook"
   | "ambition"
   | "founder_challenges"
-  | "macro_outlook"
   | "cofounder"
   | "burnout"
   | "autism"
@@ -50,7 +46,6 @@ export const SECTION_COLUMN: Record<SectionId, string> = {
   life_outlook: "section_life_outlook",
   ambition: "section_ambition",
   founder_challenges: "section_founder_challenges",
-  macro_outlook: "section_macro_outlook",
   cofounder: "section_cofounder",
   depression: "section_depression",
   anxiety: "section_anxiety",
@@ -63,7 +58,6 @@ export const SECTION_COLUMN: Record<SectionId, string> = {
   medication: "section_medication",
   substance_use: "section_substance_use",
   open_ended: "section_open_ended",
-  founder_stress: "section_founder_stress",
 };
 
 export const ALL_SECTION_IDS: SectionId[] = Object.keys(
@@ -206,8 +200,6 @@ export interface ResultsResponse {
   section_depression: SurveyResponses | null;
   section_anxiety: SurveyResponses | null;
   section_adhd: SurveyResponses | null;
-  /** Legacy V2 column; null for V3 respondents. */
-  section_founder_stress: SurveyResponses | null;
   created_at: string;
 }
 

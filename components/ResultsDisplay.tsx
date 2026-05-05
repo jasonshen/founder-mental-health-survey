@@ -81,24 +81,6 @@ const CHALLENGE_VALUE_MAP: Record<string, number> = {
   "Major challenge": 1,
 };
 
-// V2 legacy stressors (section_founder_stress, fs_* keys) — kept so
-// any pre-V3 rows still render cleanly if someone opens an old token.
-const STRESS_LABELS: Record<string, string> = {
-  fs_runway: "Financial pressure / runway",
-  fs_loneliness: "Loneliness & isolation",
-  fs_cofounder: "Co-founder / team strain",
-  fs_identity: "Identity tied to company",
-  fs_sleep: "Sleep quality",
-};
-
-const STRESS_VALUE_MAP: Record<string, number> = {
-  "Not at all": 0,
-  "Slightly": 1,
-  "Moderately": 2,
-  "Very much": 3,
-  "Extremely": 4,
-};
-
 // Likert / frequency lookups used by the new cards (cofounder, ambition, burnout).
 // Mirror the option arrays in lib/questions.ts.
 const AGREE_5_VALUES: Record<string, number> = {
@@ -510,7 +492,6 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
   const {
     scores,
     section_founder_challenges,
-    section_founder_stress,
     section_cofounder,
     section_life_outlook,
     section_ambition,
@@ -567,21 +548,6 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
     };
   });
   const hasAnyChallengeData = challengeGroups.some((g) => g.answered > 0);
-
-  // Pre-V3 legacy fallback for older tokens.
-  const legacyStressorEntries = !hasAnyChallengeData
-    ? Object.entries(section_founder_stress || {})
-        .filter(([key]) => key.startsWith("fs_"))
-        .map(([key, value]) => ({
-          key,
-          label: STRESS_LABELS[key] || key,
-          value:
-            typeof value === "string"
-              ? (STRESS_VALUE_MAP[value] ?? 0)
-              : Number(value),
-        }))
-        .sort((a, b) => b.value - a.value)
-    : [];
 
   // ─────────────────────────────────────────────────────────
   // Cofounder Relationship (8 likert5 + 1 scale 0-10)
@@ -762,8 +728,8 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
           PHQ-9 → GAD-7 → MBI burnout → ASRS → AQ-10 → Dark Triad.
           ────────────────────────────────────────────────────────── */}
 
-      {/* Founder Challenges (V3) grouped into themes, or legacy Stressors (V2 fallback) */}
-      {hasAnyChallengeData ? (
+      {/* Founder Challenges */}
+      {hasAnyChallengeData && (
         <ResultsCard title="Your Founder Challenges">
           <div className="space-y-5">
             {challengeGroups.map((group) => {
@@ -813,26 +779,7 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
             every item there as a major challenge.
           </p>
         </ResultsCard>
-      ) : legacyStressorEntries.length > 0 ? (
-        <ResultsCard title="Your Top Founder Stressors">
-          <div className="space-y-3">
-            {legacyStressorEntries.map((entry) => (
-              <div key={entry.key}>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm">{entry.label}</span>
-                  <span className="text-sm text-gray-400">{entry.value}/4</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div
-                    className="bg-indigo-500 h-2 rounded-full transition-all"
-                    style={{ width: `${(entry.value / 4) * 100}%` }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </ResultsCard>
-      ) : null}
+      )}
 
       {/* Cofounder Relationship — skipped for solo founders, so empty section means nothing to show */}
       {hasCofounderData && (

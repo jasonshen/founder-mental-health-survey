@@ -36,7 +36,7 @@ Founder-specific sections:
 - **Medication & Substance Use** — current psychotropic medication; past-12-month frequency for alcohol, cannabis, nicotine, off-prescription stimulants, MDMA, psilocybin, ayahuasca/DMT, LSD, ketamine; AUDIT-C follow-ups for monthly-or-greater drinkers.
 - **Open-ended reflection** — one optional 1000-character free-text item.
 
-Total: **16 active sections, ~140 items**, every item optional except consent. Two additional sections (`macro_outlook` and `founder_stress`) survive only as legacy JSONB columns for backwards-compat with V1/V2 respondents — they are no longer asked.
+Total: **16 active sections, ~140 items**, every item optional except consent. The legacy V1/V2 sections `macro_outlook` (merged into Outlook on 2026-05-01) and `founder_stress` (replaced by Founder Challenges in V3) were dropped from the schema in migration 010.
 
 ## Cohorts
 
@@ -97,6 +97,7 @@ All schema lives in [`supabase/migrations/`](supabase/migrations/). Apply them i
 | 007 | Allow NULL `anonymous_token` so partial rows can exist before finalize |
 | 008 | Per-section column refactor (drops `sections_ext`, adds `section_<id>` for every V3 section) |
 | 009 | Add `cohort` column to `survey_responses` (YC vs general) |
+| 010 | Drop legacy `section_macro_outlook` and `section_founder_stress` columns |
 
 Run them via the Supabase SQL editor or the Supabase CLI (`supabase migration up`).
 

@@ -24,7 +24,7 @@ export async function GET(
   const { data, error } = await supabase
     .from("survey_responses")
     .select(
-      "scores, section_company, section_founder_challenges, section_cofounder, section_life_outlook, section_ambition, section_burnout, section_depression, section_anxiety, section_adhd, section_founder_stress, section_autism, section_dark_triad, created_at, completed"
+      "scores, section_company, section_founder_challenges, section_cofounder, section_life_outlook, section_ambition, section_burnout, section_depression, section_anxiety, section_adhd, section_autism, section_dark_triad, created_at, completed"
     )
     .eq("anonymous_token", token)
     .maybeSingle();
@@ -83,8 +83,6 @@ export async function GET(
     section_depression: data.section_depression,
     section_anxiety: data.section_anxiety,
     section_adhd: data.section_adhd,
-    // Kept for backward compat with any pre-V3 rows still in the DB.
-    section_founder_stress: data.section_founder_stress,
     created_at: data.created_at,
   });
 }

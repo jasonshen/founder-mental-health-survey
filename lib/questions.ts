@@ -678,15 +678,6 @@ const founderChallengeQuestions: Question[] = [
 ];
 
 // ============================================================
-// Section 5 — LEGACY: macro_outlook is no longer populated by the
-// survey. The 2 AI sentiment items moved into life_outlook (the
-// merged "Outlook" section). The 2 economy items were dropped.
-// section_macro_outlook column is preserved for older respondents.
-// ============================================================
-
-const macroOutlookQuestions: Question[] = [];
-
-// ============================================================
 // Section 6: Cofounder Relationship Quality (9 items, skip if solo)
 // ============================================================
 
@@ -1806,15 +1797,6 @@ const openEndedQuestions: Question[] = [
 ];
 
 // ============================================================
-// Section 4 legacy alias — founder_stress column still exists but is
-// no longer populated by the survey. (Kept in SECTION_ORDER as an
-// internal no-op to avoid breaking migrations that reference the
-// column; the section itself is hidden via condition: () => false.)
-// ============================================================
-
-const founderStressQuestions: Question[] = [];
-
-// ============================================================
 // Sections metadata (order matters — this is the canonical survey flow)
 // ============================================================
 
@@ -1850,13 +1832,6 @@ export const SECTIONS: SectionMeta[] = [
     label: "Ambition",
     intro:
       "Reflect on what you're driving toward — how hard, what kind of success matters most to you, and what's motivating the work day-to-day.",
-  },
-  {
-    id: "macro_outlook",
-    label: "Outlook on AI and the Economy (legacy)",
-    intro: "",
-    // Merged into life_outlook. Section hidden; column preserved.
-    condition: () => false,
   },
   {
     id: "depression",
@@ -1914,15 +1889,6 @@ export const SECTIONS: SectionMeta[] = [
     label: "Anything Else?",
     intro: "Optional — one last place to share anything on your mind.",
   },
-  // founder_stress legacy column: always hidden, never populated. Kept
-  // only so that existing SECTION_ORDER-based code doesn't trip over a
-  // missing id if anything in the codebase references it.
-  {
-    id: "founder_stress",
-    label: "Founder Stress (legacy)",
-    intro: "",
-    condition: () => false,
-  },
 ];
 
 export const SECTION_ORDER: SectionId[] = SECTIONS.map((s) => s.id);
@@ -1936,7 +1902,6 @@ export const ALL_QUESTIONS: Question[] = [
   ...lifeOutlookQuestions,
   ...ambitionQuestions,
   ...founderChallengeQuestions,
-  ...macroOutlookQuestions,
   ...cofounderQuestions,
   ...depressionQuestions,
   ...anxietyQuestions,
@@ -1949,7 +1914,6 @@ export const ALL_QUESTIONS: Question[] = [
   ...medicationQuestions,
   ...substanceQuestions,
   ...openEndedQuestions,
-  ...founderStressQuestions,
 ];
 
 export function getQuestionsBySection(sectionId: SectionId): Question[] {
