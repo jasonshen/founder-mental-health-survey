@@ -36,16 +36,37 @@ const jetBrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
+// The opengraph image, favicon, and apple-touch-icon are picked up
+// automatically from app/opengraph-image.png, app/icon.png, and
+// app/apple-icon.png per the Next 15 file conventions — they don't
+// need to be listed here. The icons block below adds two extra sizes
+// served from /public so browsers that prefer a smaller or larger
+// favicon can pick the right one.
+const SHARE_DESCRIPTION =
+  "Anonymous. ~10 min. Founder-specific stressors plus clinically validated depression, anxiety, burnout measures. By YC founders, for YC founders. Compare your results to your peers.";
+
 export const metadata: Metadata = {
-  title: "Founder Mental Health Survey",
-  description:
-    "A confidential screening tool for startup founders. Get your scores on depression, anxiety, and ADHD traits — plus founder-specific stressors.",
+  title: "The Founder Mental Health Survey",
+  description: SHARE_DESCRIPTION,
   robots: { index: true, follow: true },
+  icons: {
+    icon: [
+      { url: "/favicon-16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-icon.png", sizes: "180x180", type: "image/png" }],
+  },
   openGraph: {
-    title: "Founder Mental Health Survey",
-    description:
-      "A confidential screening tool for startup founders — validated PHQ-9, GAD-7, ASRS plus founder-specific stressors.",
+    title: "The Founder Mental Health Survey",
+    description: SHARE_DESCRIPTION,
     type: "website",
+    siteName: "Founder Mental Health Survey",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "The Founder Mental Health Survey",
+    description: SHARE_DESCRIPTION,
   },
 };
 
