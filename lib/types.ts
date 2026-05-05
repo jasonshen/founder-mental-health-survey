@@ -203,6 +203,9 @@ export interface ResultsResponse {
   section_life_outlook: SurveyResponses | null;
   section_ambition: SurveyResponses | null;
   section_burnout: SurveyResponses | null;
+  section_depression: SurveyResponses | null;
+  section_anxiety: SurveyResponses | null;
+  section_adhd: SurveyResponses | null;
   /** Legacy V2 column; null for V3 respondents. */
   section_founder_stress: SurveyResponses | null;
   created_at: string;

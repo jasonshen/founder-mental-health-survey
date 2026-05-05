@@ -515,7 +515,23 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
     section_life_outlook,
     section_ambition,
     section_burnout,
+    section_depression,
+    section_anxiety,
+    section_adhd,
   } = data;
+
+  // Whether the respondent actually answered each clinical section. The
+  // scoring layer always returns a numeric score (default 0 when no items
+  // were submitted), so without this gate a partial respondent who skipped
+  // PHQ-9 / GAD-7 / ASRS would see those cards rendered with score 0/27,
+  // 0/21, 0/6 — implying they screened "none" when they simply didn't
+  // answer the questions.
+  const phq9Answered =
+    section_depression !== null && Object.keys(section_depression).length > 0;
+  const gad7Answered =
+    section_anxiety !== null && Object.keys(section_anxiety).length > 0;
+  const asrsAnswered =
+    section_adhd !== null && Object.keys(section_adhd).length > 0;
 
   // ─────────────────────────────────────────────────────────
   // Founder Challenges (V3, fc_*) → grouped themes
@@ -955,6 +971,7 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
       )}
 
       {/* Depression */}
+      {phq9Answered && (
       <ResultsCard title="Depression Screening (PHQ-9)">
         <div className="mb-3">
           <div className="flex items-center justify-between mb-1">
@@ -980,8 +997,10 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
           range.
         </p>
       </ResultsCard>
+      )}
 
       {/* Anxiety */}
+      {gad7Answered && (
       <ResultsCard title="Anxiety Screening (GAD-7)">
         <div className="mb-3">
           <div className="flex items-center justify-between mb-1">
@@ -1007,6 +1026,7 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
           range.
         </p>
       </ResultsCard>
+      )}
 
       {/* Burnout (MBI-GS) */}
       {hasBurnoutData && (
@@ -1045,6 +1065,7 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
       )}
 
       {/* ADHD traits */}
+      {asrsAnswered && (
       <ResultsCard title="ADHD Traits Screening (ASRS)">
         <div className="mb-3">
           <div className="flex items-center justify-between mb-1">
@@ -1081,6 +1102,7 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
           population meets this threshold.
         </p>
       </ResultsCard>
+      )}
 
       {/* Autism spectrum traits */}
       {scores.aq10 && scores.aq10.items_answered > 0 && (
