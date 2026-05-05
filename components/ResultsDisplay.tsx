@@ -139,18 +139,18 @@ function bandColor(
   max: number,
   inverted = false
 ): string {
-  if (value === null || max === min) return "bg-gray-400";
+  if (value === null || max === min) return "bg-gray-300";
   const ratio = (value - min) / (max - min);
   const high = ratio >= 0.8;
   const low = ratio < 0.4;
   if (inverted) {
-    if (high) return "bg-rose-500";
-    if (low) return "bg-emerald-500";
-    return "bg-blue-500";
+    if (high) return "bg-rose-400";
+    if (low) return "bg-emerald-400";
+    return "bg-blue-400";
   }
-  if (high) return "bg-emerald-500";
-  if (low) return "bg-rose-500";
-  return "bg-blue-500";
+  if (high) return "bg-emerald-400";
+  if (low) return "bg-rose-400";
+  return "bg-blue-400";
 }
 
 function meanOf(
@@ -201,11 +201,11 @@ function formatGAD7Severity(severity: GAD7Severity): string {
 
 function severityColor(severity: PHQ9Severity | GAD7Severity): string {
   switch (severity) {
-    case "none": return "text-green-700 bg-green-50";
-    case "mild": return "text-yellow-700 bg-yellow-50";
+    case "none": return "text-emerald-700 bg-emerald-50";
+    case "mild": return "text-amber-700 bg-amber-50";
     case "moderate": return "text-orange-700 bg-orange-50";
-    case "moderately_severe": return "text-red-600 bg-red-50";
-    case "severe": return "text-red-800 bg-red-100";
+    case "moderately_severe": return "text-rose-700 bg-rose-50";
+    case "severe": return "text-rose-800 bg-rose-50";
   }
 }
 
@@ -220,11 +220,11 @@ function scoreBarWidth(score: number, maxScore: number): string {
 
 function severityBarColor(severity: PHQ9Severity | GAD7Severity): string {
   switch (severity) {
-    case "none": return "bg-green-500";
-    case "mild": return "bg-yellow-500";
-    case "moderate": return "bg-orange-500";
-    case "moderately_severe": return "bg-red-500";
-    case "severe": return "bg-red-700";
+    case "none": return "bg-emerald-400";
+    case "mild": return "bg-amber-400";
+    case "moderate": return "bg-orange-400";
+    case "moderately_severe": return "bg-rose-400";
+    case "severe": return "bg-rose-500";
   }
 }
 
@@ -274,7 +274,7 @@ function DarkTriadRow({
       </div>
       <div className="w-full bg-gray-200 rounded-full h-2">
         <div
-          className="bg-gray-700 h-2 rounded-full transition-all"
+          className="bg-slate-500 h-2 rounded-full transition-all"
           style={{ width: `${pct}%` }}
         />
       </div>
@@ -321,7 +321,14 @@ function MeanRow({
   return (
     <div>
       <div className="flex items-center justify-between mb-1">
-        <span className="text-sm font-medium text-gray-800">{label}</span>
+        <span className="text-sm font-medium text-gray-800">
+          {label}
+          {inverted && (
+            <span className="ml-2 text-xs text-gray-400 font-normal italic">
+              ↓ lower is better
+            </span>
+          )}
+        </span>
         <span className="text-sm font-semibold tabular-nums">
           {value.toFixed(decimals)}
           <span className="text-gray-400 font-normal"> / {max}</span>
@@ -351,13 +358,13 @@ function CohortRow({
     <div>
       <div className="flex items-center justify-between mb-1">
         <span className="text-sm font-medium text-gray-800">{label}</span>
-        <span className="text-sm font-semibold text-indigo-700">
+        <span className="text-sm font-semibold text-indigo-500">
           {percentile}th %ile
         </span>
       </div>
       <div className="w-full bg-gray-200 rounded-full h-2 mb-1">
         <div
-          className="bg-indigo-500 h-2 rounded-full transition-all"
+          className="bg-indigo-400 h-2 rounded-full transition-all"
           style={{ width: `${percentile}%` }}
         />
       </div>
@@ -1047,7 +1054,7 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
           </div>
           <div className="w-full bg-gray-200 rounded-full h-3">
             <div
-              className="h-3 rounded-full transition-all bg-gray-700"
+              className="h-3 rounded-full transition-all bg-slate-500"
               style={{
                 width: scoreBarWidth(scores.asrs.items_flagged, 6),
               }}
@@ -1084,7 +1091,7 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
             </div>
             <div className="w-full bg-gray-200 rounded-full h-3">
               <div
-                className="h-3 rounded-full transition-all bg-gray-700"
+                className="h-3 rounded-full transition-all bg-slate-500"
                 style={{ width: scoreBarWidth(scores.aq10.score, 10) }}
               />
             </div>
