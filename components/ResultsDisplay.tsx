@@ -147,13 +147,13 @@ function bandColor(
   const high = ratio >= 0.8;
   const low = ratio < 0.4;
   if (inverted) {
-    if (high) return "bg-red-400";
-    if (low) return "bg-green-400";
-    return "bg-amber-300";
+    if (high) return "bg-red-500";
+    if (low) return "bg-green-500";
+    return "bg-amber-400";
   }
-  if (high) return "bg-green-400";
-  if (low) return "bg-red-400";
-  return "bg-amber-300";
+  if (high) return "bg-green-500";
+  if (low) return "bg-red-500";
+  return "bg-amber-400";
 }
 
 function meanOf(
@@ -223,11 +223,11 @@ function scoreBarWidth(score: number, maxScore: number): string {
 
 function severityBarColor(severity: PHQ9Severity | GAD7Severity): string {
   switch (severity) {
-    case "none": return "bg-green-400";
-    case "mild": return "bg-amber-300";
-    case "moderate": return "bg-orange-300";
-    case "moderately_severe": return "bg-red-400";
-    case "severe": return "bg-red-500";
+    case "none": return "bg-green-500";
+    case "mild": return "bg-amber-400";
+    case "moderate": return "bg-orange-400";
+    case "moderately_severe": return "bg-red-500";
+    case "severe": return "bg-red-600";
   }
 }
 
