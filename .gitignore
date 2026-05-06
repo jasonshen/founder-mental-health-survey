@@ -36,3 +36,8 @@ out/
 theme-*.png
 v2-*.png
 likert-interaction.png
+
+# Local data exports — respondent rows in CSV form must NEVER be committed
+# to the public repo. The codebook is harmless on its own but lives next to
+# the response files so the whole folder is gitignored as a unit.
+/exports/
