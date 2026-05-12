@@ -9,6 +9,8 @@ import type {
 } from "@/lib/types";
 import CrisisBanner from "./CrisisBanner";
 import ResultsCard from "./ResultsCard";
+import SectionView from "./SectionView";
+import type { SectionCount, StatsBundle } from "@/lib/aggregates";
 
 // V3 founder challenges (section_founder_challenges, fc_* keys)
 const CHALLENGE_LABELS: Record<string, string> = {
@@ -361,6 +363,7 @@ function CohortRow({
 export default function ResultsDisplay({ token }: ResultsDisplayProps) {
   const [data, setData] = useState<ResultsResponse | null>(null);
   const [cohort, setCohort] = useState<CohortData | null>(null);
+  const [stats, setStats] = useState<StatsBundle | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
@@ -415,6 +418,24 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
       cancelled = true;
     };
   }, [token]);
+
+  // Per-section comparison stats (counts + distributions for ready sections).
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/stats");
+        if (!res.ok) return;
+        const body = (await res.json()) as StatsBundle;
+        if (!cancelled) setStats(body);
+      } catch {
+        // Silent — comparison is an enhancement, not required.
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // Separately fetch cohort data. 404 = flag off or not enough data — silent no-op.
   useEffect(() => {
@@ -669,6 +690,9 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
     buCynicism.answered > 0 ||
     buEfficacy.answered > 0;
 
+  const sectionStats: Partial<Record<string, SectionCount>> = {};
+  for (const s of stats?.by_section ?? []) sectionStats[s.section_id] = s;
+
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">
       <CrisisBanner show={scores.phq9.suicidal_ideation_flagged} />
@@ -731,323 +755,371 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
       {/* Founder Challenges */}
       {hasAnyChallengeData && (
         <ResultsCard title="Your Founder Challenges">
-          <div className="space-y-5">
-            {challengeGroups.map((group) => {
-              const filled = group.answered > 0
-                ? Math.max(0, Math.min(100, ((group.avg - 1) / 4) * 100))
-                : 0;
-              const color =
-                group.answered > 0
-                  ? bandColor(group.avg, 1, 5, false)
-                  : "bg-gray-300";
-              return (
-                <div key={group.id}>
-                  <div className="flex items-center justify-between mb-1">
-                    <div>
-                      <span className="text-sm font-semibold text-gray-900">
-                        {group.label}
-                      </span>
-                      <span className="text-xs text-gray-500 ml-2">
-                        {group.description}
+          <SectionView
+            sectionId="founder_challenges"
+            section={sectionStats.founder_challenges}
+            responses={section_founder_challenges}
+          >
+            <div className="space-y-5">
+              {challengeGroups.map((group) => {
+                const filled = group.answered > 0
+                  ? Math.max(0, Math.min(100, ((group.avg - 1) / 4) * 100))
+                  : 0;
+                const color =
+                  group.answered > 0
+                    ? bandColor(group.avg, 1, 5, false)
+                    : "bg-gray-300";
+                return (
+                  <div key={group.id}>
+                    <div className="flex items-center justify-between mb-1">
+                      <div>
+                        <span className="text-sm font-semibold text-gray-900">
+                          {group.label}
+                        </span>
+                        <span className="text-xs text-gray-500 ml-2">
+                          {group.description}
+                        </span>
+                      </div>
+                      <span className="text-sm text-gray-400 tabular-nums">
+                        {group.answered > 0 ? group.avg.toFixed(1) : "—"} / 5
                       </span>
                     </div>
-                    <span className="text-sm text-gray-400 tabular-nums">
-                      {group.answered > 0 ? group.avg.toFixed(1) : "—"} / 5
-                    </span>
+                    <div className="w-full bg-gray-200 rounded-full h-2 mb-1">
+                      <div
+                        className={`${color} h-2 rounded-full transition-all`}
+                        style={{ width: `${filled}%` }}
+                      />
+                    </div>
+                    {group.worst ? (
+                      <p className="text-xs text-gray-500">
+                        Biggest challenge:{" "}
+                        <span className="text-gray-700">{group.worst.label}</span>
+                      </p>
+                    ) : group.answered === 0 ? (
+                      <p className="text-xs text-gray-400 italic">No answers in this theme.</p>
+                    ) : null}
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2 mb-1">
-                    <div
-                      className={`${color} h-2 rounded-full transition-all`}
-                      style={{ width: `${filled}%` }}
-                    />
-                  </div>
-                  {group.worst ? (
-                    <p className="text-xs text-gray-500">
-                      Biggest challenge:{" "}
-                      <span className="text-gray-700">{group.worst.label}</span>
-                    </p>
-                  ) : group.answered === 0 ? (
-                    <p className="text-xs text-gray-400 italic">No answers in this theme.</p>
-                  ) : null}
-                </div>
-              );
-            })}
-          </div>
-          <p className="text-sm text-gray-500 mt-4">
-            Reverse-coded: <strong>higher = better</strong>. 5 / 5 means
-            you reported no challenge in that theme; 1 / 5 means you marked
-            every item there as a major challenge.
-          </p>
+                );
+              })}
+            </div>
+            <p className="text-sm text-gray-500 mt-4">
+              Reverse-coded: <strong>higher = better</strong>. 5 / 5 means
+              you reported no challenge in that theme; 1 / 5 means you marked
+              every item there as a major challenge.
+            </p>
+          </SectionView>
         </ResultsCard>
       )}
 
       {/* Cofounder Relationship — skipped for solo founders, so empty section means nothing to show */}
       {hasCofounderData && (
         <ResultsCard title="Cofounder Relationship">
-          <div className="space-y-4 mb-3">
-            <MeanRow
-              label="Overall relationship health"
-              value={cfOverall}
-              max={10}
-              caption="Your single 0–10 rating from the end of the section."
-            />
-            <MeanRow
-              label="Compatible Vision"
-              value={cfCompatibleVision.mean}
-              min={1}
-              max={5}
-              decimals={2}
-              caption="Aligned on direction and shared standards for quality."
-            />
-            <MeanRow
-              label="Calibrated Teamwork"
-              value={cfCalibratedTeamwork.mean}
-              min={1}
-              max={5}
-              decimals={2}
-              caption="Clear roles & decision rights, fair division of labor."
-            />
-            <MeanRow
-              label="Productive Conflict"
-              value={cfProductiveConflict.mean}
-              min={1}
-              max={5}
-              decimals={2}
-              caption="Working through disagreement, raising hard topics without damage."
-            />
-            <MeanRow
-              label="Supportive Trust"
-              value={cfSupportiveTrust.mean}
-              min={1}
-              max={5}
-              decimals={2}
-              caption="Reliability and the freedom to be honest about doubts and mistakes."
-            />
-          </div>
-          <p className="text-sm text-gray-500">
-            Subscale scores are means of the underlying agreement items
-            (1 = strongly disagree, 5 = strongly agree). Higher is better.
-          </p>
+          <SectionView
+            sectionId="cofounder"
+            section={sectionStats.cofounder}
+            responses={section_cofounder}
+          >
+            <div className="space-y-4 mb-3">
+              <MeanRow
+                label="Overall relationship health"
+                value={cfOverall}
+                max={10}
+                caption="Your single 0–10 rating from the end of the section."
+              />
+              <MeanRow
+                label="Compatible Vision"
+                value={cfCompatibleVision.mean}
+                min={1}
+                max={5}
+                decimals={2}
+                caption="Aligned on direction and shared standards for quality."
+              />
+              <MeanRow
+                label="Calibrated Teamwork"
+                value={cfCalibratedTeamwork.mean}
+                min={1}
+                max={5}
+                decimals={2}
+                caption="Clear roles & decision rights, fair division of labor."
+              />
+              <MeanRow
+                label="Productive Conflict"
+                value={cfProductiveConflict.mean}
+                min={1}
+                max={5}
+                decimals={2}
+                caption="Working through disagreement, raising hard topics without damage."
+              />
+              <MeanRow
+                label="Supportive Trust"
+                value={cfSupportiveTrust.mean}
+                min={1}
+                max={5}
+                decimals={2}
+                caption="Reliability and the freedom to be honest about doubts and mistakes."
+              />
+            </div>
+            <p className="text-sm text-gray-500">
+              Subscale scores are means of the underlying agreement items
+              (1 = strongly disagree, 5 = strongly agree). Higher is better.
+            </p>
+          </SectionView>
         </ResultsCard>
       )}
 
       {/* Life Outlook (the merged "Outlook" section — all 0-10 items) */}
       {hasLifeOutlookData && (
         <ResultsCard title="Outlook">
-          <div className="space-y-4 mb-3">
-            <MeanRow
-              label="Well-being (satisfaction · happiness · purpose)"
-              value={loWellbeing.mean}
-              max={10}
-              decimals={1}
-            />
-            <MeanRow
-              label="Life domains (relationships · physical · mental)"
-              value={loDomains.mean}
-              max={10}
-              decimals={1}
-            />
-            <MeanRow
-              label="Need-frustration (founder role)"
-              value={loFrustration.mean}
-              max={10}
-              decimals={1}
-              inverted
-              caption="Higher = more frustration. Mean of two items: 'I have to' vs 'I want to', and 'I feel alone carrying this'."
-            />
-          </div>
-          <p className="text-sm text-gray-500">
-            All items are on a 0–10 scale. Well-being and life-domain bars
-            read as &quot;higher is better&quot;; the need-frustration bar is
-            inverted — high values flag autonomy/relatedness strain in the
-            founder role.
-          </p>
+          <SectionView
+            sectionId="life_outlook"
+            section={sectionStats.life_outlook}
+            responses={section_life_outlook}
+          >
+            <div className="space-y-4 mb-3">
+              <MeanRow
+                label="Well-being (satisfaction · happiness · purpose)"
+                value={loWellbeing.mean}
+                max={10}
+                decimals={1}
+              />
+              <MeanRow
+                label="Life domains (relationships · physical · mental)"
+                value={loDomains.mean}
+                max={10}
+                decimals={1}
+              />
+              <MeanRow
+                label="Need-frustration (founder role)"
+                value={loFrustration.mean}
+                max={10}
+                decimals={1}
+                inverted
+                caption="Higher = more frustration. Mean of two items: 'I have to' vs 'I want to', and 'I feel alone carrying this'."
+              />
+            </div>
+            <p className="text-sm text-gray-500">
+              All items are on a 0–10 scale. Well-being and life-domain bars
+              read as &quot;higher is better&quot;; the need-frustration bar is
+              inverted — high values flag autonomy/relatedness strain in the
+              founder role.
+            </p>
+          </SectionView>
         </ResultsCard>
       )}
 
       {/* Ambition — drive intensity + Deci-Ryan regulation + Kasser-Ryan aspirations */}
       {hasAmbitionData && (
         <ResultsCard title="Ambition">
-          <div className="space-y-4 mb-3">
-            <MeanRow
-              label="Drive intensity"
-              value={ambDrive.mean}
-              min={1}
-              max={5}
-              decimals={2}
-              caption="Mean of three Hirschi/Spurk items (ambitious · strive · challenging goals)."
-            />
-            <MeanRow
-              label="Autonomous regulation"
-              value={regAutonomous.mean}
-              min={1}
-              max={5}
-              decimals={2}
-              caption="Identified · integrated · intrinsic — doing the work because it fits who you are."
-            />
-            <MeanRow
-              label="Controlled regulation"
-              value={regControlled.mean}
-              min={1}
-              max={5}
-              decimals={2}
-              inverted
-              caption="External avoidance · external approach · introjected — doing it because of consequences, rewards, or guilt."
-            />
-            <MeanRow
-              label="Intrinsic aspirations (helping · self-knowledge)"
-              value={aspIntrinsic.mean}
-              min={1}
-              max={5}
-              decimals={2}
-            />
-            <MeanRow
-              label="Extrinsic aspirations (financial · admiration)"
-              value={aspExtrinsic.mean}
-              min={1}
-              max={5}
-              decimals={2}
-            />
-          </div>
-          <p className="text-sm text-gray-500">
-            The autonomous-vs-controlled split is the analytical centerpiece —
-            high autonomous + low controlled is the Self-Determination Theory
-            profile that predicts well-being independent of attainment.
-          </p>
+          <SectionView
+            sectionId="ambition"
+            section={sectionStats.ambition}
+            responses={section_ambition}
+          >
+            <div className="space-y-4 mb-3">
+              <MeanRow
+                label="Drive intensity"
+                value={ambDrive.mean}
+                min={1}
+                max={5}
+                decimals={2}
+                caption="Mean of three Hirschi/Spurk items (ambitious · strive · challenging goals)."
+              />
+              <MeanRow
+                label="Autonomous regulation"
+                value={regAutonomous.mean}
+                min={1}
+                max={5}
+                decimals={2}
+                caption="Identified · integrated · intrinsic — doing the work because it fits who you are."
+              />
+              <MeanRow
+                label="Controlled regulation"
+                value={regControlled.mean}
+                min={1}
+                max={5}
+                decimals={2}
+                inverted
+                caption="External avoidance · external approach · introjected — doing it because of consequences, rewards, or guilt."
+              />
+              <MeanRow
+                label="Intrinsic aspirations (helping · self-knowledge)"
+                value={aspIntrinsic.mean}
+                min={1}
+                max={5}
+                decimals={2}
+              />
+              <MeanRow
+                label="Extrinsic aspirations (financial · admiration)"
+                value={aspExtrinsic.mean}
+                min={1}
+                max={5}
+                decimals={2}
+              />
+            </div>
+            <p className="text-sm text-gray-500">
+              The autonomous-vs-controlled split is the analytical centerpiece —
+              high autonomous + low controlled is the Self-Determination Theory
+              profile that predicts well-being independent of attainment.
+            </p>
+          </SectionView>
         </ResultsCard>
       )}
 
       {/* Depression */}
       {phq9Answered && (
       <ResultsCard title="Depression Screening (PHQ-9)">
-        <div className="mb-3">
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-sm text-gray-600">Score</span>
-            <span className="font-semibold text-lg">{scores.phq9.score}/27</span>
+        <SectionView
+          sectionId="depression"
+          section={sectionStats.depression}
+          responses={section_depression}
+        >
+          <div className="mb-3">
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-sm text-gray-600">Score</span>
+              <span className="font-semibold text-lg">{scores.phq9.score}/27</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-3">
+              <div
+                className={`h-3 rounded-full transition-all ${severityBarColor(scores.phq9.severity)}`}
+                style={{ width: scoreBarWidth(scores.phq9.score, 27) }}
+              />
+            </div>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-3">
-            <div
-              className={`h-3 rounded-full transition-all ${severityBarColor(scores.phq9.severity)}`}
-              style={{ width: scoreBarWidth(scores.phq9.score, 27) }}
-            />
-          </div>
-        </div>
-        <p className="mb-1">
-          Severity:{" "}
-          <span className={`inline-block px-2 py-0.5 rounded text-sm font-medium ${severityColor(scores.phq9.severity)}`}>
-            {formatPHQ9Severity(scores.phq9.severity)}
-          </span>
-        </p>
-        <p className="text-sm text-gray-500">
-          About {scores.phq9.general_pop_band_pct}% of the general population
-          scores in the {formatPHQ9Severity(scores.phq9.severity).toLowerCase()}{" "}
-          range.
-        </p>
+          <p className="mb-1">
+            Severity:{" "}
+            <span className={`inline-block px-2 py-0.5 rounded text-sm font-medium ${severityColor(scores.phq9.severity)}`}>
+              {formatPHQ9Severity(scores.phq9.severity)}
+            </span>
+          </p>
+          <p className="text-sm text-gray-500">
+            About {scores.phq9.general_pop_band_pct}% of the general population
+            scores in the {formatPHQ9Severity(scores.phq9.severity).toLowerCase()}{" "}
+            range.
+          </p>
+        </SectionView>
       </ResultsCard>
       )}
 
       {/* Anxiety */}
       {gad7Answered && (
       <ResultsCard title="Anxiety Screening (GAD-7)">
-        <div className="mb-3">
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-sm text-gray-600">Score</span>
-            <span className="font-semibold text-lg">{scores.gad7.score}/21</span>
+        <SectionView
+          sectionId="anxiety"
+          section={sectionStats.anxiety}
+          responses={section_anxiety}
+        >
+          <div className="mb-3">
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-sm text-gray-600">Score</span>
+              <span className="font-semibold text-lg">{scores.gad7.score}/21</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-3">
+              <div
+                className={`h-3 rounded-full transition-all ${severityBarColor(scores.gad7.severity)}`}
+                style={{ width: scoreBarWidth(scores.gad7.score, 21) }}
+              />
+            </div>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-3">
-            <div
-              className={`h-3 rounded-full transition-all ${severityBarColor(scores.gad7.severity)}`}
-              style={{ width: scoreBarWidth(scores.gad7.score, 21) }}
-            />
-          </div>
-        </div>
-        <p className="mb-1">
-          Severity:{" "}
-          <span className={`inline-block px-2 py-0.5 rounded text-sm font-medium ${severityColor(scores.gad7.severity)}`}>
-            {formatGAD7Severity(scores.gad7.severity)}
-          </span>
-        </p>
-        <p className="text-sm text-gray-500">
-          About {scores.gad7.general_pop_band_pct}% of the general population
-          scores in the {formatGAD7Severity(scores.gad7.severity).toLowerCase()}{" "}
-          range.
-        </p>
+          <p className="mb-1">
+            Severity:{" "}
+            <span className={`inline-block px-2 py-0.5 rounded text-sm font-medium ${severityColor(scores.gad7.severity)}`}>
+              {formatGAD7Severity(scores.gad7.severity)}
+            </span>
+          </p>
+          <p className="text-sm text-gray-500">
+            About {scores.gad7.general_pop_band_pct}% of the general population
+            scores in the {formatGAD7Severity(scores.gad7.severity).toLowerCase()}{" "}
+            range.
+          </p>
+        </SectionView>
       </ResultsCard>
       )}
 
       {/* Burnout (MBI-GS) */}
       {hasBurnoutData && (
         <ResultsCard title="Burnout (MBI-GS)">
-          <div className="space-y-4 mb-3">
-            <MeanRow
-              label="Emotional exhaustion"
-              value={buExhaustion.mean}
-              max={6}
-              decimals={1}
-              inverted
-              caption="How often you feel drained / used up / tired by work."
-            />
-            <MeanRow
-              label="Cynicism (depersonalization)"
-              value={buCynicism.mean}
-              max={6}
-              decimals={1}
-              inverted
-              caption="How often interest, enthusiasm, and meaning have eroded."
-            />
-            <MeanRow
-              label="Professional efficacy"
-              value={buEfficacy.mean}
-              max={6}
-              decimals={1}
-              caption="How often you feel good at, exhilarated by, or accomplished in your work — higher is better."
-            />
-          </div>
-          <p className="text-sm text-gray-500">
-            MBI-GS scales each run 0 (Never) to 6 (Every day). High
-            exhaustion + high cynicism + low efficacy is the burnout
-            signature; isolated high exhaustion is more often plain overwork.
-          </p>
+          <SectionView
+            sectionId="burnout"
+            section={sectionStats.burnout}
+            responses={section_burnout}
+          >
+            <div className="space-y-4 mb-3">
+              <MeanRow
+                label="Emotional exhaustion"
+                value={buExhaustion.mean}
+                max={6}
+                decimals={1}
+                inverted
+                caption="How often you feel drained / used up / tired by work."
+              />
+              <MeanRow
+                label="Cynicism (depersonalization)"
+                value={buCynicism.mean}
+                max={6}
+                decimals={1}
+                inverted
+                caption="How often interest, enthusiasm, and meaning have eroded."
+              />
+              <MeanRow
+                label="Professional efficacy"
+                value={buEfficacy.mean}
+                max={6}
+                decimals={1}
+                caption="How often you feel good at, exhilarated by, or accomplished in your work — higher is better."
+              />
+            </div>
+            <p className="text-sm text-gray-500">
+              MBI-GS scales each run 0 (Never) to 6 (Every day). High
+              exhaustion + high cynicism + low efficacy is the burnout
+              signature; isolated high exhaustion is more often plain overwork.
+            </p>
+          </SectionView>
         </ResultsCard>
       )}
 
       {/* ADHD traits */}
       {asrsAnswered && (
       <ResultsCard title="ADHD Traits Screening (ASRS)">
-        <div className="mb-3">
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-sm text-gray-600">
-              Screening items met
-            </span>
-            <span className="font-semibold text-lg">
-              {scores.asrs.items_flagged}/6
-            </span>
+        <SectionView
+          sectionId="adhd"
+          section={sectionStats.adhd}
+          responses={section_adhd}
+        >
+          <div className="mb-3">
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-sm text-gray-600">
+                Screening items met
+              </span>
+              <span className="font-semibold text-lg">
+                {scores.asrs.items_flagged}/6
+              </span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-3">
+              <div
+                className="h-3 rounded-full transition-all bg-slate-500"
+                style={{
+                  width: scoreBarWidth(scores.asrs.items_flagged, 6),
+                }}
+              />
+            </div>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-3">
-            <div
-              className="h-3 rounded-full transition-all bg-slate-500"
-              style={{
-                width: scoreBarWidth(scores.asrs.items_flagged, 6),
-              }}
-            />
-          </div>
-        </div>
-        <p className="mb-1">
-          Threshold:{" "}
-          <span className="inline-block px-2 py-0.5 rounded text-sm font-medium bg-gray-100 text-gray-700">
-            {scores.asrs.above_threshold
-              ? "Above (4+ of 6 items met)"
-              : "Below (fewer than 4 items met)"}
-          </span>
-        </p>
-        <p className="text-sm text-gray-500">
-          The ASRS-v1.1 screener flags an item when you answer in a high-frequency
-          range (items 1–3: <em>Sometimes</em> or higher; items 4–6: <em>Often</em>{" "}
-          or higher). Meeting <strong>4 or more out of 6</strong> is the cutoff
-          that suggests further ADHD evaluation may be worthwhile. About{" "}
-          {scores.asrs.general_pop_above_threshold_pct}% of the general
-          population meets this threshold.
-        </p>
+          <p className="mb-1">
+            Threshold:{" "}
+            <span className="inline-block px-2 py-0.5 rounded text-sm font-medium bg-gray-100 text-gray-700">
+              {scores.asrs.above_threshold
+                ? "Above (4+ of 6 items met)"
+                : "Below (fewer than 4 items met)"}
+            </span>
+          </p>
+          <p className="text-sm text-gray-500">
+            The ASRS-v1.1 screener flags an item when you answer in a high-frequency
+            range (items 1–3: <em>Sometimes</em> or higher; items 4–6: <em>Often</em>{" "}
+            or higher). Meeting <strong>4 or more out of 6</strong> is the cutoff
+            that suggests further ADHD evaluation may be worthwhile. About{" "}
+            {scores.asrs.general_pop_above_threshold_pct}% of the general
+            population meets this threshold.
+          </p>
+        </SectionView>
       </ResultsCard>
       )}
 
