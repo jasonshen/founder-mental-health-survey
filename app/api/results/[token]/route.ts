@@ -83,6 +83,7 @@ export async function GET(
     section_depression: data.section_depression,
     section_anxiety: data.section_anxiety,
     section_adhd: data.section_adhd,
+    section_dark_triad: data.section_dark_triad,
     created_at: data.created_at,
   });
 }

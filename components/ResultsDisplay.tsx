@@ -520,6 +520,7 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
     section_depression,
     section_anxiety,
     section_adhd,
+    section_dark_triad,
   } = data;
 
   // Whether the respondent actually answered each clinical section. The
@@ -972,6 +973,7 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
           sectionId="depression"
           section={sectionStats.depression}
           responses={section_depression}
+          scores={scores}
         >
           <div className="mb-3">
             <div className="flex items-center justify-between mb-1">
@@ -1007,6 +1009,7 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
           sectionId="anxiety"
           section={sectionStats.anxiety}
           responses={section_anxiety}
+          scores={scores}
         >
           <div className="mb-3">
             <div className="flex items-center justify-between mb-1">
@@ -1084,6 +1087,7 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
           sectionId="adhd"
           section={sectionStats.adhd}
           responses={section_adhd}
+          scores={scores}
         >
           <div className="mb-3">
             <div className="flex items-center justify-between mb-1">
@@ -1126,69 +1130,81 @@ export default function ResultsDisplay({ token }: ResultsDisplayProps) {
       {/* Autism spectrum traits */}
       {scores.aq10 && scores.aq10.items_answered > 0 && (
         <ResultsCard title="Autism Spectrum Traits Screening (AQ-10)">
-          <div className="mb-3">
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-sm text-gray-600">Score</span>
-              <span className="font-semibold text-lg">
-                {scores.aq10.score}/10
+          <SectionView
+            sectionId="autism"
+            section={sectionStats.autism}
+            scores={scores}
+          >
+            <div className="mb-3">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-sm text-gray-600">Score</span>
+                <span className="font-semibold text-lg">
+                  {scores.aq10.score}/10
+                </span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-3">
+                <div
+                  className="h-3 rounded-full transition-all bg-slate-500"
+                  style={{ width: scoreBarWidth(scores.aq10.score, 10) }}
+                />
+              </div>
+            </div>
+            <p className="mb-1">
+              Threshold:{" "}
+              <span className="inline-block px-2 py-0.5 rounded text-sm font-medium bg-gray-100 text-gray-700">
+                {scores.aq10.above_threshold
+                  ? "At or above (6+ of 10)"
+                  : "Below (fewer than 6)"}
               </span>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-3">
-              <div
-                className="h-3 rounded-full transition-all bg-slate-500"
-                style={{ width: scoreBarWidth(scores.aq10.score, 10) }}
-              />
-            </div>
-          </div>
-          <p className="mb-1">
-            Threshold:{" "}
-            <span className="inline-block px-2 py-0.5 rounded text-sm font-medium bg-gray-100 text-gray-700">
-              {scores.aq10.above_threshold
-                ? "At or above (6+ of 10)"
-                : "Below (fewer than 6)"}
-            </span>
-          </p>
-          <p className="text-sm text-gray-500">
-            The AQ-10 awards 1 point per item answered in the autism-trait
-            direction. A score of <strong>6 or higher</strong> is the cutoff
-            commonly used in adult primary care to suggest a referral for full
-            autism assessment. This is a screening tool only, not a diagnosis.
-          </p>
+            </p>
+            <p className="text-sm text-gray-500">
+              The AQ-10 awards 1 point per item answered in the autism-trait
+              direction. A score of <strong>6 or higher</strong> is the cutoff
+              commonly used in adult primary care to suggest a referral for full
+              autism assessment. This is a screening tool only, not a diagnosis.
+            </p>
+          </SectionView>
         </ResultsCard>
       )}
 
       {/* Dark Triad personality (Dirty Dozen) */}
       {scores.darkTriad && scores.darkTriad.items_answered > 0 && (
         <ResultsCard title="Personality (Dirty Dozen Dark Triad)">
-          <div className="space-y-3 mb-3">
-            <DarkTriadRow
-              label="Machiavellianism"
-              value={scores.darkTriad.machiavellianism}
-            />
-            <DarkTriadRow
-              label="Psychopathy"
-              value={scores.darkTriad.psychopathy}
-            />
-            <DarkTriadRow
-              label="Narcissism"
-              value={scores.darkTriad.narcissism}
-            />
-          </div>
-          {scores.darkTriad.composite !== null && (
-            <p className="text-sm text-gray-700 mb-1">
-              Composite (mean of all 12 items):{" "}
-              <strong>
-                {scores.darkTriad.composite.toFixed(2)}
-              </strong>
-              <span className="text-gray-400"> / 5</span>
+          <SectionView
+            sectionId="dark_triad"
+            section={sectionStats.dark_triad}
+            responses={section_dark_triad}
+          >
+            <div className="space-y-3 mb-3">
+              <DarkTriadRow
+                label="Machiavellianism"
+                value={scores.darkTriad.machiavellianism}
+              />
+              <DarkTriadRow
+                label="Psychopathy"
+                value={scores.darkTriad.psychopathy}
+              />
+              <DarkTriadRow
+                label="Narcissism"
+                value={scores.darkTriad.narcissism}
+              />
+            </div>
+            {scores.darkTriad.composite !== null && (
+              <p className="text-sm text-gray-700 mb-1">
+                Composite (mean of all 12 items):{" "}
+                <strong>
+                  {scores.darkTriad.composite.toFixed(2)}
+                </strong>
+                <span className="text-gray-400"> / 5</span>
+              </p>
+            )}
+            <p className="text-sm text-gray-500">
+              Each subscale is the mean of 4 items rated 1 (strongly disagree) to
+              5 (strongly agree). Higher scores reflect stronger expression of the
+              trait. Dark Triad traits aren&apos;t inherently pathological — modest
+              elevations are common and can be adaptive in entrepreneurial settings.
             </p>
-          )}
-          <p className="text-sm text-gray-500">
-            Each subscale is the mean of 4 items rated 1 (strongly disagree) to
-            5 (strongly agree). Higher scores reflect stronger expression of the
-            trait. Dark Triad traits aren&apos;t inherently pathological — modest
-            elevations are common and can be adaptive in entrepreneurial settings.
-          </p>
+          </SectionView>
         </ResultsCard>
       )}
 
