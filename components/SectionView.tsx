@@ -2,22 +2,13 @@
 
 import { useState, type ReactNode } from "react";
 
-import type { SectionId, SurveyResponses } from "@/lib/types";
+import type { AllScores, SectionId, SurveyResponses } from "@/lib/types";
 import {
-  FC_GROUPS,
-  fcGroupMeansForRow,
+  SECTION_SUBSCALES,
+  subscaleMeansForRow,
   percentileRank,
   type SectionCount,
 } from "@/lib/aggregates";
-
-// Sections that have a concrete comparison renderer implemented. Sections
-// outside this list either don't make sense to compare (demographics,
-// free-text) or are waiting on their N to cross COMPARISON_THRESHOLD —
-// they'll fall through to the "collecting" footer instead of getting a
-// toggle.
-const HAS_COMPARISON_RENDERER: Partial<Record<SectionId, true>> = {
-  founder_challenges: true,
-};
 
 const SECTION_LABEL: Partial<Record<SectionId, string>> = {
   founder_challenges: "founder challenges",
@@ -32,11 +23,12 @@ const SECTION_LABEL: Partial<Record<SectionId, string>> = {
   dark_triad: "personality",
 };
 
-const FC_GROUP_LABELS: Record<string, string> = {
-  self_leadership: "Self-Leadership",
-  team_execution: "Team & Execution",
-  relationships: "Cofounder & Board",
-  business: "Business Risk",
+// Footnote shown under sections that are reverse-coded for display.
+// Right now only founder_challenges shows higher = better; everything else
+// uses the natural scale direction.
+const FOOTNOTES: Partial<Record<SectionId, string>> = {
+  founder_challenges:
+    "Section is reverse-coded — higher = less challenge reported. A higher percentile means you reported less challenge than most founders.",
 };
 
 function ordinal(n: number): string {
@@ -74,7 +66,7 @@ function CollectingNote({
           Comparison data is collecting
         </span>
         <span className="tabular-nums text-gray-500">
-          {section.n_total} / 100
+          {section.n_total} / {section.n_total + section.needed}
         </span>
       </div>
       <div className="w-full bg-gray-200 rounded-full h-1.5 mb-1.5">
@@ -118,13 +110,19 @@ function Toggle({
         type="button"
         onClick={() => setView("compare")}
         aria-pressed={view === "compare"}
-        className={`px-3 py-1 rounded-full transition-colors ${
+        className={`px-3 py-1 rounded-full transition-colors inline-flex items-center gap-1.5 ${
           view === "compare"
             ? "bg-white text-indigo-700 shadow-sm"
             : "text-gray-500 hover:text-gray-700"
         }`}
       >
         Compare to founders
+        {view === "yours" && (
+          <span
+            aria-hidden="true"
+            className="w-1.5 h-1.5 rounded-full bg-indigo-500"
+          />
+        )}
       </button>
     </div>
   );
@@ -139,6 +137,8 @@ function DistroRow({
   p75,
   min,
   max,
+  inverted,
+  decimals,
 }: {
   label: string;
   pct: number;
@@ -148,6 +148,8 @@ function DistroRow({
   p75: number;
   min: number;
   max: number;
+  inverted: boolean;
+  decimals: number;
 }) {
   const minePctPos = pctOnScale(mine, min, max);
   const medianPctPos = pctOnScale(median, min, max);
@@ -158,12 +160,19 @@ function DistroRow({
     Math.abs(diff) < 0.05
       ? "right at the founder median"
       : diff > 0
-        ? `above the founder median (${median.toFixed(1)})`
-        : `below the founder median (${median.toFixed(1)})`;
+        ? `above the founder median (${median.toFixed(decimals)})`
+        : `below the founder median (${median.toFixed(decimals)})`;
   return (
     <div>
       <div className="flex items-center justify-between mb-1">
-        <span className="text-sm font-medium text-gray-800">{label}</span>
+        <span className="text-sm font-medium text-gray-800">
+          {label}
+          {inverted && (
+            <span className="ml-2 text-xs text-gray-400 font-normal italic">
+              ↓ lower is better
+            </span>
+          )}
+        </span>
         <span className="text-xs font-semibold text-indigo-700 tabular-nums">
           {ordinal(pct)} percentile
         </span>
@@ -193,45 +202,71 @@ function DistroRow({
         />
       </div>
       <p className="text-xs text-gray-500">
-        Your {mine.toFixed(1)} sits {direction}.
+        Your {mine.toFixed(decimals)} sits {direction}.
       </p>
     </div>
   );
 }
 
-function FcGroupsComparison({
+function SubscalesComparison({
+  sectionId,
   section,
   responses,
+  scores,
 }: {
+  sectionId: SectionId;
   section: SectionCount;
   responses?: SurveyResponses | null;
+  scores?: AllScores | null;
 }) {
+  const subscales = SECTION_SUBSCALES[sectionId];
   if (
+    !subscales ||
     !section.distributions ||
-    section.distributions.type !== "fc_groups" ||
-    !responses
+    section.distributions.type !== "subscales"
   ) {
     return null;
   }
-  const myMeans = fcGroupMeansForRow(responses);
+  // Items-based subscales need the section JSON cell; score-based subscales
+  // need the precomputed scores blob. We bail only when both are missing AND
+  // the section has any subscale that requires the missing source.
+  const needsResponses = subscales.some((s) => s.items && !s.scoreField);
+  const needsScores = subscales.some((s) => s.scoreField);
+  if (needsResponses && !responses) return null;
+  if (needsScores && !scores) return null;
+  const myMeans = subscaleMeansForRow(responses, scores, subscales);
   const byId = new Map(section.distributions.groups.map((g) => [g.id, g]));
 
-  const rows = FC_GROUPS.map((g) => {
-    const mine = myMeans[g.id];
-    const cohort = byId.get(g.id);
-    if (mine === null || !cohort || cohort.values.length === 0) return null;
-    return {
-      id: g.id,
-      label: FC_GROUP_LABELS[g.id] ?? g.id,
-      pct: percentileRank(cohort.values, mine),
-      mine,
-      median: cohort.median,
-      p25: cohort.p25,
-      p75: cohort.p75,
-    };
-  }).filter((r): r is NonNullable<typeof r> => r !== null);
+  const rows = subscales
+    .map((s) => {
+      const mine = myMeans[s.id];
+      const cohort = byId.get(s.id);
+      if (mine === null || !cohort || cohort.values.length === 0) return null;
+      // For inverted subscales, "high percentile" naturally maps to "doing
+      // worse than most founders." We don't flip the percentile here — we
+      // surface the inversion via the row label so the reader can interpret
+      // it correctly.
+      return {
+        id: s.id,
+        label: cohort.label,
+        pct: percentileRank(cohort.values, mine),
+        mine,
+        median: cohort.median,
+        p25: cohort.p25,
+        p75: cohort.p75,
+        min: cohort.min,
+        max: cohort.max,
+        inverted: cohort.inverted,
+        // Likert subscales (max 5 or 6) want 2 decimals to show fine
+        // movement; 0-10 scales are coarser and read better with 1.
+        decimals: cohort.max <= 6 ? 2 : 1,
+      };
+    })
+    .filter((r): r is NonNullable<typeof r> => r !== null);
 
   if (rows.length === 0) return null;
+
+  const footnote = FOOTNOTES[sectionId];
 
   return (
     <div>
@@ -248,8 +283,10 @@ function FcGroupsComparison({
             median={r.median}
             p25={r.p25}
             p75={r.p75}
-            min={1}
-            max={5}
+            min={r.min}
+            max={r.max}
+            inverted={r.inverted}
+            decimals={r.decimals}
           />
         ))}
       </div>
@@ -267,34 +304,19 @@ function FcGroupsComparison({
           Middle 50% of founders
         </span>
       </div>
-      <p className="text-xs text-gray-500 mt-2 leading-relaxed">
-        Section is reverse-coded — higher = less challenge reported. A higher
-        percentile means you reported less challenge in this theme than most
-        founders.
-      </p>
+      {footnote && (
+        <p className="text-xs text-gray-500 mt-2 leading-relaxed">{footnote}</p>
+      )}
     </div>
   );
-}
-
-function ComparisonContent({
-  sectionId,
-  section,
-  responses,
-}: {
-  sectionId: SectionId;
-  section: SectionCount;
-  responses?: SurveyResponses | null;
-}) {
-  if (sectionId === "founder_challenges") {
-    return <FcGroupsComparison section={section} responses={responses} />;
-  }
-  return null;
 }
 
 interface Props {
   sectionId: SectionId;
   section: SectionCount | undefined;
   responses?: SurveyResponses | null;
+  /** Precomputed scores blob — required for score-based subscale rows. */
+  scores?: AllScores | null;
   /** The respondent's own scores view — typically the rating bars + notes. */
   children: ReactNode;
 }
@@ -309,11 +331,12 @@ export default function SectionView({
   sectionId,
   section,
   responses,
+  scores,
   children,
 }: Props) {
   const [view, setView] = useState<"yours" | "compare">("yours");
   const canCompare =
-    section?.ready === true && HAS_COMPARISON_RENDERER[sectionId] === true;
+    section?.ready === true && SECTION_SUBSCALES[sectionId] !== undefined;
 
   if (!section) return <>{children}</>;
 
@@ -321,7 +344,7 @@ export default function SectionView({
     return (
       <>
         {children}
-        {!section.ready && (
+        {!section.ready && SECTION_SUBSCALES[sectionId] !== undefined && (
           <CollectingNote section={section} sectionId={sectionId} />
         )}
       </>
@@ -334,10 +357,11 @@ export default function SectionView({
       {view === "yours" ? (
         children
       ) : (
-        <ComparisonContent
+        <SubscalesComparison
           sectionId={sectionId}
           section={section}
           responses={responses}
+          scores={scores}
         />
       )}
     </>

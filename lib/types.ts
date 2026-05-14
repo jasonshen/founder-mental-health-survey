@@ -200,6 +200,7 @@ export interface ResultsResponse {
   section_depression: SurveyResponses | null;
   section_anxiety: SurveyResponses | null;
   section_adhd: SurveyResponses | null;
+  section_dark_triad: SurveyResponses | null;
   created_at: string;
 }
 
