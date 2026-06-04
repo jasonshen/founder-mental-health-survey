@@ -2,6 +2,27 @@ import Link from "next/link";
 import AuthorPair from "@/components/AuthorPair";
 import QuoteRotator from "@/components/QuoteRotator";
 
+/* Arrow icon used inside the primary CTA. */
+function Arrow() {
+  return (
+    <svg
+      className="arrow"
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2.5}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <line x1="5" y1="12" x2="19" y2="12" />
+      <polyline points="12 5 19 12 12 19" />
+    </svg>
+  );
+}
+
 /* Plus/minus toggle on accordion summaries. The vertical bar collapses
    to scaleY(0) when the parent <details> is open, leaving the
    horizontal bar — i.e., "+" becomes "−". */
@@ -99,11 +120,12 @@ export default function YcLandingPage() {
         </div>
 
         <div className="cta-row">
-          <span className="btn" aria-disabled="true">
-            Survey closed
-          </span>
+          <Link href="/results/2026" className="btn">
+            See the 2026 results
+            <Arrow />
+          </Link>
           <span className="btn-meta">
-            Thank you to everyone who took part — aggregate results coming soon.
+            Survey closed · thank you to everyone who took part.
           </span>
         </div>
 
