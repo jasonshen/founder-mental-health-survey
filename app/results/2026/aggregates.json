@@ -1,0 +1,424 @@
+{
+  "generatedAt": "2026-06-04",
+  "source": "exports/2026-06-04",
+  "note": "Aggregate counts only. No row-level or free-text data is included.",
+  "totals": {
+    "responses": 266,
+    "completed": 131,
+    "yc": 211,
+    "general": 49
+  },
+  "cohort": {
+    "id": "cohort",
+    "text": "Which founder community are you part of?",
+    "kind": "categorical",
+    "answered": 260,
+    "options": [
+      {
+        "label": "Y Combinator",
+        "count": 211,
+        "pct": 81.2
+      },
+      {
+        "label": "General / non-YC",
+        "count": 49,
+        "pct": 18.8
+      }
+    ]
+  },
+  "sections": {
+    "demographics": {
+      "title": "Demographics",
+      "questions": [
+        {
+          "id": "company_role",
+          "text": "What is your role?",
+          "kind": "categorical",
+          "answered": 244,
+          "options": [
+            {
+              "label": "Solo Founder",
+              "count": 48,
+              "pct": 19.7
+            },
+            {
+              "label": "Co-Founder / CEO",
+              "count": 106,
+              "pct": 43.4
+            },
+            {
+              "label": "Co-Founder / CTO",
+              "count": 75,
+              "pct": 30.7
+            },
+            {
+              "label": "Co-Founder / Other",
+              "count": 14,
+              "pct": 5.7
+            },
+            {
+              "label": "Other",
+              "count": 1,
+              "pct": 0.4
+            }
+          ]
+        },
+        {
+          "id": "company_age",
+          "text": "What is your age?",
+          "kind": "numeric",
+          "answered": 230,
+          "stats": {
+            "median": 31,
+            "mean": 32.4,
+            "min": 19,
+            "max": 66
+          },
+          "buckets": [
+            {
+              "label": "Under 25",
+              "count": 48,
+              "pct": 20.9
+            },
+            {
+              "label": "25–29",
+              "count": 53,
+              "pct": 23
+            },
+            {
+              "label": "30–34",
+              "count": 47,
+              "pct": 20.4
+            },
+            {
+              "label": "35–39",
+              "count": 38,
+              "pct": 16.5
+            },
+            {
+              "label": "40–49",
+              "count": 32,
+              "pct": 13.9
+            },
+            {
+              "label": "50+",
+              "count": 12,
+              "pct": 5.2
+            }
+          ]
+        },
+        {
+          "id": "company_gender",
+          "text": "What is your gender?",
+          "kind": "categorical",
+          "answered": 238,
+          "options": [
+            {
+              "label": "Male",
+              "count": 208,
+              "pct": 87.4
+            },
+            {
+              "label": "Female",
+              "count": 28,
+              "pct": 11.8
+            },
+            {
+              "label": "Non-binary",
+              "count": 1,
+              "pct": 0.4
+            },
+            {
+              "label": "Prefer not to say",
+              "count": 1,
+              "pct": 0.4
+            }
+          ]
+        },
+        {
+          "id": "company_ethnicity",
+          "text": "What is your race/ethnicity?",
+          "kind": "categorical",
+          "answered": 228,
+          "options": [
+            {
+              "label": "Asian",
+              "count": 86,
+              "pct": 37.7
+            },
+            {
+              "label": "Black / African American",
+              "count": 5,
+              "pct": 2.2
+            },
+            {
+              "label": "Hispanic / Latino",
+              "count": 9,
+              "pct": 3.9
+            },
+            {
+              "label": "Middle Eastern / North African",
+              "count": 6,
+              "pct": 2.6
+            },
+            {
+              "label": "White / Caucasian",
+              "count": 101,
+              "pct": 44.3
+            },
+            {
+              "label": "Multiracial / Mixed",
+              "count": 9,
+              "pct": 3.9
+            },
+            {
+              "label": "Prefer not to say",
+              "count": 10,
+              "pct": 4.4
+            },
+            {
+              "label": "Other",
+              "count": 2,
+              "pct": 0.9
+            }
+          ]
+        }
+      ]
+    },
+    "company": {
+      "title": "Their companies",
+      "questions": [
+        {
+          "id": "company_industry",
+          "text": "What industry is your company in?",
+          "kind": "categorical",
+          "answered": 224,
+          "options": [
+            {
+              "label": "SaaS / Software",
+              "count": 91,
+              "pct": 40.6
+            },
+            {
+              "label": "AI / Machine Learning",
+              "count": 60,
+              "pct": 26.8
+            },
+            {
+              "label": "Fintech",
+              "count": 15,
+              "pct": 6.7
+            },
+            {
+              "label": "Healthcare / Biotech",
+              "count": 18,
+              "pct": 8
+            },
+            {
+              "label": "Consumer / E-commerce",
+              "count": 12,
+              "pct": 5.4
+            },
+            {
+              "label": "Climate / Energy",
+              "count": 3,
+              "pct": 1.3
+            },
+            {
+              "label": "Education",
+              "count": 6,
+              "pct": 2.7
+            },
+            {
+              "label": "Hardware / Robotics",
+              "count": 6,
+              "pct": 2.7
+            },
+            {
+              "label": "Other",
+              "count": 13,
+              "pct": 5.8
+            }
+          ]
+        },
+        {
+          "id": "company_team_size",
+          "text": "How many people are on your team? (employees + full-time contractors, including yourself)",
+          "kind": "categorical",
+          "answered": 223,
+          "options": [
+            {
+              "label": "Just me",
+              "count": 25,
+              "pct": 11.2
+            },
+            {
+              "label": "2-5",
+              "count": 118,
+              "pct": 52.9
+            },
+            {
+              "label": "6-15",
+              "count": 44,
+              "pct": 19.7
+            },
+            {
+              "label": "16-50",
+              "count": 19,
+              "pct": 8.5
+            },
+            {
+              "label": "51-100",
+              "count": 9,
+              "pct": 4
+            },
+            {
+              "label": "100+",
+              "count": 8,
+              "pct": 3.6
+            }
+          ]
+        },
+        {
+          "id": "company_funding",
+          "text": "How much total funding has your company raised?",
+          "kind": "categorical",
+          "answered": 222,
+          "options": [
+            {
+              "label": "Less than $1M",
+              "count": 84,
+              "pct": 37.8
+            },
+            {
+              "label": "$1M - $2M",
+              "count": 47,
+              "pct": 21.2
+            },
+            {
+              "label": "$2M - $5M",
+              "count": 42,
+              "pct": 18.9
+            },
+            {
+              "label": "$5M - $10M",
+              "count": 20,
+              "pct": 9
+            },
+            {
+              "label": "$10M - $25M",
+              "count": 11,
+              "pct": 5
+            },
+            {
+              "label": "$25M - $50M",
+              "count": 11,
+              "pct": 5
+            },
+            {
+              "label": "$50M+",
+              "count": 7,
+              "pct": 3.2
+            }
+          ]
+        },
+        {
+          "id": "company_revenue",
+          "text": "What is your approximate annual run rate?",
+          "kind": "categorical",
+          "answered": 217,
+          "options": [
+            {
+              "label": "Pre-revenue",
+              "count": 42,
+              "pct": 19.4
+            },
+            {
+              "label": "Less than $100K",
+              "count": 40,
+              "pct": 18.4
+            },
+            {
+              "label": "$100K - $500K",
+              "count": 54,
+              "pct": 24.9
+            },
+            {
+              "label": "$500K - $1M",
+              "count": 23,
+              "pct": 10.6
+            },
+            {
+              "label": "$1M - $5M",
+              "count": 31,
+              "pct": 14.3
+            },
+            {
+              "label": "$5M - $10M",
+              "count": 10,
+              "pct": 4.6
+            },
+            {
+              "label": "$10M+",
+              "count": 17,
+              "pct": 7.8
+            }
+          ]
+        },
+        {
+          "id": "company_year_founded",
+          "text": "What year was your company founded?",
+          "kind": "categorical",
+          "answered": 240,
+          "options": [
+            {
+              "label": "2026",
+              "count": 28,
+              "pct": 11.7
+            },
+            {
+              "label": "2025",
+              "count": 68,
+              "pct": 28.3
+            },
+            {
+              "label": "2024",
+              "count": 38,
+              "pct": 15.8
+            },
+            {
+              "label": "2023",
+              "count": 23,
+              "pct": 9.6
+            },
+            {
+              "label": "2022",
+              "count": 12,
+              "pct": 5
+            },
+            {
+              "label": "2021",
+              "count": 14,
+              "pct": 5.8
+            },
+            {
+              "label": "2020",
+              "count": 10,
+              "pct": 4.2
+            },
+            {
+              "label": "2019",
+              "count": 9,
+              "pct": 3.8
+            },
+            {
+              "label": "2018 or earlier",
+              "count": 38,
+              "pct": 15.8
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
