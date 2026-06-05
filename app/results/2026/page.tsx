@@ -171,7 +171,7 @@ function SeverityChart({ composite }: { composite: Composite }) {
   );
 }
 
-/* ─── Subscale card (for MBI, Dark Triad) ─────────────────────────── */
+/* ─── Subscale card (for MBI) ──────────────────────────────────────── */
 
 function SubscaleCard({
   composite,
@@ -192,11 +192,11 @@ function SubscaleCard({
       <div className="subscale-track">
         <span className="subscale-fill" style={{ width: `${fill}%` }} />
         <span
-          className="subscale-marker subscale-p25"
+          className="subscale-marker"
           style={{ left: `${(composite.stats.p25 / maxVal) * 100}%` }}
         />
         <span
-          className="subscale-marker subscale-p75"
+          className="subscale-marker"
           style={{ left: `${(composite.stats.p75 / maxVal) * 100}%` }}
         />
       </div>
@@ -210,6 +210,41 @@ function SubscaleCard({
         IQR {composite.stats.p25}–{composite.stats.p75} ·
         n = {composite.answered}
       </div>
+    </div>
+  );
+}
+
+/* ─── Trait scale bar (Life-Outlook-style for Dirty Dozen) ─────────── */
+
+function TraitScaleBar({
+  composite,
+  maxVal,
+  description,
+}: {
+  composite: Composite;
+  maxVal: number;
+  description?: string;
+}) {
+  const { mean, p25, p75 } = composite.stats;
+  const left = (p25 / maxVal) * 100;
+  const width = ((p75 - p25) / maxVal) * 100;
+  const meanPos = (mean / maxVal) * 100;
+  return (
+    <div className="trait-item">
+      <div className="trait-header">
+        <span className="trait-name">{composite.label}</span>
+        {description && <span className="trait-desc">{description}</span>}
+      </div>
+      <div className="trait-bar-wrap">
+        <span className="scale-track-bg">
+          <span className="scale-iqr" style={{ left: `${left}%`, width: `${width}%` }} />
+          <span className="trait-diamond" style={{ left: `${meanPos}%` }} />
+        </span>
+        <span className="scale-endpoints">
+          <span>0</span><span>{maxVal}</span>
+        </span>
+      </div>
+      <span className="trait-val">{mean}</span>
     </div>
   );
 }
@@ -355,12 +390,15 @@ export default function Results2026Page() {
       {/* ─── Table of contents ─────────────────────────────────────── */}
 
       <nav className="results-toc">
-        {TOC.map((t) => (
-          <a key={t.id} href={`#${t.id}`} className="toc-item">
-            <span className="toc-num">{t.num}</span>
-            {t.label}
-          </a>
-        ))}
+        <div className="toc-label">Navigation</div>
+        <div className="toc-items">
+          {TOC.map((t) => (
+            <a key={t.id} href={`#${t.id}`} className="toc-item">
+              <span className="toc-num">{t.num}</span>
+              {t.label}
+            </a>
+          ))}
+        </div>
       </nav>
 
       {/* ═══ §01 Demographics ══════════════════════════════════════════ */}
@@ -727,11 +765,10 @@ export default function Results2026Page() {
       <AccSection id="personality" num="15" title="Personality (Dirty Dozen)">
         <p>
           The Dirty Dozen measures three personality traits on a 0–4
-          agreement scale (strongly disagree to strongly agree).
-          Subscale scores are the mean of 4 items each. Tick marks show
-          the interquartile range (P25–P75).
+          agreement scale. The shaded region shows the middle 50% (P25–P75);
+          the diamond marks the mean.
         </p>
-        <div className="subscale-grid subscale-grid-wide">
+        <div className="trait-list">
           {sec("dark_triad")?.composites?.map((c) => {
             const desc: Record<string, string> = {
               machiavellianism: "Strategic manipulation & self-interest",
@@ -739,7 +776,7 @@ export default function Results2026Page() {
               narcissism: "Need for admiration & special status",
             };
             return (
-              <SubscaleCard
+              <TraitScaleBar
                 key={c.id}
                 composite={c}
                 maxVal={4}
@@ -752,7 +789,7 @@ export default function Results2026Page() {
           The Dirty Dozen (Jonason & Webster, 2010) is a brief measure of
           subclinical dark personality traits. Scores are descriptive, not
           diagnostic. Higher values indicate stronger endorsement of each
-          trait cluster.
+          trait cluster. n = {sec("dark_triad")?.composites?.[0]?.answered}.
         </p>
       </AccSection>
 
@@ -780,7 +817,10 @@ export default function Results2026Page() {
           {CURATED_QUOTES.map((quote, i) => (
             <blockquote key={i} className="founder-quote">
               <p>{quote.text}</p>
-              <cite>{quote.theme}</cite>
+              <footer className="quote-footer">
+                <cite className="quote-theme">{quote.theme}</cite>
+                <span className="quote-bio">{quote.bio}</span>
+              </footer>
             </blockquote>
           ))}
         </div>

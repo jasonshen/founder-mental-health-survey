@@ -1268,14 +1268,25 @@ footer.foot a:hover {
 
 /* ─── Table of contents ───────────────────────────────────────────── */
 .results-toc {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
   margin: 24px 0 12px;
   padding: 16px;
   background: #fff;
   border: 1px solid var(--line);
   border-radius: 8px;
+}
+.toc-label {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+.toc-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
 }
 .toc-item {
   font-size: 12px;
@@ -1676,6 +1687,77 @@ footer.foot a:hover {
   margin: 16px 0 8px;
 }
 
+/* ─── Trait scale bar (Life-Outlook-style, used for Dirty Dozen) ──── */
+.trait-list {
+  margin: 16px 0;
+}
+.trait-item {
+  display: grid;
+  grid-template-columns: 1fr 200px 36px;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+.trait-item:first-child {
+  border-top: 1px solid var(--line);
+}
+.trait-header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.trait-name {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.trait-desc {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.3;
+}
+.trait-bar-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.trait-val {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ink);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+/* Diamond marker for mean (distinct from the dot used for median) */
+.trait-diamond {
+  display: block;
+  position: absolute;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  margin-left: -5px;
+  margin-top: -5px;
+  background: var(--orange-deep, var(--orange));
+  transform: rotate(45deg);
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px var(--orange-deep, var(--orange));
+}
+@media (max-width: 560px) {
+  .trait-item {
+    grid-template-columns: 1fr 130px 30px;
+    gap: 8px;
+  }
+  .trait-name {
+    font-size: 13px;
+  }
+  .trait-desc {
+    font-size: 11px;
+  }
+}
+
 /* ─── Founder quotes ──────────────────────────────────────────────── */
 .quotes-grid {
   display: flex;
@@ -1695,16 +1777,27 @@ footer.foot a:hover {
   font-size: 14px;
   line-height: 1.6;
   color: var(--ink);
-  margin: 0 0 8px;
+  margin: 0 0 10px;
   font-style: italic;
 }
-.founder-quote cite {
+.quote-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+}
+.quote-theme {
   font-style: normal;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.03em;
   text-transform: uppercase;
+  color: var(--orange-deep, var(--orange));
+}
+.quote-bio {
+  font-size: 12px;
   color: var(--muted);
+  line-height: 1.4;
 }
 
 @media (max-width: 560px) {
