@@ -4681,6 +4681,38 @@
             }
           ]
         }
+      ],
+      "composites": [
+        {
+          "id": "aq_10_total",
+          "label": "AQ-10 Total",
+          "description": "Binary clinical score (0–10)",
+          "range": [
+            0,
+            10
+          ],
+          "answered": 129,
+          "stats": {
+            "median": 3,
+            "mean": 3,
+            "min": 0,
+            "max": 9,
+            "p25": 2,
+            "p75": 4
+          },
+          "severity": [
+            {
+              "label": "Below threshold (0–5)",
+              "count": 119,
+              "pct": 92.2
+            },
+            {
+              "label": "At or above threshold (6+)",
+              "count": 10,
+              "pct": 7.8
+            }
+          ]
+        }
       ]
     },
     "dark_triad": {

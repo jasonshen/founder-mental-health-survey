@@ -135,8 +135,9 @@ function ScaleBar({ q }: { q: Question }) {
 
 const SEVERITY_COLORS = ["#2d9d4e", "#8ab63f", "#e8a838", "#d96136", "#c0392b"];
 
-function SeverityChart({ composite }: { composite: Composite }) {
+function SeverityChart({ composite, colors }: { composite: Composite; colors?: string[] }) {
   if (!composite.severity) return null;
+  const palette = colors ?? SEVERITY_COLORS;
   return (
     <div className="composite-card">
       <div className="composite-header">
@@ -153,7 +154,7 @@ function SeverityChart({ composite }: { composite: Composite }) {
             className="severity-seg"
             style={{
               width: `${Math.max(band.pct, 1.5)}%`,
-              background: SEVERITY_COLORS[i] ?? SEVERITY_COLORS[SEVERITY_COLORS.length - 1],
+              background: palette[i] ?? palette[palette.length - 1],
             }}
             title={`${band.label}: ${band.pct}%`}
           />
@@ -162,7 +163,7 @@ function SeverityChart({ composite }: { composite: Composite }) {
       <div className="severity-legend">
         {composite.severity.map((band, i) => (
           <span key={band.label} className="severity-label">
-            <span className="severity-dot" style={{ background: SEVERITY_COLORS[i] ?? "#999" }} />
+            <span className="severity-dot" style={{ background: palette[i] ?? "#999" }} />
             {band.label} <strong>{band.pct}%</strong>
           </span>
         ))}
@@ -936,11 +937,37 @@ export default function Results2026Page() {
 
       {/* ═══ §16 Neurodivergence ═══════════════════════════════════════ */}
 
-      <AccSection id="neurodivergence" num="16" title="Neurodivergence Diagnoses">
+      <AccSection id="neurodivergence" num="16" title="Neurodivergence">
         <p>
-          Self-reported formal diagnoses of ADHD, autism, and other
-          neurodivergent conditions.
+          The AQ-10 is a brief screener for autistic traits. Each item is
+          scored 0 or 1 (binary clinical scoring); a total of 6+ out of 10
+          suggests referral for further assessment.
         </p>
+        {(() => {
+          const aq10 = sec("autism")?.composites?.[0];
+          const aboveThreshold = aq10?.severity?.[1]?.pct ?? 0;
+          const adhdDx = sec("autism")?.questions.find((x) => x.id === "nd_adhd_diagnosis");
+          const autismDx = sec("autism")?.questions.find((x) => x.id === "nd_autism_diagnosis");
+          const adhdYes = adhdDx?.options?.find((o) => o.label === "Yes")?.pct ?? 0;
+          const adhdSuspected = adhdDx?.options?.find((o) => o.label === "Suspected but not diagnosed")?.pct ?? 0;
+          const autismYes = autismDx?.options?.find((o) => o.label === "Yes")?.pct ?? 0;
+          const autismSuspected = autismDx?.options?.find((o) => o.label === "Suspected but not diagnosed")?.pct ?? 0;
+          return (
+            <>
+              <p className="section-insight">
+                <strong>{aboveThreshold}%</strong> of founders score at or
+                above the AQ-10 referral threshold (6+). The median score
+                is {aq10?.stats.median}/10, well below the clinical cutoff.
+                Separately, <strong>{adhdYes}%</strong> report a formal ADHD
+                diagnosis ({adhdSuspected}% suspected), and{" "}
+                <strong>{autismYes}%</strong> report a formal autism
+                diagnosis ({autismSuspected}% suspected).
+              </p>
+              {aq10 && <SeverityChart composite={aq10} colors={["#2d9d4e", "#d96136"]} />}
+              <div className="subsection-label">Self-reported diagnoses</div>
+            </>
+          );
+        })()}
         {sec("autism")?.questions
           .filter((aq) => aq.id.startsWith("nd_"))
           .map((aq) => <Distribution key={aq.id} q={aq} />)}
