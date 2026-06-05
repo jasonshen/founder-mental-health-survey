@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import PageChrome from "@/components/PageChrome";
 import aggregates from "./aggregates.json";
+import { CURATED_QUOTES } from "./quotes";
 
 export const metadata: Metadata = {
   title: "2026 Results — Founder Mental Health Survey",
@@ -39,6 +40,28 @@ interface Section {
   questions: Question[];
   composites?: Composite[];
 }
+
+/* ─── Table of contents data ───────────────────────────────────────── */
+
+const TOC = [
+  { id: "demographics", num: "01", label: "Demographics" },
+  { id: "companies", num: "02", label: "Their Companies" },
+  { id: "life-outlook", num: "03", label: "Life Outlook" },
+  { id: "challenges", num: "04", label: "Founder Challenges" },
+  { id: "cofounder", num: "05", label: "Cofounder Relationship" },
+  { id: "depression", num: "06", label: "Depression (PHQ-9)" },
+  { id: "anxiety", num: "07", label: "Anxiety (GAD-7)" },
+  { id: "burnout", num: "08", label: "Burnout (MBI-GS)" },
+  { id: "adhd", num: "09", label: "ADHD (ASRS-6)" },
+  { id: "ambition", num: "10", label: "Ambition & Motivation" },
+  { id: "social-support", num: "11", label: "Social Support" },
+  { id: "help-seeking", num: "12", label: "Help-Seeking" },
+  { id: "medication", num: "13", label: "Medication" },
+  { id: "substance-use", num: "14", label: "Substance Use" },
+  { id: "personality", num: "15", label: "Personality" },
+  { id: "neurodivergence", num: "16", label: "Neurodivergence" },
+  { id: "voices", num: "17", label: "In Their Own Words" },
+];
 
 /* ─── Shared chart components ──────────────────────────────────────── */
 
@@ -150,18 +173,42 @@ function SeverityChart({ composite }: { composite: Composite }) {
 
 /* ─── Subscale card (for MBI, Dark Triad) ─────────────────────────── */
 
-function SubscaleCard({ composite, maxVal }: { composite: Composite; maxVal: number }) {
+function SubscaleCard({
+  composite,
+  maxVal,
+  description,
+}: {
+  composite: Composite;
+  maxVal: number;
+  description?: string;
+}) {
   const fill = (composite.stats.mean / maxVal) * 100;
   return (
     <div className="subscale-card">
       <div className="subscale-name">{composite.label}</div>
+      {description && (
+        <div className="subscale-desc">{description}</div>
+      )}
       <div className="subscale-track">
         <span className="subscale-fill" style={{ width: `${fill}%` }} />
+        <span
+          className="subscale-marker subscale-p25"
+          style={{ left: `${(composite.stats.p25 / maxVal) * 100}%` }}
+        />
+        <span
+          className="subscale-marker subscale-p75"
+          style={{ left: `${(composite.stats.p75 / maxVal) * 100}%` }}
+        />
+      </div>
+      <div className="subscale-range-labels">
+        <span>0</span>
+        <span>{maxVal}</span>
       </div>
       <div className="subscale-stats">
-        Mean <strong>{composite.stats.mean}</strong> / {maxVal} ·
+        Mean <strong>{composite.stats.mean}</strong> ·
         Median {composite.stats.median} ·
-        IQR {composite.stats.p25}–{composite.stats.p75}
+        IQR {composite.stats.p25}–{composite.stats.p75} ·
+        n = {composite.answered}
       </div>
     </div>
   );
@@ -173,12 +220,10 @@ function ChallengeRanking({ questions }: { questions: Question[] }) {
   const sorted = [...questions]
     .filter((q) => q.stats)
     .sort((a, b) => (b.stats!.mean) - (a.stats!.mean));
-  const maxMean = Math.max(...sorted.map((q) => q.stats!.mean), 0);
   return (
     <div className="challenges">
       {sorted.map((q) => {
-        const fill = maxMean > 0 ? (q.stats!.mean / 4) * 100 : 0;
-        // Shorten text for display
+        const fill = (q.stats!.mean / 4) * 100;
         const label = q.text.replace(/^I (am |feel |struggle to |have |keep )?/, "")
           .replace(/\.$/, "");
         return (
@@ -194,6 +239,36 @@ function ChallengeRanking({ questions }: { questions: Question[] }) {
         );
       })}
     </div>
+  );
+}
+
+/* ─── Accordion section wrapper ────────────────────────────────────── */
+
+function AccSection({
+  id,
+  num,
+  title,
+  children,
+}: {
+  id: string;
+  num: string;
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <details className="acc-section" id={id} open>
+      <summary className="acc-section-summary">
+        <span className="acc-section-title">
+          <span className="acc-section-num">{num}</span> {title}
+        </span>
+        <svg className="acc-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </summary>
+      <div className="acc-section-body">
+        {children}
+      </div>
+    </details>
   );
 }
 
@@ -221,7 +296,7 @@ export default function Results2026Page() {
     return undefined;
   };
 
-  // Pre-compute some summary stats for text
+  // Pre-compute summary stats
   const phq9 = sec("depression")?.composites?.[0];
   const gad7 = sec("anxiety")?.composites?.[0];
   const asrs = sec("adhd")?.composites?.[0];
@@ -237,17 +312,11 @@ export default function Results2026Page() {
     : 0;
   const asrsHigh = asrs?.severity?.[2]?.pct ?? 0;
 
-  // Life outlook helpers
   const lifeQ = (id: string) => sec("life_outlook")?.questions.find((x) => x.id === id);
-
-  // Help-seeking helpers
   const hsQ = (id: string) => sec("help_seeking")?.questions.find((x) => x.id === id);
-  const therapyEver = hsQ("hs_therapy_ever");
-  const therapyYesPct = therapyEver?.options?.find((o) => o.label === "Yes")?.pct ?? 0;
-  const coachEver = hsQ("hs_coach_ever");
-  const coachYesPct = coachEver?.options?.find((o) => o.label === "Yes")?.pct ?? 0;
-  const consideredNoGo = hsQ("hs_considered_no_go");
-  const consideredPct = consideredNoGo?.options?.find((o) => o.label === "Yes")?.pct ?? 0;
+  const therapyYesPct = hsQ("hs_therapy_ever")?.options?.find((o) => o.label === "Yes")?.pct ?? 0;
+  const coachYesPct = hsQ("hs_coach_ever")?.options?.find((o) => o.label === "Yes")?.pct ?? 0;
+  const consideredPct = hsQ("hs_considered_no_go")?.options?.find((o) => o.label === "Yes")?.pct ?? 0;
 
   return (
     <PageChrome
@@ -283,10 +352,20 @@ export default function Results2026Page() {
         </div>
       </div>
 
+      {/* ─── Table of contents ─────────────────────────────────────── */}
+
+      <nav className="results-toc">
+        {TOC.map((t) => (
+          <a key={t.id} href={`#${t.id}`} className="toc-item">
+            <span className="toc-num">{t.num}</span>
+            {t.label}
+          </a>
+        ))}
+      </nav>
+
       {/* ═══ §01 Demographics ══════════════════════════════════════════ */}
 
-      <section className="section">
-        <h3>01 · Demographics</h3>
+      <AccSection id="demographics" num="01" title="Demographics">
         <p>
           Who the founders behind these responses are — role, age, gender,
           and background.
@@ -294,12 +373,11 @@ export default function Results2026Page() {
         {sec("demographics").questions.map((dq) => (
           <Distribution key={dq.id} q={dq} />
         ))}
-      </section>
+      </AccSection>
 
       {/* ═══ §02 Their companies ═══════════════════════════════════════ */}
 
-      <section className="section">
-        <h3>02 · Their companies</h3>
+      <AccSection id="companies" num="02" title="Their Companies">
         <p>
           The companies they&apos;re running — community, industry, stage,
           and size.
@@ -308,12 +386,11 @@ export default function Results2026Page() {
         {sec("company").questions.map((dq) => (
           <Distribution key={dq.id} q={dq} />
         ))}
-      </section>
+      </AccSection>
 
       {/* ═══ §03 Life Outlook ══════════════════════════════════════════ */}
 
-      <section className="section">
-        <h3>03 · Life Outlook</h3>
+      <AccSection id="life-outlook" num="03" title="Life Outlook">
         <p>
           How founders rate their well-being on a 0–10 scale. The bar shows the
           middle 50% of responses (P25–P75); the dot marks the median.
@@ -346,12 +423,11 @@ export default function Results2026Page() {
           Higher = more agreement for all items. For the &ldquo;founder
           experience&rdquo; items, higher values indicate more frustration.
         </p>
-      </section>
+      </AccSection>
 
       {/* ═══ §04 Founder Challenges ════════════════════════════════════ */}
 
-      <section className="section">
-        <h3>04 · Founder Challenges</h3>
+      <AccSection id="challenges" num="04" title="Founder Challenges">
         <p>
           Founders rated each challenge on a 0–4 scale
           (0 = &ldquo;not a challenge,&rdquo; 4 = &ldquo;major challenge&rdquo;).
@@ -369,12 +445,11 @@ export default function Results2026Page() {
           4 = major. &ldquo;Cofounder friction&rdquo; shown only for cofounded
           companies (n = {q("fc_cofounder_friction")?.answered}).
         </p>
-      </section>
+      </AccSection>
 
       {/* ═══ §05 Cofounder Relationship ════════════════════════════════ */}
 
-      <section className="section">
-        <h3>05 · Cofounder Relationship</h3>
+      <AccSection id="cofounder" num="05" title="Cofounder Relationship">
         <p>
           Among cofounded teams, how founders rate the health and dynamics of
           their primary cofounder relationship. Likert items use a 0–4 agree
@@ -398,12 +473,11 @@ export default function Results2026Page() {
         {sec("cofounder").questions
           .filter((cq) => !["cf_gender", "cf_role", "cf_overall_health"].includes(cq.id))
           .map((cq) => <Distribution key={cq.id} q={cq} />)}
-      </section>
+      </AccSection>
 
       {/* ═══ §06 Depression (PHQ-9) ════════════════════════════════════ */}
 
-      <section className="section">
-        <h3>06 · Depression Screening (PHQ-9)</h3>
+      <AccSection id="depression" num="06" title="Depression (PHQ-9)">
         <p>
           The PHQ-9 is a validated screener for depression severity.
           Scores range from 0 (no symptoms) to 27 (severe).
@@ -415,12 +489,11 @@ export default function Results2026Page() {
           in the general population.
         </p>
         {phq9 && <SeverityChart composite={phq9} />}
-      </section>
+      </AccSection>
 
       {/* ═══ §07 Anxiety (GAD-7) ══════════════════════════════════════ */}
 
-      <section className="section">
-        <h3>07 · Anxiety Screening (GAD-7)</h3>
+      <AccSection id="anxiety" num="07" title="Anxiety (GAD-7)">
         <p>
           The GAD-7 is a validated screener for generalized anxiety disorder.
           Scores range from 0 to 21.
@@ -432,12 +505,11 @@ export default function Results2026Page() {
           rate.
         </p>
         {gad7 && <SeverityChart composite={gad7} />}
-      </section>
+      </AccSection>
 
       {/* ═══ §08 Burnout (MBI-GS) ═════════════════════════════════════ */}
 
-      <section className="section">
-        <h3>08 · Burnout (MBI-GS)</h3>
+      <AccSection id="burnout" num="08" title="Burnout (MBI-GS)">
         <p>
           The Maslach Burnout Inventory measures three dimensions on a 0–6
           frequency scale (0 = never, 6 = every day). Higher exhaustion and
@@ -451,16 +523,15 @@ export default function Results2026Page() {
           the middle at {mbiCynicism?.stats.mean}/6.
         </p>
         <div className="subscale-grid">
-          {mbiExhaust && <SubscaleCard composite={mbiExhaust} maxVal={6} />}
-          {mbiCynicism && <SubscaleCard composite={mbiCynicism} maxVal={6} />}
-          {mbiEfficacy && <SubscaleCard composite={mbiEfficacy} maxVal={6} />}
+          {mbiExhaust && <SubscaleCard composite={mbiExhaust} maxVal={6} description="How drained and depleted by work" />}
+          {mbiCynicism && <SubscaleCard composite={mbiCynicism} maxVal={6} description="Detachment and doubt about work's value" />}
+          {mbiEfficacy && <SubscaleCard composite={mbiEfficacy} maxVal={6} description="Confidence and accomplishment at work" />}
         </div>
-      </section>
+      </AccSection>
 
       {/* ═══ §09 ADHD (ASRS-6) ════════════════════════════════════════ */}
 
-      <section className="section">
-        <h3>09 · Focus & Attention (ASRS-6)</h3>
+      <AccSection id="adhd" num="09" title="Focus & Attention (ASRS-6)">
         <p>
           The ASRS-6 is a screening tool for adult ADHD. Items are rated
           0–4 (never to very often); higher total scores suggest more
@@ -475,20 +546,19 @@ export default function Results2026Page() {
             : ""}
         </p>
         {asrs && <SeverityChart composite={asrs} />}
-      </section>
+      </AccSection>
 
       {/* ═══ §10 Ambition & Motivation ═════════════════════════════════ */}
 
-      <section className="section">
-        <h3>10 · Ambition & Motivation</h3>
+      <AccSection id="ambition" num="10" title="Ambition & Motivation">
         <p>
           What drives founders — how ambitious, what kind of success matters, and
           the deeper motivational regulation behind the work. All items use a
-          0–4 agree/importance scale.
+          five-point scale (0–4).
         </p>
         <p className="section-insight">
           Founders are highly ambitious (median {q("amb_ambitious")?.stats?.median}/4
-          &ldquo;agree&rdquo; or &ldquo;strongly agree&rdquo;). The strongest
+          — &ldquo;strongly agree&rdquo;). The strongest
           motivations are autonomous — genuinely valuing the work (median{" "}
           {q("reg_identified")?.stats?.median}/4) and finding it enjoyable
           (median {q("reg_intrinsic")?.stats?.median}/4). External pressure
@@ -513,48 +583,49 @@ export default function Results2026Page() {
         {["asp_helping", "asp_self_knowledge", "asp_financial", "asp_admiration"].map(
           (id) => { const aq = q(id); return aq ? <Distribution key={id} q={aq} /> : null; }
         )}
-      </section>
+      </AccSection>
 
       {/* ═══ §11 Social Support ════════════════════════════════════════ */}
 
-      <section className="section">
-        <h3>11 · Social Support & Connection</h3>
+      <AccSection id="social-support" num="11" title="Social Support & Connection">
         <p>
           How many people founders can confide in, and how often they do.
         </p>
         {(() => {
           const confWork = q("ss_could_confide_work");
           const confPersonal = q("ss_could_confide_personal");
+          const freqWork = q("ss_confide_work_freq");
+          const freqPersonal = q("ss_confide_personal_freq");
           return confWork?.stats && confPersonal?.stats ? (
             <p className="section-insight">
               The median founder knows <strong>{confWork.stats.median}{" "}
               people</strong> they could confide in about work struggles and{" "}
               <strong>{confPersonal.stats.median}</strong> about personal
               struggles. In the past month, the median founder confided about
-              work <strong>{q("ss_confide_work_freq")?.stats?.median ?? "?"}{" "}
+              work <strong>{freqWork?.stats?.median ?? "?"}{" "}
               times</strong> and about personal matters{" "}
-              <strong>{q("ss_confide_personal_freq")?.stats?.median ?? "?"}{" "}
+              <strong>{freqPersonal?.stats?.median ?? "?"}{" "}
               times</strong>.
             </p>
           ) : null;
         })()}
-        <div className="stat-band" style={{ marginBottom: 16 }}>
+        <div className="support-grid">
           {sec("social_support").questions.map((sq) => (
-            <div key={sq.id} className="stat-cell">
-              <div className="stat-num">{sq.stats?.median ?? "—"}</div>
-              <div className="stat-lab">
-                {sq.text.length > 60 ? sq.text.slice(0, 60) + "..." : sq.text}
-                <br /><span style={{ fontSize: 11 }}>median (n = {sq.answered})</span>
+            <div key={sq.id} className="support-card">
+              <div className="support-num">{sq.stats?.median ?? "—"}</div>
+              <div className="support-label">{sq.text}</div>
+              <div className="support-meta">
+                median · mean {sq.stats?.mean ?? "—"} · IQR{" "}
+                {sq.stats?.p25 ?? "—"}–{sq.stats?.p75 ?? "—"} · n = {sq.answered}
               </div>
             </div>
           ))}
         </div>
-      </section>
+      </AccSection>
 
       {/* ═══ §12 Help-Seeking ══════════════════════════════════════════ */}
 
-      <section className="section">
-        <h3>12 · Help-Seeking & Support</h3>
+      <AccSection id="help-seeking" num="12" title="Help-Seeking & Support">
         <p>
           Founders&apos; experience with therapy, coaching, and barriers to
           seeking help.
@@ -600,12 +671,11 @@ export default function Results2026Page() {
             </>
           ) : null;
         })()}
-      </section>
+      </AccSection>
 
       {/* ═══ §13 Medication ════════════════════════════════════════════ */}
 
-      <section className="section">
-        <h3>13 · Medication</h3>
+      <AccSection id="medication" num="13" title="Medication">
         <p>
           What psychiatric medications founders are currently taking. Respondents
           could select multiple options.
@@ -613,12 +683,11 @@ export default function Results2026Page() {
         {sec("medication").questions.map((mq) => (
           <Distribution key={mq.id} q={mq} />
         ))}
-      </section>
+      </AccSection>
 
       {/* ═══ §14 Substance Use ═════════════════════════════════════════ */}
 
-      <section className="section">
-        <h3>14 · Substance Use</h3>
+      <AccSection id="substance-use" num="14" title="Substance Use">
         <p>
           How often founders used various substances in the past 12 months,
           on a 0–5 frequency scale (0 = never, 5 = daily or near-daily).
@@ -651,27 +720,45 @@ export default function Results2026Page() {
           Scale: 0 = never, 1 = once or twice, 2 = monthly, 3 = weekly,
           4 = 2–3&times;/week, 5 = daily. Mean frequency shown.
         </p>
-      </section>
+      </AccSection>
 
       {/* ═══ §15 Personality ═══════════════════════════════════════════ */}
 
-      <section className="section">
-        <h3>15 · Personality (Dirty Dozen)</h3>
+      <AccSection id="personality" num="15" title="Personality (Dirty Dozen)">
         <p>
-          The Dirty Dozen measures Machiavellianism, psychopathy, and narcissism
-          on a 0–4 agree scale. Subscale scores are the mean of 4 items each.
+          The Dirty Dozen measures three personality traits on a 0–4
+          agreement scale (strongly disagree to strongly agree).
+          Subscale scores are the mean of 4 items each. Tick marks show
+          the interquartile range (P25–P75).
         </p>
-        <div className="subscale-grid">
-          {sec("dark_triad")?.composites?.map((c) => (
-            <SubscaleCard key={c.id} composite={c} maxVal={4} />
-          ))}
+        <div className="subscale-grid subscale-grid-wide">
+          {sec("dark_triad")?.composites?.map((c) => {
+            const desc: Record<string, string> = {
+              machiavellianism: "Strategic manipulation & self-interest",
+              psychopathy: "Emotional detachment & moral flexibility",
+              narcissism: "Need for admiration & special status",
+            };
+            return (
+              <SubscaleCard
+                key={c.id}
+                composite={c}
+                maxVal={4}
+                description={desc[c.id] ?? c.description}
+              />
+            );
+          })}
         </div>
-      </section>
+        <p className="footnote">
+          The Dirty Dozen (Jonason & Webster, 2010) is a brief measure of
+          subclinical dark personality traits. Scores are descriptive, not
+          diagnostic. Higher values indicate stronger endorsement of each
+          trait cluster.
+        </p>
+      </AccSection>
 
       {/* ═══ §16 Neurodivergence ═══════════════════════════════════════ */}
 
-      <section className="section">
-        <h3>16 · Neurodivergence Diagnoses</h3>
+      <AccSection id="neurodivergence" num="16" title="Neurodivergence Diagnoses">
         <p>
           Self-reported formal diagnoses of ADHD, autism, and other
           neurodivergent conditions.
@@ -679,20 +766,39 @@ export default function Results2026Page() {
         {sec("autism")?.questions
           .filter((aq) => aq.id.startsWith("nd_"))
           .map((aq) => <Distribution key={aq.id} q={aq} />)}
-      </section>
+      </AccSection>
 
-      {/* ═══ Footer ═══════════════════════════════════════════════════ */}
+      {/* ═══ §17 In Their Own Words ════════════════════════════════════ */}
 
-      <section className="section">
-        <h3>Methodology note</h3>
+      <AccSection id="voices" num="17" title="In Their Own Words">
+        <p>
+          A curated selection of anonymous open-ended responses to
+          &ldquo;Is there anything else about your mental health, wellbeing, or
+          life as a founder that you&apos;d like to share?&rdquo;
+        </p>
+        <div className="quotes-grid">
+          {CURATED_QUOTES.map((quote, i) => (
+            <blockquote key={i} className="founder-quote">
+              <p>{quote.text}</p>
+              <cite>{quote.theme}</cite>
+            </blockquote>
+          ))}
+        </div>
+      </AccSection>
+
+      {/* ═══ Methodology ══════════════════════════════════════════════ */}
+
+      <section className="section" style={{ marginTop: 40 }}>
+        <h3 style={{ fontSize: 14 }}>Methodology note</h3>
         <p style={{ fontSize: 13, color: "var(--muted)" }}>
           Figures are percentages of respondents who answered each question
           ({"​n"} varies by question as not everyone finished every section).
           Composite scores (PHQ-9, GAD-7, ASRS, MBI) require &ge;70% of items
           answered; missing items are prorated. Aggregate counts
-          only — no individual responses are shared. All respondents
-          consented to anonymous data collection; the survey was open
-          April 27 – May 31, 2026.
+          only — no individual responses are shared. Open-ended quotes are
+          curated for representativeness; no identifying information is
+          included. All respondents consented to anonymous data collection;
+          the survey was open April 27 – May 31, 2026.
         </p>
       </section>
 

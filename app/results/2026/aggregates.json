@@ -2110,6 +2110,16 @@
           "answered": 157,
           "options": [
             {
+              "label": "Strongly disagree",
+              "count": 0,
+              "pct": 0
+            },
+            {
+              "label": "Disagree",
+              "count": 0,
+              "pct": 0
+            },
+            {
               "label": "Neither agree nor disagree",
               "count": 10,
               "pct": 6.4
@@ -2140,6 +2150,11 @@
           "kind": "ordinal",
           "answered": 156,
           "options": [
+            {
+              "label": "Strongly disagree",
+              "count": 0,
+              "pct": 0
+            },
             {
               "label": "Disagree",
               "count": 1,
@@ -2176,6 +2191,11 @@
           "kind": "ordinal",
           "answered": 156,
           "options": [
+            {
+              "label": "Strongly disagree",
+              "count": 0,
+              "pct": 0
+            },
             {
               "label": "Disagree",
               "count": 1,
@@ -3047,6 +3067,16 @@
               "label": "Several days",
               "count": 16,
               "pct": 11
+            },
+            {
+              "label": "More than half the days",
+              "count": 0,
+              "pct": 0
+            },
+            {
+              "label": "Nearly every day",
+              "count": 0,
+              "pct": 0
             }
           ],
           "stats": {
@@ -3721,6 +3751,11 @@
           "kind": "ordinal",
           "answered": 138,
           "options": [
+            {
+              "label": "Never",
+              "count": 0,
+              "pct": 0
+            },
             {
               "label": "A few times a year",
               "count": 2,
@@ -5883,6 +5918,16 @@
               "label": "Weekly",
               "count": 1,
               "pct": 0.8
+            },
+            {
+              "label": "2-3 times per week",
+              "count": 0,
+              "pct": 0
+            },
+            {
+              "label": "Daily or near-daily",
+              "count": 0,
+              "pct": 0
             }
           ],
           "stats": {
@@ -5909,6 +5954,26 @@
               "label": "Once or twice",
               "count": 15,
               "pct": 11.6
+            },
+            {
+              "label": "Monthly",
+              "count": 0,
+              "pct": 0
+            },
+            {
+              "label": "Weekly",
+              "count": 0,
+              "pct": 0
+            },
+            {
+              "label": "2-3 times per week",
+              "count": 0,
+              "pct": 0
+            },
+            {
+              "label": "Daily or near-daily",
+              "count": 0,
+              "pct": 0
             }
           ],
           "stats": {
@@ -5935,6 +6000,26 @@
               "label": "Once or twice",
               "count": 29,
               "pct": 22.7
+            },
+            {
+              "label": "Monthly",
+              "count": 0,
+              "pct": 0
+            },
+            {
+              "label": "Weekly",
+              "count": 0,
+              "pct": 0
+            },
+            {
+              "label": "2-3 times per week",
+              "count": 0,
+              "pct": 0
+            },
+            {
+              "label": "Daily or near-daily",
+              "count": 0,
+              "pct": 0
             }
           ],
           "stats": {
@@ -5961,6 +6046,26 @@
               "label": "Once or twice",
               "count": 3,
               "pct": 2.3
+            },
+            {
+              "label": "Monthly",
+              "count": 0,
+              "pct": 0
+            },
+            {
+              "label": "Weekly",
+              "count": 0,
+              "pct": 0
+            },
+            {
+              "label": "2-3 times per week",
+              "count": 0,
+              "pct": 0
+            },
+            {
+              "label": "Daily or near-daily",
+              "count": 0,
+              "pct": 0
             }
           ],
           "stats": {
@@ -5992,6 +6097,21 @@
               "label": "Monthly",
               "count": 2,
               "pct": 1.6
+            },
+            {
+              "label": "Weekly",
+              "count": 0,
+              "pct": 0
+            },
+            {
+              "label": "2-3 times per week",
+              "count": 0,
+              "pct": 0
+            },
+            {
+              "label": "Daily or near-daily",
+              "count": 0,
+              "pct": 0
             }
           ],
           "stats": {
@@ -6028,6 +6148,16 @@
               "label": "Weekly",
               "count": 1,
               "pct": 0.8
+            },
+            {
+              "label": "2-3 times per week",
+              "count": 0,
+              "pct": 0
+            },
+            {
+              "label": "Daily or near-daily",
+              "count": 0,
+              "pct": 0
             }
           ],
           "stats": {

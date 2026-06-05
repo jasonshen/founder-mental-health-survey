@@ -1266,6 +1266,98 @@ footer.foot a:hover {
   }
 }
 
+/* ─── Table of contents ───────────────────────────────────────────── */
+.results-toc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 24px 0 12px;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.toc-item {
+  font-size: 12px;
+  color: var(--ink-2);
+  text-decoration: none;
+  padding: 4px 10px;
+  border-radius: 4px;
+  background: #f8f7f5;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+.toc-item:hover {
+  background: var(--orange);
+  color: #fff;
+}
+.toc-num {
+  font-weight: 600;
+  margin-right: 4px;
+  color: var(--muted);
+}
+.toc-item:hover .toc-num {
+  color: #fff;
+}
+
+/* ─── Accordion sections ──────────────────────────────────────────── */
+.acc-section {
+  border-top: 1px solid var(--line);
+  margin-top: 0;
+}
+.acc-section[open] {
+  padding-bottom: 8px;
+}
+.acc-section-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0 12px;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+.acc-section-summary::-webkit-details-marker {
+  display: none;
+}
+.acc-section-summary::marker {
+  content: "";
+}
+.acc-section-title {
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 19px;
+  font-weight: 400;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+.acc-section-num {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  margin-right: 6px;
+}
+.acc-chevron {
+  color: var(--muted);
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+.acc-section[open] > .acc-section-summary .acc-chevron {
+  transform: rotate(180deg);
+}
+.acc-section:not([open]) > .acc-section-summary .acc-chevron {
+  transform: rotate(0deg);
+}
+.acc-section-body {
+  padding-bottom: 8px;
+}
+.acc-section-body > p:first-child {
+  margin-top: 0;
+  font-size: 14px;
+  color: var(--ink-2);
+  line-height: 1.6;
+}
+
 /* ─── Section insight text ────────────────────────────────────────── */
 .section-insight {
   font-size: 14px;
@@ -1456,6 +1548,9 @@ footer.foot a:hover {
   gap: 12px;
   margin: 12px 0;
 }
+.subscale-grid-wide .subscale-card {
+  flex: 1 1 280px;
+}
 .subscale-card {
   flex: 1 1 200px;
   border: 1px solid var(--line);
@@ -1465,18 +1560,25 @@ footer.foot a:hover {
 }
 .subscale-name {
   font-family: var(--font-inter), sans-serif;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--ink);
+  margin-bottom: 2px;
+}
+.subscale-desc {
+  font-size: 12px;
+  color: var(--muted);
   margin-bottom: 10px;
+  line-height: 1.4;
 }
 .subscale-track {
   display: block;
-  height: 14px;
+  position: relative;
+  height: 16px;
   background: var(--line);
   border-radius: 3px;
-  overflow: hidden;
-  margin-bottom: 8px;
+  overflow: visible;
+  margin-bottom: 4px;
 }
 .subscale-fill {
   display: block;
@@ -1484,6 +1586,23 @@ footer.foot a:hover {
   background: var(--orange);
   border-radius: 3px;
   min-width: 2px;
+}
+.subscale-marker {
+  position: absolute;
+  top: -2px;
+  width: 2px;
+  height: 20px;
+  background: var(--ink);
+  opacity: 0.5;
+  border-radius: 1px;
+}
+.subscale-range-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--muted);
+  margin-bottom: 6px;
+  padding: 0 1px;
 }
 .subscale-stats {
   font-size: 11.5px;
@@ -1493,6 +1612,38 @@ footer.foot a:hover {
 .subscale-stats strong {
   color: var(--ink);
   font-weight: 600;
+}
+
+/* ─── Social support cards ────────────────────────────────────────── */
+.support-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+  margin: 16px 0;
+}
+.support-card {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 18px;
+  background: #fff;
+}
+.support-num {
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 28px;
+  font-weight: 500;
+  color: var(--ink);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.support-label {
+  font-size: 13px;
+  color: var(--ink-2);
+  line-height: 1.4;
+  margin-bottom: 6px;
+}
+.support-meta {
+  font-size: 11px;
+  color: var(--muted);
 }
 
 /* ─── Challenge ranking ───────────────────────────────────────────── */
@@ -1525,6 +1676,37 @@ footer.foot a:hover {
   margin: 16px 0 8px;
 }
 
+/* ─── Founder quotes ──────────────────────────────────────────────── */
+.quotes-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 16px 0;
+}
+.founder-quote {
+  margin: 0;
+  padding: 18px 20px 14px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  border-left: 3px solid var(--orange);
+}
+.founder-quote p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink);
+  margin: 0 0 8px;
+  font-style: italic;
+}
+.founder-quote cite {
+  font-style: normal;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
 @media (max-width: 560px) {
   .challenge-row {
     grid-template-columns: 1fr 100px 36px;
@@ -1539,5 +1721,15 @@ footer.foot a:hover {
   .severity-legend {
     flex-direction: column;
     gap: 4px;
+  }
+  .support-grid {
+    grid-template-columns: 1fr;
+  }
+  .results-toc {
+    gap: 4px;
+  }
+  .toc-item {
+    font-size: 11px;
+    padding: 3px 8px;
   }
 }

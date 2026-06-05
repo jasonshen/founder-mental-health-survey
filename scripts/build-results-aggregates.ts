@@ -281,7 +281,7 @@ function main() {
     const options: CategoryOption[] = [];
     for (const code of order) {
       const c = counts.get(code) ?? 0;
-      if (c === 0) continue;
+      // Keep all options for ordinal scales (showing 0 is informative)
       options.push({ label: labelMap.get(id)?.get(code) ?? code, count: c, pct: pct(c, answered) });
     }
     return { id, text: textMap.get(id) ?? id, kind: "ordinal", answered, options, stats };
