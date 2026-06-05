@@ -782,36 +782,94 @@ export default function Results2026Page() {
 
       <AccSection id="substance-use" num="14" title="Substance Use">
         <p>
-          How often founders used various substances in the past 12 months,
-          on a 0–5 frequency scale (0 = never, 5 = daily or near-daily).
+          Founders reported how often they used each substance in the past
+          12 months. Two key metrics: <strong>any use</strong> (tried it at
+          least once) and <strong>monthly or more</strong> (regular use).
         </p>
         {(() => {
-          const subs = sec("substance_use")?.questions.filter((sq) => sq.stats) ?? [];
-          const sorted = [...subs].sort((a, b) => (b.stats!.mean) - (a.stats!.mean));
+          const subs = sec("substance_use")?.questions ?? [];
+
+          // Compute derived metrics for each substance
+          const rows = subs.map((sq) => {
+            const opts = sq.options ?? [];
+            const neverPct = opts.find((o) => o.label === "Never")?.pct ?? 100;
+            const anyUse = Math.round((100 - neverPct) * 10) / 10;
+            const monthlyPlus = opts
+              .filter((o) => !["Never", "Once or twice"].includes(o.label))
+              .reduce((sum, o) => sum + o.pct, 0);
+            const shortText = sq.text
+              .replace(/\(.*\)/, "")
+              .replace(/".*"/, "")
+              .trim();
+            return { ...sq, shortText, anyUse, monthlyPlus: Math.round(monthlyPlus * 10) / 10 };
+          }).sort((a, b) => b.anyUse - a.anyUse);
+
+          const alcoholRow = rows.find((r) => r.id === "sub_alcohol");
+          const cannabisRow = rows.find((r) => r.id === "sub_cannabis");
+          const psychedelicIds = ["sub_psilocybin", "sub_mdma", "sub_lsd", "sub_ayahuasca", "sub_ketamine"];
+          const anyPsychedelic = Math.round(
+            (subs
+              .filter((s) => psychedelicIds.includes(s.id))
+              .reduce((max, s) => {
+                const neverPct = s.options?.find((o) => o.label === "Never")?.pct ?? 100;
+                return Math.max(max, 100 - neverPct);
+              }, 0)) * 10
+          ) / 10;
+
           return (
-            <div className="substance-grid">
-              {sorted.map((sq) => {
-                const fill = (sq.stats!.mean / 5) * 100;
-                const shortText = sq.text
-                  .replace(/\(.*\)/, "")
-                  .replace(/".*"/, "")
-                  .trim();
-                return (
-                  <div key={sq.id} className="challenge-row">
-                    <span className="challenge-label">{shortText}</span>
-                    <span className="dist-track">
-                      <span className="dist-fill" style={{ width: `${fill}%` }} />
+            <>
+              <p className="section-insight">
+                <strong>{alcoholRow?.anyUse}%</strong> of founders used
+                alcohol in the past year, with{" "}
+                <strong>{alcoholRow?.monthlyPlus}%</strong> drinking monthly
+                or more. <strong>{cannabisRow?.anyUse}%</strong> used
+                cannabis. Around <strong>1 in 4</strong> founders have tried
+                a psychedelic (psilocybin is the most common
+                at {rows.find((r) => r.id === "sub_psilocybin")?.anyUse}%),
+                though regular psychedelic use is rare.
+              </p>
+              <div className="substance-table">
+                <div className="substance-header-row">
+                  <span className="substance-header-name">Substance</span>
+                  <span className="substance-header-metric">Any use</span>
+                  <span className="substance-header-metric">Monthly+</span>
+                </div>
+                {rows.map((r) => (
+                  <div key={r.id} className="substance-row">
+                    <span className="substance-name">{r.shortText}</span>
+                    <span className="substance-cell">
+                      <span className="substance-bar-wrap">
+                        <span
+                          className="substance-bar substance-bar-any"
+                          style={{ width: `${r.anyUse}%` }}
+                        />
+                      </span>
+                      <span className="substance-pct">{r.anyUse}%</span>
                     </span>
-                    <span className="challenge-val">{sq.stats!.mean.toFixed(1)}</span>
+                    <span className="substance-cell">
+                      <span className="substance-bar-wrap">
+                        <span
+                          className="substance-bar substance-bar-monthly"
+                          style={{ width: `${r.monthlyPlus}%` }}
+                        />
+                      </span>
+                      <span className="substance-pct">
+                        {r.monthlyPlus > 0 ? `${r.monthlyPlus}%` : "—"}
+                      </span>
+                    </span>
                   </div>
-                );
-              })}
-            </div>
+                ))}
+              </div>
+            </>
           );
         })()}
         <p className="footnote">
-          Scale: 0 = never, 1 = once or twice, 2 = monthly, 3 = weekly,
-          4 = 2–3&times;/week, 5 = daily. Mean frequency shown.
+          Past 12 months. &ldquo;Any use&rdquo; = at least once.
+          &ldquo;Monthly+&rdquo; = monthly, weekly, or daily.
+          n &asymp; {sec("substance_use")?.questions[0]?.answered}.
+          &ldquo;Stimulants&rdquo; refers to non-prescribed use
+          (e.g., Adderall without Rx, cocaine). &ldquo;Ketamine&rdquo;
+          is recreational only (not prescribed/clinical).
         </p>
       </AccSection>
 
