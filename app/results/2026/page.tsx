@@ -177,10 +177,12 @@ function SubscaleCard({
   composite,
   maxVal,
   description,
+  baseline,
 }: {
   composite: Composite;
   maxVal: number;
   description?: string;
+  baseline?: { value: number; label: string };
 }) {
   const fill = (composite.stats.mean / maxVal) * 100;
   return (
@@ -199,6 +201,15 @@ function SubscaleCard({
           className="subscale-marker"
           style={{ left: `${(composite.stats.p75 / maxVal) * 100}%` }}
         />
+        {baseline && (
+          <span
+            className="baseline-marker"
+            style={{ left: `${(baseline.value / maxVal) * 100}%` }}
+            title={`${baseline.label}: ${baseline.value}`}
+          >
+            <span className="baseline-flag">{baseline.label}</span>
+          </span>
+        )}
       </div>
       <div className="subscale-range-labels">
         <span>0</span>
@@ -209,6 +220,9 @@ function SubscaleCard({
         Median {composite.stats.median} ·
         IQR {composite.stats.p25}–{composite.stats.p75} ·
         n = {composite.answered}
+        {baseline && (
+          <> · {baseline.label}: {baseline.value}</>
+        )}
       </div>
     </div>
   );
@@ -220,10 +234,12 @@ function TraitScaleBar({
   composite,
   maxVal,
   description,
+  baseline,
 }: {
   composite: Composite;
   maxVal: number;
   description?: string;
+  baseline?: { value: number; label: string };
 }) {
   const { mean, p25, p75 } = composite.stats;
   const left = (p25 / maxVal) * 100;
@@ -239,6 +255,13 @@ function TraitScaleBar({
         <span className="scale-track-bg">
           <span className="scale-iqr" style={{ left: `${left}%`, width: `${width}%` }} />
           <span className="trait-diamond" style={{ left: `${meanPos}%` }} />
+          {baseline && (
+            <span
+              className="trait-baseline"
+              style={{ left: `${(baseline.value / maxVal) * 100}%` }}
+              title={`${baseline.label}: ${baseline.value}`}
+            />
+          )}
         </span>
         <span className="scale-endpoints">
           <span>0</span><span>{maxVal}</span>
@@ -554,17 +577,49 @@ export default function Results2026Page() {
           cynicism indicate more burnout; higher efficacy is protective.
         </p>
         <p className="section-insight">
-          Founders report high emotional exhaustion (mean{" "}
-          {mbiExhaust?.stats.mean}/6 — between &ldquo;a few times a
-          month&rdquo; and &ldquo;once a week&rdquo;) but maintain strong
-          professional efficacy ({mbiEfficacy?.stats.mean}/6). Cynicism sits in
-          the middle at {mbiCynicism?.stats.mean}/6.
+          Founders report emotional exhaustion well above working-population
+          norms — mean {mbiExhaust?.stats.mean}/6 vs. the normative
+          mean of 2.16 (+1.05 SD), exceeding the &ldquo;high&rdquo;
+          threshold of 2.89. Cynicism is also elevated at{" "}
+          {mbiCynicism?.stats.mean}/6 vs. 1.41 (+1.03 SD), approaching the
+          high threshold of 2.86. Professional efficacy remains healthy
+          at {mbiEfficacy?.stats.mean}/6 (norm: 4.19). This pattern — high
+          exhaustion with adequate efficacy — is characteristic of an
+          &ldquo;Overextended&rdquo; burnout profile. The{" "}
+          <span style={{ color: "var(--muted)" }}>▼</span> marker shows the
+          general working population mean for comparison.
         </p>
         <div className="subscale-grid">
-          {mbiExhaust && <SubscaleCard composite={mbiExhaust} maxVal={6} description="How drained and depleted by work" />}
-          {mbiCynicism && <SubscaleCard composite={mbiCynicism} maxVal={6} description="Detachment and doubt about work's value" />}
-          {mbiEfficacy && <SubscaleCard composite={mbiEfficacy} maxVal={6} description="Confidence and accomplishment at work" />}
+          {mbiExhaust && (
+            <SubscaleCard
+              composite={mbiExhaust}
+              maxVal={6}
+              description="How drained and depleted by work"
+              baseline={{ value: 2.16, label: "Gen. pop." }}
+            />
+          )}
+          {mbiCynicism && (
+            <SubscaleCard
+              composite={mbiCynicism}
+              maxVal={6}
+              description="Detachment and doubt about work's value"
+              baseline={{ value: 1.41, label: "Gen. pop." }}
+            />
+          )}
+          {mbiEfficacy && (
+            <SubscaleCard
+              composite={mbiEfficacy}
+              maxVal={6}
+              description="Confidence and accomplishment at work"
+              baseline={{ value: 4.19, label: "Gen. pop." }}
+            />
+          )}
         </div>
+        <p className="footnote">
+          Population norms from the MBI Manual, 4th Ed. (Maslach, Jackson &amp;
+          Leiter, 2018; N = 1,766 workers). &ldquo;High&rdquo; thresholds:
+          Exhaustion &ge; 2.89, Cynicism &ge; 2.86, Efficacy &le; 4.30 (reverse-scored).
+        </p>
       </AccSection>
 
       {/* ═══ §09 ADHD (ASRS-6) ════════════════════════════════════════ */}
@@ -766,30 +821,58 @@ export default function Results2026Page() {
         <p>
           The Dirty Dozen measures three personality traits on a 0–4
           agreement scale. The shaded region shows the middle 50% (P25–P75);
-          the diamond marks the mean.
+          the ◆ marks the founder mean;
+          the <span style={{ color: "var(--muted)" }}>▼</span> marks the
+          general population mean.
         </p>
-        <div className="trait-list">
-          {sec("dark_triad")?.composites?.map((c) => {
-            const desc: Record<string, string> = {
-              machiavellianism: "Strategic manipulation & self-interest",
-              psychopathy: "Emotional detachment & moral flexibility",
-              narcissism: "Need for admiration & special status",
-            };
-            return (
-              <TraitScaleBar
-                key={c.id}
-                composite={c}
-                maxVal={4}
-                description={desc[c.id] ?? c.description}
-              />
-            );
-          })}
-        </div>
+        {(() => {
+          const ddBaselines: Record<string, number> = {
+            machiavellianism: 1.24,
+            psychopathy: 1.14,
+            narcissism: 1.60,
+          };
+          const ddDesc: Record<string, string> = {
+            machiavellianism: "Strategic manipulation & self-interest",
+            psychopathy: "Emotional detachment & moral flexibility",
+            narcissism: "Need for admiration & special status",
+          };
+          const machComp = sec("dark_triad")?.composites?.find((c) => c.id === "machiavellianism");
+          const narcComp = sec("dark_triad")?.composites?.find((c) => c.id === "narcissism");
+          const psychComp = sec("dark_triad")?.composites?.find((c) => c.id === "psychopathy");
+          return (
+            <>
+              <p className="section-insight">
+                Founders score slightly above population norms on
+                Machiavellianism ({machComp?.stats.mean} vs. 1.24) and
+                Narcissism ({narcComp?.stats.mean} vs. 1.60) — consistent
+                with research showing entrepreneurs at roughly the 63rd
+                percentile on narcissism. Psychopathy is at or below the
+                general population level ({psychComp?.stats.mean} vs. 1.14).
+              </p>
+              <div className="trait-list">
+                {sec("dark_triad")?.composites?.map((c) => (
+                  <TraitScaleBar
+                    key={c.id}
+                    composite={c}
+                    maxVal={4}
+                    description={ddDesc[c.id] ?? c.description}
+                    baseline={
+                      ddBaselines[c.id] != null
+                        ? { value: ddBaselines[c.id], label: "Gen. pop." }
+                        : undefined
+                    }
+                  />
+                ))}
+              </div>
+            </>
+          );
+        })()}
         <p className="footnote">
-          The Dirty Dozen (Jonason & Webster, 2010) is a brief measure of
-          subclinical dark personality traits. Scores are descriptive, not
-          diagnostic. Higher values indicate stronger endorsement of each
-          trait cluster. n = {sec("dark_triad")?.composites?.[0]?.answered}.
+          The Dirty Dozen (Jonason &amp; Webster, 2010) is a brief measure of
+          subclinical dark personality traits. Population norms from Czarna et al.
+          (2016; N = 634; converted from 1–5 to 0–4 scale). Entrepreneur
+          narcissism context from Hmieleski &amp; Lerner (2016). Scores are
+          descriptive, not diagnostic. n = {sec("dark_triad")?.composites?.[0]?.answered}.
         </p>
       </AccSection>
 
