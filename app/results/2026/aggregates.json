@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-04",
+  "generatedAt": "2026-06-05",
   "source": "exports/2026-06-04",
   "note": "Aggregate counts only. No row-level or free-text data is included.",
   "totals": {
@@ -72,7 +72,9 @@
             "median": 31,
             "mean": 32.4,
             "min": 19,
-            "max": 66
+            "max": 66,
+            "p25": 26,
+            "p75": 38
           },
           "buckets": [
             {
@@ -417,6 +419,5625 @@
               "pct": 15.8
             }
           ]
+        }
+      ]
+    },
+    "life_outlook": {
+      "title": "Life Outlook",
+      "questions": [
+        {
+          "id": "life_satisfaction",
+          "text": "Overall, how satisfied are you with life as a whole these days?",
+          "kind": "scale",
+          "answered": 163,
+          "stats": {
+            "median": 7,
+            "mean": 6.2,
+            "min": 1,
+            "max": 10,
+            "p25": 5,
+            "p75": 8
+          },
+          "options": [
+            {
+              "label": "1",
+              "count": 4,
+              "pct": 2.5
+            },
+            {
+              "label": "2",
+              "count": 7,
+              "pct": 4.3
+            },
+            {
+              "label": "3",
+              "count": 11,
+              "pct": 6.7
+            },
+            {
+              "label": "4",
+              "count": 10,
+              "pct": 6.1
+            },
+            {
+              "label": "5",
+              "count": 25,
+              "pct": 15.3
+            },
+            {
+              "label": "6",
+              "count": 24,
+              "pct": 14.7
+            },
+            {
+              "label": "7",
+              "count": 30,
+              "pct": 18.4
+            },
+            {
+              "label": "8",
+              "count": 33,
+              "pct": 20.2
+            },
+            {
+              "label": "9",
+              "count": 14,
+              "pct": 8.6
+            },
+            {
+              "label": "10",
+              "count": 5,
+              "pct": 3.1
+            }
+          ]
+        },
+        {
+          "id": "life_happy",
+          "text": "In general, how happy or unhappy do you usually feel?",
+          "kind": "scale",
+          "answered": 163,
+          "stats": {
+            "median": 6,
+            "mean": 6,
+            "min": 1,
+            "max": 10,
+            "p25": 5,
+            "p75": 8
+          },
+          "options": [
+            {
+              "label": "1",
+              "count": 3,
+              "pct": 1.8
+            },
+            {
+              "label": "2",
+              "count": 6,
+              "pct": 3.7
+            },
+            {
+              "label": "3",
+              "count": 16,
+              "pct": 9.8
+            },
+            {
+              "label": "4",
+              "count": 14,
+              "pct": 8.6
+            },
+            {
+              "label": "5",
+              "count": 24,
+              "pct": 14.7
+            },
+            {
+              "label": "6",
+              "count": 24,
+              "pct": 14.7
+            },
+            {
+              "label": "7",
+              "count": 34,
+              "pct": 20.9
+            },
+            {
+              "label": "8",
+              "count": 27,
+              "pct": 16.6
+            },
+            {
+              "label": "9",
+              "count": 13,
+              "pct": 8
+            },
+            {
+              "label": "10",
+              "count": 2,
+              "pct": 1.2
+            }
+          ]
+        },
+        {
+          "id": "life_worthwhile",
+          "text": "Overall, to what extent do you feel the things you do in your life are worthwhile?",
+          "kind": "scale",
+          "answered": 162,
+          "stats": {
+            "median": 7,
+            "mean": 6.9,
+            "min": 0,
+            "max": 10,
+            "p25": 6,
+            "p75": 9
+          },
+          "options": [
+            {
+              "label": "0",
+              "count": 2,
+              "pct": 1.2
+            },
+            {
+              "label": "1",
+              "count": 4,
+              "pct": 2.5
+            },
+            {
+              "label": "2",
+              "count": 5,
+              "pct": 3.1
+            },
+            {
+              "label": "3",
+              "count": 8,
+              "pct": 4.9
+            },
+            {
+              "label": "4",
+              "count": 5,
+              "pct": 3.1
+            },
+            {
+              "label": "5",
+              "count": 15,
+              "pct": 9.3
+            },
+            {
+              "label": "6",
+              "count": 17,
+              "pct": 10.5
+            },
+            {
+              "label": "7",
+              "count": 30,
+              "pct": 18.5
+            },
+            {
+              "label": "8",
+              "count": 34,
+              "pct": 21
+            },
+            {
+              "label": "9",
+              "count": 20,
+              "pct": 12.3
+            },
+            {
+              "label": "10",
+              "count": 22,
+              "pct": 13.6
+            }
+          ]
+        },
+        {
+          "id": "life_purpose",
+          "text": "I understand my purpose in life.",
+          "kind": "scale",
+          "answered": 161,
+          "stats": {
+            "median": 7,
+            "mean": 6.4,
+            "min": 0,
+            "max": 10,
+            "p25": 5,
+            "p75": 8
+          },
+          "options": [
+            {
+              "label": "0",
+              "count": 3,
+              "pct": 1.9
+            },
+            {
+              "label": "1",
+              "count": 7,
+              "pct": 4.3
+            },
+            {
+              "label": "2",
+              "count": 8,
+              "pct": 5
+            },
+            {
+              "label": "3",
+              "count": 7,
+              "pct": 4.3
+            },
+            {
+              "label": "4",
+              "count": 13,
+              "pct": 8.1
+            },
+            {
+              "label": "5",
+              "count": 19,
+              "pct": 11.8
+            },
+            {
+              "label": "6",
+              "count": 16,
+              "pct": 9.9
+            },
+            {
+              "label": "7",
+              "count": 18,
+              "pct": 11.2
+            },
+            {
+              "label": "8",
+              "count": 31,
+              "pct": 19.3
+            },
+            {
+              "label": "9",
+              "count": 20,
+              "pct": 12.4
+            },
+            {
+              "label": "10",
+              "count": 19,
+              "pct": 11.8
+            }
+          ]
+        },
+        {
+          "id": "life_relationships_satisfying",
+          "text": "My relationships are as satisfying as I would want them to be.",
+          "kind": "scale",
+          "answered": 161,
+          "stats": {
+            "median": 7,
+            "mean": 6.1,
+            "min": 0,
+            "max": 10,
+            "p25": 4,
+            "p75": 8
+          },
+          "options": [
+            {
+              "label": "0",
+              "count": 3,
+              "pct": 1.9
+            },
+            {
+              "label": "1",
+              "count": 4,
+              "pct": 2.5
+            },
+            {
+              "label": "2",
+              "count": 14,
+              "pct": 8.7
+            },
+            {
+              "label": "3",
+              "count": 10,
+              "pct": 6.2
+            },
+            {
+              "label": "4",
+              "count": 11,
+              "pct": 6.8
+            },
+            {
+              "label": "5",
+              "count": 18,
+              "pct": 11.2
+            },
+            {
+              "label": "6",
+              "count": 15,
+              "pct": 9.3
+            },
+            {
+              "label": "7",
+              "count": 32,
+              "pct": 19.9
+            },
+            {
+              "label": "8",
+              "count": 25,
+              "pct": 15.5
+            },
+            {
+              "label": "9",
+              "count": 18,
+              "pct": 11.2
+            },
+            {
+              "label": "10",
+              "count": 11,
+              "pct": 6.8
+            }
+          ]
+        },
+        {
+          "id": "life_physical_health",
+          "text": "In general, how would you rate your physical health?",
+          "kind": "scale",
+          "answered": 161,
+          "stats": {
+            "median": 7,
+            "mean": 6.2,
+            "min": 0,
+            "max": 10,
+            "p25": 4,
+            "p75": 8
+          },
+          "options": [
+            {
+              "label": "0",
+              "count": 2,
+              "pct": 1.2
+            },
+            {
+              "label": "1",
+              "count": 2,
+              "pct": 1.2
+            },
+            {
+              "label": "2",
+              "count": 10,
+              "pct": 6.2
+            },
+            {
+              "label": "3",
+              "count": 14,
+              "pct": 8.7
+            },
+            {
+              "label": "4",
+              "count": 15,
+              "pct": 9.3
+            },
+            {
+              "label": "5",
+              "count": 14,
+              "pct": 8.7
+            },
+            {
+              "label": "6",
+              "count": 21,
+              "pct": 13
+            },
+            {
+              "label": "7",
+              "count": 23,
+              "pct": 14.3
+            },
+            {
+              "label": "8",
+              "count": 33,
+              "pct": 20.5
+            },
+            {
+              "label": "9",
+              "count": 17,
+              "pct": 10.6
+            },
+            {
+              "label": "10",
+              "count": 10,
+              "pct": 6.2
+            }
+          ]
+        },
+        {
+          "id": "life_mental_health",
+          "text": "How would you rate your overall mental health?",
+          "kind": "scale",
+          "answered": 160,
+          "stats": {
+            "median": 6,
+            "mean": 5.9,
+            "min": 0,
+            "max": 10,
+            "p25": 4,
+            "p75": 8
+          },
+          "options": [
+            {
+              "label": "0",
+              "count": 2,
+              "pct": 1.3
+            },
+            {
+              "label": "1",
+              "count": 3,
+              "pct": 1.9
+            },
+            {
+              "label": "2",
+              "count": 5,
+              "pct": 3.1
+            },
+            {
+              "label": "3",
+              "count": 22,
+              "pct": 13.8
+            },
+            {
+              "label": "4",
+              "count": 13,
+              "pct": 8.1
+            },
+            {
+              "label": "5",
+              "count": 20,
+              "pct": 12.5
+            },
+            {
+              "label": "6",
+              "count": 22,
+              "pct": 13.8
+            },
+            {
+              "label": "7",
+              "count": 30,
+              "pct": 18.8
+            },
+            {
+              "label": "8",
+              "count": 27,
+              "pct": 16.9
+            },
+            {
+              "label": "9",
+              "count": 11,
+              "pct": 6.9
+            },
+            {
+              "label": "10",
+              "count": 5,
+              "pct": 3.1
+            }
+          ]
+        },
+        {
+          "id": "life_have_to",
+          "text": "Most of what I do as a founder feels like 'I have to' rather than 'I want to.'",
+          "kind": "scale",
+          "answered": 161,
+          "stats": {
+            "median": 6,
+            "mean": 5.6,
+            "min": 0,
+            "max": 10,
+            "p25": 4,
+            "p75": 7
+          },
+          "options": [
+            {
+              "label": "0",
+              "count": 3,
+              "pct": 1.9
+            },
+            {
+              "label": "1",
+              "count": 9,
+              "pct": 5.6
+            },
+            {
+              "label": "2",
+              "count": 9,
+              "pct": 5.6
+            },
+            {
+              "label": "3",
+              "count": 15,
+              "pct": 9.3
+            },
+            {
+              "label": "4",
+              "count": 19,
+              "pct": 11.8
+            },
+            {
+              "label": "5",
+              "count": 19,
+              "pct": 11.8
+            },
+            {
+              "label": "6",
+              "count": 17,
+              "pct": 10.6
+            },
+            {
+              "label": "7",
+              "count": 30,
+              "pct": 18.6
+            },
+            {
+              "label": "8",
+              "count": 23,
+              "pct": 14.3
+            },
+            {
+              "label": "9",
+              "count": 13,
+              "pct": 8.1
+            },
+            {
+              "label": "10",
+              "count": 4,
+              "pct": 2.5
+            }
+          ]
+        },
+        {
+          "id": "life_alone",
+          "text": "I feel alone carrying the weight of this company.",
+          "kind": "scale",
+          "answered": 160,
+          "stats": {
+            "median": 6,
+            "mean": 5.5,
+            "min": 0,
+            "max": 10,
+            "p25": 2,
+            "p75": 9
+          },
+          "options": [
+            {
+              "label": "0",
+              "count": 21,
+              "pct": 13.1
+            },
+            {
+              "label": "1",
+              "count": 7,
+              "pct": 4.4
+            },
+            {
+              "label": "2",
+              "count": 14,
+              "pct": 8.8
+            },
+            {
+              "label": "3",
+              "count": 11,
+              "pct": 6.9
+            },
+            {
+              "label": "4",
+              "count": 9,
+              "pct": 5.6
+            },
+            {
+              "label": "5",
+              "count": 14,
+              "pct": 8.8
+            },
+            {
+              "label": "6",
+              "count": 12,
+              "pct": 7.5
+            },
+            {
+              "label": "7",
+              "count": 15,
+              "pct": 9.4
+            },
+            {
+              "label": "8",
+              "count": 11,
+              "pct": 6.9
+            },
+            {
+              "label": "9",
+              "count": 17,
+              "pct": 10.6
+            },
+            {
+              "label": "10",
+              "count": 29,
+              "pct": 18.1
+            }
+          ]
+        }
+      ]
+    },
+    "founder_challenges": {
+      "title": "Founder Challenges",
+      "questions": [
+        {
+          "id": "fc_own_way",
+          "text": "I keep getting in my own way.",
+          "kind": "ordinal",
+          "answered": 201,
+          "options": [
+            {
+              "label": "Not a challenge for me",
+              "count": 28,
+              "pct": 13.9
+            },
+            {
+              "label": "Minor challenge",
+              "count": 60,
+              "pct": 29.9
+            },
+            {
+              "label": "Moderate challenge",
+              "count": 70,
+              "pct": 34.8
+            },
+            {
+              "label": "Significant challenge",
+              "count": 33,
+              "pct": 16.4
+            },
+            {
+              "label": "Major challenge",
+              "count": 10,
+              "pct": 5
+            }
+          ],
+          "stats": {
+            "median": 2,
+            "mean": 1.7,
+            "min": 0,
+            "max": 4,
+            "p25": 1,
+            "p75": 2
+          }
+        },
+        {
+          "id": "fc_ic_to_leader",
+          "text": "I struggle to evolve from being a technical/functional contributor to being a leader.",
+          "kind": "ordinal",
+          "answered": 195,
+          "options": [
+            {
+              "label": "Not a challenge for me",
+              "count": 47,
+              "pct": 24.1
+            },
+            {
+              "label": "Minor challenge",
+              "count": 57,
+              "pct": 29.2
+            },
+            {
+              "label": "Moderate challenge",
+              "count": 62,
+              "pct": 31.8
+            },
+            {
+              "label": "Significant challenge",
+              "count": 22,
+              "pct": 11.3
+            },
+            {
+              "label": "Major challenge",
+              "count": 7,
+              "pct": 3.6
+            }
+          ],
+          "stats": {
+            "median": 1,
+            "mean": 1.4,
+            "min": 0,
+            "max": 4,
+            "p25": 1,
+            "p75": 2
+          }
+        },
+        {
+          "id": "fc_operational_trap",
+          "text": "I am trapped in operational details instead of being strategic.",
+          "kind": "ordinal",
+          "answered": 193,
+          "options": [
+            {
+              "label": "Not a challenge for me",
+              "count": 26,
+              "pct": 13.5
+            },
+            {
+              "label": "Minor challenge",
+              "count": 27,
+              "pct": 14
+            },
+            {
+              "label": "Moderate challenge",
+              "count": 68,
+              "pct": 35.2
+            },
+            {
+              "label": "Significant challenge",
+              "count": 55,
+              "pct": 28.5
+            },
+            {
+              "label": "Major challenge",
+              "count": 17,
+              "pct": 8.8
+            }
+          ],
+          "stats": {
+            "median": 2,
+            "mean": 2.1,
+            "min": 0,
+            "max": 4,
+            "p25": 1,
+            "p75": 3
+          }
+        },
+        {
+          "id": "fc_fraud",
+          "text": "I feel like a fraud or pretend leader.",
+          "kind": "ordinal",
+          "answered": 194,
+          "options": [
+            {
+              "label": "Not a challenge for me",
+              "count": 52,
+              "pct": 26.8
+            },
+            {
+              "label": "Minor challenge",
+              "count": 57,
+              "pct": 29.4
+            },
+            {
+              "label": "Moderate challenge",
+              "count": 37,
+              "pct": 19.1
+            },
+            {
+              "label": "Significant challenge",
+              "count": 33,
+              "pct": 17
+            },
+            {
+              "label": "Major challenge",
+              "count": 15,
+              "pct": 7.7
+            }
+          ],
+          "stats": {
+            "median": 1,
+            "mean": 1.5,
+            "min": 0,
+            "max": 4,
+            "p25": 0,
+            "p75": 2
+          }
+        },
+        {
+          "id": "fc_accountability",
+          "text": "I struggle to hold my team accountable.",
+          "kind": "ordinal",
+          "answered": 190,
+          "options": [
+            {
+              "label": "Not a challenge for me",
+              "count": 33,
+              "pct": 17.4
+            },
+            {
+              "label": "Minor challenge",
+              "count": 40,
+              "pct": 21.1
+            },
+            {
+              "label": "Moderate challenge",
+              "count": 64,
+              "pct": 33.7
+            },
+            {
+              "label": "Significant challenge",
+              "count": 38,
+              "pct": 20
+            },
+            {
+              "label": "Major challenge",
+              "count": 15,
+              "pct": 7.9
+            }
+          ],
+          "stats": {
+            "median": 2,
+            "mean": 1.8,
+            "min": 0,
+            "max": 4,
+            "p25": 1,
+            "p75": 3
+          }
+        },
+        {
+          "id": "fc_hard_conversations",
+          "text": "I avoid hard calls and difficult conversations I know I need to have.",
+          "kind": "ordinal",
+          "answered": 189,
+          "options": [
+            {
+              "label": "Not a challenge for me",
+              "count": 36,
+              "pct": 19
+            },
+            {
+              "label": "Minor challenge",
+              "count": 52,
+              "pct": 27.5
+            },
+            {
+              "label": "Moderate challenge",
+              "count": 57,
+              "pct": 30.2
+            },
+            {
+              "label": "Significant challenge",
+              "count": 27,
+              "pct": 14.3
+            },
+            {
+              "label": "Major challenge",
+              "count": 17,
+              "pct": 9
+            }
+          ],
+          "stats": {
+            "median": 2,
+            "mean": 1.7,
+            "min": 0,
+            "max": 4,
+            "p25": 1,
+            "p75": 2
+          }
+        },
+        {
+          "id": "fc_team_slow",
+          "text": "Our team is moving too slowly given what we need to accomplish.",
+          "kind": "ordinal",
+          "answered": 189,
+          "options": [
+            {
+              "label": "Not a challenge for me",
+              "count": 16,
+              "pct": 8.5
+            },
+            {
+              "label": "Minor challenge",
+              "count": 33,
+              "pct": 17.5
+            },
+            {
+              "label": "Moderate challenge",
+              "count": 40,
+              "pct": 21.2
+            },
+            {
+              "label": "Significant challenge",
+              "count": 56,
+              "pct": 29.6
+            },
+            {
+              "label": "Major challenge",
+              "count": 44,
+              "pct": 23.3
+            }
+          ],
+          "stats": {
+            "median": 3,
+            "mean": 2.4,
+            "min": 0,
+            "max": 4,
+            "p25": 1,
+            "p75": 3
+          }
+        },
+        {
+          "id": "fc_cofounder_friction",
+          "text": "There is too much friction between me and my cofounder(s).",
+          "kind": "ordinal",
+          "answered": 144,
+          "options": [
+            {
+              "label": "Not a challenge for me",
+              "count": 42,
+              "pct": 29.2
+            },
+            {
+              "label": "Minor challenge",
+              "count": 38,
+              "pct": 26.4
+            },
+            {
+              "label": "Moderate challenge",
+              "count": 32,
+              "pct": 22.2
+            },
+            {
+              "label": "Significant challenge",
+              "count": 20,
+              "pct": 13.9
+            },
+            {
+              "label": "Major challenge",
+              "count": 12,
+              "pct": 8.3
+            }
+          ],
+          "stats": {
+            "median": 1,
+            "mean": 1.5,
+            "min": 0,
+            "max": 4,
+            "p25": 0,
+            "p75": 2
+          }
+        },
+        {
+          "id": "fc_board_conflict",
+          "text": "I am dealing with conflict with my board or investors.",
+          "kind": "ordinal",
+          "answered": 186,
+          "options": [
+            {
+              "label": "Not a challenge for me",
+              "count": 147,
+              "pct": 79
+            },
+            {
+              "label": "Minor challenge",
+              "count": 24,
+              "pct": 12.9
+            },
+            {
+              "label": "Moderate challenge",
+              "count": 9,
+              "pct": 4.8
+            },
+            {
+              "label": "Significant challenge",
+              "count": 5,
+              "pct": 2.7
+            },
+            {
+              "label": "Major challenge",
+              "count": 1,
+              "pct": 0.5
+            }
+          ],
+          "stats": {
+            "median": 0,
+            "mean": 0.3,
+            "min": 0,
+            "max": 4,
+            "p25": 0,
+            "p75": 0
+          }
+        },
+        {
+          "id": "fc_runway_worry",
+          "text": "I am worried we will run out of money.",
+          "kind": "ordinal",
+          "answered": 183,
+          "options": [
+            {
+              "label": "Not a challenge for me",
+              "count": 54,
+              "pct": 29.5
+            },
+            {
+              "label": "Minor challenge",
+              "count": 46,
+              "pct": 25.1
+            },
+            {
+              "label": "Moderate challenge",
+              "count": 25,
+              "pct": 13.7
+            },
+            {
+              "label": "Significant challenge",
+              "count": 24,
+              "pct": 13.1
+            },
+            {
+              "label": "Major challenge",
+              "count": 34,
+              "pct": 18.6
+            }
+          ],
+          "stats": {
+            "median": 1,
+            "mean": 1.7,
+            "min": 0,
+            "max": 4,
+            "p25": 0,
+            "p75": 3
+          }
+        },
+        {
+          "id": "fc_next_round",
+          "text": "I am worried we won't be able to raise our next round.",
+          "kind": "ordinal",
+          "answered": 185,
+          "options": [
+            {
+              "label": "Not a challenge for me",
+              "count": 51,
+              "pct": 27.6
+            },
+            {
+              "label": "Minor challenge",
+              "count": 29,
+              "pct": 15.7
+            },
+            {
+              "label": "Moderate challenge",
+              "count": 40,
+              "pct": 21.6
+            },
+            {
+              "label": "Significant challenge",
+              "count": 30,
+              "pct": 16.2
+            },
+            {
+              "label": "Major challenge",
+              "count": 35,
+              "pct": 18.9
+            }
+          ],
+          "stats": {
+            "median": 2,
+            "mean": 1.8,
+            "min": 0,
+            "max": 4,
+            "p25": 0,
+            "p75": 3
+          }
+        },
+        {
+          "id": "fc_pivot",
+          "text": "I am worried we may need to pivot the company.",
+          "kind": "ordinal",
+          "answered": 184,
+          "options": [
+            {
+              "label": "Not a challenge for me",
+              "count": 44,
+              "pct": 23.9
+            },
+            {
+              "label": "Minor challenge",
+              "count": 42,
+              "pct": 22.8
+            },
+            {
+              "label": "Moderate challenge",
+              "count": 33,
+              "pct": 17.9
+            },
+            {
+              "label": "Significant challenge",
+              "count": 37,
+              "pct": 20.1
+            },
+            {
+              "label": "Major challenge",
+              "count": 28,
+              "pct": 15.2
+            }
+          ],
+          "stats": {
+            "median": 2,
+            "mean": 1.8,
+            "min": 0,
+            "max": 4,
+            "p25": 1,
+            "p75": 3
+          }
+        },
+        {
+          "id": "fc_growth",
+          "text": "We are not growing fast enough.",
+          "kind": "ordinal",
+          "answered": 184,
+          "options": [
+            {
+              "label": "Not a challenge for me",
+              "count": 12,
+              "pct": 6.5
+            },
+            {
+              "label": "Minor challenge",
+              "count": 11,
+              "pct": 6
+            },
+            {
+              "label": "Moderate challenge",
+              "count": 40,
+              "pct": 21.7
+            },
+            {
+              "label": "Significant challenge",
+              "count": 50,
+              "pct": 27.2
+            },
+            {
+              "label": "Major challenge",
+              "count": 71,
+              "pct": 38.6
+            }
+          ],
+          "stats": {
+            "median": 3,
+            "mean": 2.9,
+            "min": 0,
+            "max": 4,
+            "p25": 2,
+            "p75": 4
+          }
+        },
+        {
+          "id": "fc_competition",
+          "text": "I am anxious about competition.",
+          "kind": "ordinal",
+          "answered": 184,
+          "options": [
+            {
+              "label": "Not a challenge for me",
+              "count": 25,
+              "pct": 13.6
+            },
+            {
+              "label": "Minor challenge",
+              "count": 52,
+              "pct": 28.3
+            },
+            {
+              "label": "Moderate challenge",
+              "count": 54,
+              "pct": 29.3
+            },
+            {
+              "label": "Significant challenge",
+              "count": 28,
+              "pct": 15.2
+            },
+            {
+              "label": "Major challenge",
+              "count": 25,
+              "pct": 13.6
+            }
+          ],
+          "stats": {
+            "median": 2,
+            "mean": 1.9,
+            "min": 0,
+            "max": 4,
+            "p25": 1,
+            "p75": 3
+          }
+        }
+      ]
+    },
+    "cofounder": {
+      "title": "Cofounder Relationship",
+      "questions": [
+        {
+          "id": "cf_gender",
+          "text": "What is your primary cofounder's gender?",
+          "kind": "categorical",
+          "answered": 134,
+          "options": [
+            {
+              "label": "Male",
+              "count": 117,
+              "pct": 87.3
+            },
+            {
+              "label": "Female",
+              "count": 15,
+              "pct": 11.2
+            },
+            {
+              "label": "Prefer not to say",
+              "count": 2,
+              "pct": 1.5
+            }
+          ]
+        },
+        {
+          "id": "cf_role",
+          "text": "What is your primary cofounder's role?",
+          "kind": "categorical",
+          "answered": 133,
+          "options": [
+            {
+              "label": "CEO",
+              "count": 60,
+              "pct": 45.1
+            },
+            {
+              "label": "CTO",
+              "count": 49,
+              "pct": 36.8
+            },
+            {
+              "label": "COO",
+              "count": 12,
+              "pct": 9
+            },
+            {
+              "label": "CPO / Head of Product",
+              "count": 4,
+              "pct": 3
+            },
+            {
+              "label": "Head of Engineering",
+              "count": 2,
+              "pct": 1.5
+            },
+            {
+              "label": "Other",
+              "count": 6,
+              "pct": 4.5
+            }
+          ]
+        },
+        {
+          "id": "cf_aligned_vision",
+          "text": "My cofounder and I are aligned on where we want to take the company.",
+          "kind": "ordinal",
+          "answered": 132,
+          "options": [
+            {
+              "label": "Strongly disagree",
+              "count": 3,
+              "pct": 2.3
+            },
+            {
+              "label": "Disagree",
+              "count": 15,
+              "pct": 11.4
+            },
+            {
+              "label": "Neither agree nor disagree",
+              "count": 19,
+              "pct": 14.4
+            },
+            {
+              "label": "Agree",
+              "count": 62,
+              "pct": 47
+            },
+            {
+              "label": "Strongly agree",
+              "count": 33,
+              "pct": 25
+            }
+          ],
+          "stats": {
+            "median": 3,
+            "mean": 2.8,
+            "min": 0,
+            "max": 4,
+            "p25": 2,
+            "p75": 4
+          }
+        },
+        {
+          "id": "cf_quality_standards",
+          "text": "My cofounder and I share the same standards for quality and excellence.",
+          "kind": "ordinal",
+          "answered": 132,
+          "options": [
+            {
+              "label": "Strongly disagree",
+              "count": 3,
+              "pct": 2.3
+            },
+            {
+              "label": "Disagree",
+              "count": 23,
+              "pct": 17.4
+            },
+            {
+              "label": "Neither agree nor disagree",
+              "count": 22,
+              "pct": 16.7
+            },
+            {
+              "label": "Agree",
+              "count": 57,
+              "pct": 43.2
+            },
+            {
+              "label": "Strongly agree",
+              "count": 27,
+              "pct": 20.5
+            }
+          ],
+          "stats": {
+            "median": 3,
+            "mean": 2.6,
+            "min": 0,
+            "max": 4,
+            "p25": 2,
+            "p75": 3
+          }
+        },
+        {
+          "id": "cf_trust_do",
+          "text": "I trust my cofounder to do what they say they'll do.",
+          "kind": "ordinal",
+          "answered": 132,
+          "options": [
+            {
+              "label": "Strongly disagree",
+              "count": 5,
+              "pct": 3.8
+            },
+            {
+              "label": "Disagree",
+              "count": 11,
+              "pct": 8.3
+            },
+            {
+              "label": "Neither agree nor disagree",
+              "count": 22,
+              "pct": 16.7
+            },
+            {
+              "label": "Agree",
+              "count": 50,
+              "pct": 37.9
+            },
+            {
+              "label": "Strongly agree",
+              "count": 44,
+              "pct": 33.3
+            }
+          ],
+          "stats": {
+            "median": 3,
+            "mean": 2.9,
+            "min": 0,
+            "max": 4,
+            "p25": 2,
+            "p75": 4
+          }
+        },
+        {
+          "id": "cf_honest_doubts",
+          "text": "I can be honest with my cofounder about my doubts, fears, and mistakes.",
+          "kind": "ordinal",
+          "answered": 130,
+          "options": [
+            {
+              "label": "Strongly disagree",
+              "count": 5,
+              "pct": 3.8
+            },
+            {
+              "label": "Disagree",
+              "count": 14,
+              "pct": 10.8
+            },
+            {
+              "label": "Neither agree nor disagree",
+              "count": 19,
+              "pct": 14.6
+            },
+            {
+              "label": "Agree",
+              "count": 41,
+              "pct": 31.5
+            },
+            {
+              "label": "Strongly agree",
+              "count": 51,
+              "pct": 39.2
+            }
+          ],
+          "stats": {
+            "median": 3,
+            "mean": 2.9,
+            "min": 0,
+            "max": 4,
+            "p25": 2,
+            "p75": 4
+          }
+        },
+        {
+          "id": "cf_work_through",
+          "text": "When my cofounder and I disagree, we work through it rather than avoid it.",
+          "kind": "ordinal",
+          "answered": 130,
+          "options": [
+            {
+              "label": "Strongly disagree",
+              "count": 3,
+              "pct": 2.3
+            },
+            {
+              "label": "Disagree",
+              "count": 11,
+              "pct": 8.5
+            },
+            {
+              "label": "Neither agree nor disagree",
+              "count": 27,
+              "pct": 20.8
+            },
+            {
+              "label": "Agree",
+              "count": 51,
+              "pct": 39.2
+            },
+            {
+              "label": "Strongly agree",
+              "count": 38,
+              "pct": 29.2
+            }
+          ],
+          "stats": {
+            "median": 3,
+            "mean": 2.8,
+            "min": 0,
+            "max": 4,
+            "p25": 2,
+            "p75": 4
+          }
+        },
+        {
+          "id": "cf_difficult_topics",
+          "text": "I can raise difficult topics with my cofounder without it damaging the relationship.",
+          "kind": "ordinal",
+          "answered": 127,
+          "options": [
+            {
+              "label": "Strongly disagree",
+              "count": 3,
+              "pct": 2.4
+            },
+            {
+              "label": "Disagree",
+              "count": 18,
+              "pct": 14.2
+            },
+            {
+              "label": "Neither agree nor disagree",
+              "count": 21,
+              "pct": 16.5
+            },
+            {
+              "label": "Agree",
+              "count": 42,
+              "pct": 33.1
+            },
+            {
+              "label": "Strongly agree",
+              "count": 43,
+              "pct": 33.9
+            }
+          ],
+          "stats": {
+            "median": 3,
+            "mean": 2.8,
+            "min": 0,
+            "max": 4,
+            "p25": 2,
+            "p75": 4
+          }
+        },
+        {
+          "id": "cf_roles",
+          "text": "My cofounder and I have clear, agreed-upon roles and decision rights.",
+          "kind": "ordinal",
+          "answered": 127,
+          "options": [
+            {
+              "label": "Strongly disagree",
+              "count": 4,
+              "pct": 3.1
+            },
+            {
+              "label": "Disagree",
+              "count": 20,
+              "pct": 15.7
+            },
+            {
+              "label": "Neither agree nor disagree",
+              "count": 18,
+              "pct": 14.2
+            },
+            {
+              "label": "Agree",
+              "count": 50,
+              "pct": 39.4
+            },
+            {
+              "label": "Strongly agree",
+              "count": 35,
+              "pct": 27.6
+            }
+          ],
+          "stats": {
+            "median": 3,
+            "mean": 2.7,
+            "min": 0,
+            "max": 4,
+            "p25": 2,
+            "p75": 4
+          }
+        },
+        {
+          "id": "cf_fair_division",
+          "text": "The division of labor between my cofounder and me feels fair.",
+          "kind": "ordinal",
+          "answered": 128,
+          "options": [
+            {
+              "label": "Strongly disagree",
+              "count": 7,
+              "pct": 5.5
+            },
+            {
+              "label": "Disagree",
+              "count": 19,
+              "pct": 14.8
+            },
+            {
+              "label": "Neither agree nor disagree",
+              "count": 16,
+              "pct": 12.5
+            },
+            {
+              "label": "Agree",
+              "count": 50,
+              "pct": 39.1
+            },
+            {
+              "label": "Strongly agree",
+              "count": 36,
+              "pct": 28.1
+            }
+          ],
+          "stats": {
+            "median": 3,
+            "mean": 2.7,
+            "min": 0,
+            "max": 4,
+            "p25": 2,
+            "p75": 4
+          }
+        },
+        {
+          "id": "cf_overall_health",
+          "text": "Overall, how would you rate the health of your cofounder relationship today?",
+          "kind": "scale",
+          "answered": 123,
+          "stats": {
+            "median": 8,
+            "mean": 7.2,
+            "min": 0,
+            "max": 10,
+            "p25": 6,
+            "p75": 9
+          },
+          "options": [
+            {
+              "label": "0",
+              "count": 1,
+              "pct": 0.8
+            },
+            {
+              "label": "1",
+              "count": 1,
+              "pct": 0.8
+            },
+            {
+              "label": "2",
+              "count": 5,
+              "pct": 4.1
+            },
+            {
+              "label": "3",
+              "count": 3,
+              "pct": 2.4
+            },
+            {
+              "label": "4",
+              "count": 3,
+              "pct": 2.4
+            },
+            {
+              "label": "5",
+              "count": 9,
+              "pct": 7.3
+            },
+            {
+              "label": "6",
+              "count": 15,
+              "pct": 12.2
+            },
+            {
+              "label": "7",
+              "count": 19,
+              "pct": 15.4
+            },
+            {
+              "label": "8",
+              "count": 30,
+              "pct": 24.4
+            },
+            {
+              "label": "9",
+              "count": 27,
+              "pct": 22
+            },
+            {
+              "label": "10",
+              "count": 10,
+              "pct": 8.1
+            }
+          ]
+        }
+      ]
+    },
+    "ambition": {
+      "title": "Ambition & Motivation",
+      "questions": [
+        {
+          "id": "amb_ambitious",
+          "text": "I am ambitious.",
+          "kind": "ordinal",
+          "answered": 157,
+          "options": [
+            {
+              "label": "Neither agree nor disagree",
+              "count": 10,
+              "pct": 6.4
+            },
+            {
+              "label": "Agree",
+              "count": 62,
+              "pct": 39.5
+            },
+            {
+              "label": "Strongly agree",
+              "count": 85,
+              "pct": 54.1
+            }
+          ],
+          "stats": {
+            "median": 4,
+            "mean": 3.5,
+            "min": 2,
+            "max": 4,
+            "p25": 3,
+            "p75": 4
+          }
+        },
+        {
+          "id": "amb_strive",
+          "text": "I strive for success.",
+          "kind": "ordinal",
+          "answered": 156,
+          "options": [
+            {
+              "label": "Disagree",
+              "count": 1,
+              "pct": 0.6
+            },
+            {
+              "label": "Neither agree nor disagree",
+              "count": 4,
+              "pct": 2.6
+            },
+            {
+              "label": "Agree",
+              "count": 51,
+              "pct": 32.7
+            },
+            {
+              "label": "Strongly agree",
+              "count": 100,
+              "pct": 64.1
+            }
+          ],
+          "stats": {
+            "median": 4,
+            "mean": 3.6,
+            "min": 1,
+            "max": 4,
+            "p25": 3,
+            "p75": 4
+          }
+        },
+        {
+          "id": "amb_challenging_goals",
+          "text": "I have challenging goals.",
+          "kind": "ordinal",
+          "answered": 156,
+          "options": [
+            {
+              "label": "Disagree",
+              "count": 1,
+              "pct": 0.6
+            },
+            {
+              "label": "Neither agree nor disagree",
+              "count": 16,
+              "pct": 10.3
+            },
+            {
+              "label": "Agree",
+              "count": 61,
+              "pct": 39.1
+            },
+            {
+              "label": "Strongly agree",
+              "count": 78,
+              "pct": 50
+            }
+          ],
+          "stats": {
+            "median": 3.5,
+            "mean": 3.4,
+            "min": 1,
+            "max": 4,
+            "p25": 3,
+            "p75": 4
+          }
+        },
+        {
+          "id": "amb_multi_domain",
+          "text": "I am pursuing ambitious goals in more than one domain of my life (e.g., work, creative work, physical, relational, spiritual).",
+          "kind": "ordinal",
+          "answered": 157,
+          "options": [
+            {
+              "label": "Strongly disagree",
+              "count": 7,
+              "pct": 4.5
+            },
+            {
+              "label": "Disagree",
+              "count": 30,
+              "pct": 19.1
+            },
+            {
+              "label": "Neither agree nor disagree",
+              "count": 18,
+              "pct": 11.5
+            },
+            {
+              "label": "Agree",
+              "count": 51,
+              "pct": 32.5
+            },
+            {
+              "label": "Strongly agree",
+              "count": 51,
+              "pct": 32.5
+            }
+          ],
+          "stats": {
+            "median": 3,
+            "mean": 2.7,
+            "min": 0,
+            "max": 4,
+            "p25": 2,
+            "p75": 4
+          }
+        },
+        {
+          "id": "amb_identity_professional",
+          "text": "My identity is primarily defined by what I do professionally.",
+          "kind": "ordinal",
+          "answered": 157,
+          "options": [
+            {
+              "label": "Strongly disagree",
+              "count": 6,
+              "pct": 3.8
+            },
+            {
+              "label": "Disagree",
+              "count": 26,
+              "pct": 16.6
+            },
+            {
+              "label": "Neither agree nor disagree",
+              "count": 28,
+              "pct": 17.8
+            },
+            {
+              "label": "Agree",
+              "count": 59,
+              "pct": 37.6
+            },
+            {
+              "label": "Strongly agree",
+              "count": 38,
+              "pct": 24.2
+            }
+          ],
+          "stats": {
+            "median": 3,
+            "mean": 2.6,
+            "min": 0,
+            "max": 4,
+            "p25": 2,
+            "p75": 3
+          }
+        },
+        {
+          "id": "asp_helping",
+          "text": "How important to you is the following: Helping others improve their lives.",
+          "kind": "ordinal",
+          "answered": 156,
+          "options": [
+            {
+              "label": "Not at all important",
+              "count": 2,
+              "pct": 1.3
+            },
+            {
+              "label": "Slightly important",
+              "count": 11,
+              "pct": 7.1
+            },
+            {
+              "label": "Moderately important",
+              "count": 46,
+              "pct": 29.5
+            },
+            {
+              "label": "Very important",
+              "count": 52,
+              "pct": 33.3
+            },
+            {
+              "label": "Extremely important",
+              "count": 45,
+              "pct": 28.8
+            }
+          ],
+          "stats": {
+            "median": 3,
+            "mean": 2.8,
+            "min": 0,
+            "max": 4,
+            "p25": 2,
+            "p75": 4
+          }
+        },
+        {
+          "id": "asp_self_knowledge",
+          "text": "How important to you is the following: Knowing and accepting who I really am.",
+          "kind": "ordinal",
+          "answered": 156,
+          "options": [
+            {
+              "label": "Not at all important",
+              "count": 5,
+              "pct": 3.2
+            },
+            {
+              "label": "Slightly important",
+              "count": 15,
+              "pct": 9.6
+            },
+            {
+              "label": "Moderately important",
+              "count": 34,
+              "pct": 21.8
+            },
+            {
+              "label": "Very important",
+              "count": 53,
+              "pct": 34
+            },
+            {
+              "label": "Extremely important",
+              "count": 49,
+              "pct": 31.4
+            }
+          ],
+          "stats": {
+            "median": 3,
+            "mean": 2.8,
+            "min": 0,
+            "max": 4,
+            "p25": 2,
+            "p75": 4
+          }
+        },
+        {
+          "id": "asp_financial",
+          "text": "How important to you is the following: Being financially successful.",
+          "kind": "ordinal",
+          "answered": 155,
+          "options": [
+            {
+              "label": "Not at all important",
+              "count": 3,
+              "pct": 1.9
+            },
+            {
+              "label": "Slightly important",
+              "count": 10,
+              "pct": 6.5
+            },
+            {
+              "label": "Moderately important",
+              "count": 35,
+              "pct": 22.6
+            },
+            {
+              "label": "Very important",
+              "count": 53,
+              "pct": 34.2
+            },
+            {
+              "label": "Extremely important",
+              "count": 54,
+              "pct": 34.8
+            }
+          ],
+          "stats": {
+            "median": 3,
+            "mean": 2.9,
+            "min": 0,
+            "max": 4,
+            "p25": 2,
+            "p75": 4
+          }
+        },
+        {
+          "id": "asp_admiration",
+          "text": "How important to you is the following: Being admired and recognized by many people.",
+          "kind": "ordinal",
+          "answered": 155,
+          "options": [
+            {
+              "label": "Not at all important",
+              "count": 35,
+              "pct": 22.6
+            },
+            {
+              "label": "Slightly important",
+              "count": 35,
+              "pct": 22.6
+            },
+            {
+              "label": "Moderately important",
+              "count": 49,
+              "pct": 31.6
+            },
+            {
+              "label": "Very important",
+              "count": 21,
+              "pct": 13.5
+            },
+            {
+              "label": "Extremely important",
+              "count": 15,
+              "pct": 9.7
+            }
+          ],
+          "stats": {
+            "median": 2,
+            "mean": 1.7,
+            "min": 0,
+            "max": 4,
+            "p25": 1,
+            "p75": 2
+          }
+        },
+        {
+          "id": "reg_external_avoid",
+          "text": "I am working on my company because other people (investors, peers, family) expect me to, and there would be real consequences if I quit.",
+          "kind": "ordinal",
+          "answered": 155,
+          "options": [
+            {
+              "label": "Strongly disagree",
+              "count": 53,
+              "pct": 34.2
+            },
+            {
+              "label": "Disagree",
+              "count": 40,
+              "pct": 25.8
+            },
+            {
+              "label": "Neither agree nor disagree",
+              "count": 27,
+              "pct": 17.4
+            },
+            {
+              "label": "Agree",
+              "count": 24,
+              "pct": 15.5
+            },
+            {
+              "label": "Strongly agree",
+              "count": 11,
+              "pct": 7.1
+            }
+          ],
+          "stats": {
+            "median": 1,
+            "mean": 1.4,
+            "min": 0,
+            "max": 4,
+            "p25": 0,
+            "p75": 2
+          }
+        },
+        {
+          "id": "reg_external_approach",
+          "text": "I am working on my company because of the rewards it can bring me — money, status, recognition.",
+          "kind": "ordinal",
+          "answered": 154,
+          "options": [
+            {
+              "label": "Strongly disagree",
+              "count": 9,
+              "pct": 5.8
+            },
+            {
+              "label": "Disagree",
+              "count": 20,
+              "pct": 13
+            },
+            {
+              "label": "Neither agree nor disagree",
+              "count": 27,
+              "pct": 17.5
+            },
+            {
+              "label": "Agree",
+              "count": 63,
+              "pct": 40.9
+            },
+            {
+              "label": "Strongly agree",
+              "count": 35,
+              "pct": 22.7
+            }
+          ],
+          "stats": {
+            "median": 3,
+            "mean": 2.6,
+            "min": 0,
+            "max": 4,
+            "p25": 2,
+            "p75": 3
+          }
+        },
+        {
+          "id": "reg_introjected",
+          "text": "I am working on my company because I would feel guilty or like a failure if I quit.",
+          "kind": "ordinal",
+          "answered": 154,
+          "options": [
+            {
+              "label": "Strongly disagree",
+              "count": 18,
+              "pct": 11.7
+            },
+            {
+              "label": "Disagree",
+              "count": 28,
+              "pct": 18.2
+            },
+            {
+              "label": "Neither agree nor disagree",
+              "count": 37,
+              "pct": 24
+            },
+            {
+              "label": "Agree",
+              "count": 54,
+              "pct": 35.1
+            },
+            {
+              "label": "Strongly agree",
+              "count": 17,
+              "pct": 11
+            }
+          ],
+          "stats": {
+            "median": 2,
+            "mean": 2.2,
+            "min": 0,
+            "max": 4,
+            "p25": 1,
+            "p75": 3
+          }
+        },
+        {
+          "id": "reg_identified",
+          "text": "I am working on my company because I genuinely value what we're building, regardless of how it turns out.",
+          "kind": "ordinal",
+          "answered": 154,
+          "options": [
+            {
+              "label": "Strongly disagree",
+              "count": 6,
+              "pct": 3.9
+            },
+            {
+              "label": "Disagree",
+              "count": 17,
+              "pct": 11
+            },
+            {
+              "label": "Neither agree nor disagree",
+              "count": 26,
+              "pct": 16.9
+            },
+            {
+              "label": "Agree",
+              "count": 54,
+              "pct": 35.1
+            },
+            {
+              "label": "Strongly agree",
+              "count": 51,
+              "pct": 33.1
+            }
+          ],
+          "stats": {
+            "median": 3,
+            "mean": 2.8,
+            "min": 0,
+            "max": 4,
+            "p25": 2,
+            "p75": 4
+          }
+        },
+        {
+          "id": "reg_integrated",
+          "text": "I am working on my company because it's an expression of who I am at my core — coherent with my other values and the rest of my life.",
+          "kind": "ordinal",
+          "answered": 154,
+          "options": [
+            {
+              "label": "Strongly disagree",
+              "count": 8,
+              "pct": 5.2
+            },
+            {
+              "label": "Disagree",
+              "count": 12,
+              "pct": 7.8
+            },
+            {
+              "label": "Neither agree nor disagree",
+              "count": 22,
+              "pct": 14.3
+            },
+            {
+              "label": "Agree",
+              "count": 65,
+              "pct": 42.2
+            },
+            {
+              "label": "Strongly agree",
+              "count": 47,
+              "pct": 30.5
+            }
+          ],
+          "stats": {
+            "median": 3,
+            "mean": 2.9,
+            "min": 0,
+            "max": 4,
+            "p25": 2,
+            "p75": 4
+          }
+        },
+        {
+          "id": "reg_intrinsic",
+          "text": "I am working on my company because I find the work itself genuinely enjoyable.",
+          "kind": "ordinal",
+          "answered": 153,
+          "options": [
+            {
+              "label": "Strongly disagree",
+              "count": 2,
+              "pct": 1.3
+            },
+            {
+              "label": "Disagree",
+              "count": 13,
+              "pct": 8.5
+            },
+            {
+              "label": "Neither agree nor disagree",
+              "count": 29,
+              "pct": 19
+            },
+            {
+              "label": "Agree",
+              "count": 70,
+              "pct": 45.8
+            },
+            {
+              "label": "Strongly agree",
+              "count": 39,
+              "pct": 25.5
+            }
+          ],
+          "stats": {
+            "median": 3,
+            "mean": 2.9,
+            "min": 0,
+            "max": 4,
+            "p25": 2,
+            "p75": 4
+          }
+        },
+        {
+          "id": "reg_amotivation",
+          "text": "I am working on my company because — honestly, I'm not sure why anymore.",
+          "kind": "ordinal",
+          "answered": 154,
+          "options": [
+            {
+              "label": "Strongly disagree",
+              "count": 51,
+              "pct": 33.1
+            },
+            {
+              "label": "Disagree",
+              "count": 49,
+              "pct": 31.8
+            },
+            {
+              "label": "Neither agree nor disagree",
+              "count": 22,
+              "pct": 14.3
+            },
+            {
+              "label": "Agree",
+              "count": 22,
+              "pct": 14.3
+            },
+            {
+              "label": "Strongly agree",
+              "count": 10,
+              "pct": 6.5
+            }
+          ],
+          "stats": {
+            "median": 1,
+            "mean": 1.3,
+            "min": 0,
+            "max": 4,
+            "p25": 0,
+            "p75": 2
+          }
+        }
+      ]
+    },
+    "depression": {
+      "title": "Depression (PHQ-9)",
+      "questions": [
+        {
+          "id": "phq9_1",
+          "text": "Little interest or pleasure in doing things",
+          "kind": "ordinal",
+          "answered": 147,
+          "options": [
+            {
+              "label": "Not at all",
+              "count": 55,
+              "pct": 37.4
+            },
+            {
+              "label": "Several days",
+              "count": 61,
+              "pct": 41.5
+            },
+            {
+              "label": "More than half the days",
+              "count": 25,
+              "pct": 17
+            },
+            {
+              "label": "Nearly every day",
+              "count": 6,
+              "pct": 4.1
+            }
+          ],
+          "stats": {
+            "median": 1,
+            "mean": 0.9,
+            "min": 0,
+            "max": 3,
+            "p25": 0,
+            "p75": 1
+          }
+        },
+        {
+          "id": "phq9_2",
+          "text": "Feeling down, depressed, or hopeless",
+          "kind": "ordinal",
+          "answered": 147,
+          "options": [
+            {
+              "label": "Not at all",
+              "count": 46,
+              "pct": 31.3
+            },
+            {
+              "label": "Several days",
+              "count": 73,
+              "pct": 49.7
+            },
+            {
+              "label": "More than half the days",
+              "count": 19,
+              "pct": 12.9
+            },
+            {
+              "label": "Nearly every day",
+              "count": 9,
+              "pct": 6.1
+            }
+          ],
+          "stats": {
+            "median": 1,
+            "mean": 0.9,
+            "min": 0,
+            "max": 3,
+            "p25": 0,
+            "p75": 1
+          }
+        },
+        {
+          "id": "phq9_3",
+          "text": "Trouble falling or staying asleep, or sleeping too much",
+          "kind": "ordinal",
+          "answered": 147,
+          "options": [
+            {
+              "label": "Not at all",
+              "count": 52,
+              "pct": 35.4
+            },
+            {
+              "label": "Several days",
+              "count": 55,
+              "pct": 37.4
+            },
+            {
+              "label": "More than half the days",
+              "count": 20,
+              "pct": 13.6
+            },
+            {
+              "label": "Nearly every day",
+              "count": 20,
+              "pct": 13.6
+            }
+          ],
+          "stats": {
+            "median": 1,
+            "mean": 1.1,
+            "min": 0,
+            "max": 3,
+            "p25": 0,
+            "p75": 2
+          }
+        },
+        {
+          "id": "phq9_4",
+          "text": "Feeling tired or having little energy",
+          "kind": "ordinal",
+          "answered": 148,
+          "options": [
+            {
+              "label": "Not at all",
+              "count": 16,
+              "pct": 10.8
+            },
+            {
+              "label": "Several days",
+              "count": 79,
+              "pct": 53.4
+            },
+            {
+              "label": "More than half the days",
+              "count": 31,
+              "pct": 20.9
+            },
+            {
+              "label": "Nearly every day",
+              "count": 22,
+              "pct": 14.9
+            }
+          ],
+          "stats": {
+            "median": 1,
+            "mean": 1.4,
+            "min": 0,
+            "max": 3,
+            "p25": 1,
+            "p75": 2
+          }
+        },
+        {
+          "id": "phq9_5",
+          "text": "Poor appetite or overeating",
+          "kind": "ordinal",
+          "answered": 147,
+          "options": [
+            {
+              "label": "Not at all",
+              "count": 72,
+              "pct": 49
+            },
+            {
+              "label": "Several days",
+              "count": 43,
+              "pct": 29.3
+            },
+            {
+              "label": "More than half the days",
+              "count": 20,
+              "pct": 13.6
+            },
+            {
+              "label": "Nearly every day",
+              "count": 12,
+              "pct": 8.2
+            }
+          ],
+          "stats": {
+            "median": 1,
+            "mean": 0.8,
+            "min": 0,
+            "max": 3,
+            "p25": 0,
+            "p75": 1
+          }
+        },
+        {
+          "id": "phq9_6",
+          "text": "Feeling bad about yourself — or that you are a failure or have let yourself or your family down",
+          "kind": "ordinal",
+          "answered": 147,
+          "options": [
+            {
+              "label": "Not at all",
+              "count": 62,
+              "pct": 42.2
+            },
+            {
+              "label": "Several days",
+              "count": 49,
+              "pct": 33.3
+            },
+            {
+              "label": "More than half the days",
+              "count": 22,
+              "pct": 15
+            },
+            {
+              "label": "Nearly every day",
+              "count": 14,
+              "pct": 9.5
+            }
+          ],
+          "stats": {
+            "median": 1,
+            "mean": 0.9,
+            "min": 0,
+            "max": 3,
+            "p25": 0,
+            "p75": 1
+          }
+        },
+        {
+          "id": "phq9_7",
+          "text": "Trouble concentrating on things, such as reading the newspaper or watching television",
+          "kind": "ordinal",
+          "answered": 147,
+          "options": [
+            {
+              "label": "Not at all",
+              "count": 62,
+              "pct": 42.2
+            },
+            {
+              "label": "Several days",
+              "count": 60,
+              "pct": 40.8
+            },
+            {
+              "label": "More than half the days",
+              "count": 15,
+              "pct": 10.2
+            },
+            {
+              "label": "Nearly every day",
+              "count": 10,
+              "pct": 6.8
+            }
+          ],
+          "stats": {
+            "median": 1,
+            "mean": 0.8,
+            "min": 0,
+            "max": 3,
+            "p25": 0,
+            "p75": 1
+          }
+        },
+        {
+          "id": "phq9_8",
+          "text": "Moving or speaking so slowly that other people could have noticed? Or the opposite — being so fidgety or restless that you have been moving around a lot more than usual",
+          "kind": "ordinal",
+          "answered": 148,
+          "options": [
+            {
+              "label": "Not at all",
+              "count": 113,
+              "pct": 76.4
+            },
+            {
+              "label": "Several days",
+              "count": 21,
+              "pct": 14.2
+            },
+            {
+              "label": "More than half the days",
+              "count": 10,
+              "pct": 6.8
+            },
+            {
+              "label": "Nearly every day",
+              "count": 4,
+              "pct": 2.7
+            }
+          ],
+          "stats": {
+            "median": 0,
+            "mean": 0.4,
+            "min": 0,
+            "max": 3,
+            "p25": 0,
+            "p75": 0
+          }
+        },
+        {
+          "id": "phq9_9",
+          "text": "Thoughts that you would be better off dead or of hurting yourself in some way",
+          "kind": "ordinal",
+          "answered": 146,
+          "options": [
+            {
+              "label": "Not at all",
+              "count": 130,
+              "pct": 89
+            },
+            {
+              "label": "Several days",
+              "count": 16,
+              "pct": 11
+            }
+          ],
+          "stats": {
+            "median": 0,
+            "mean": 0.1,
+            "min": 0,
+            "max": 1,
+            "p25": 0,
+            "p75": 0
+          }
+        }
+      ],
+      "composites": [
+        {
+          "id": "phq_9_total",
+          "label": "PHQ-9 Total",
+          "description": "Sum of 9 items (0–3 each)",
+          "range": [
+            0,
+            27
+          ],
+          "answered": 148,
+          "stats": {
+            "median": 6,
+            "mean": 7.3,
+            "min": 0,
+            "max": 25,
+            "p25": 4,
+            "p75": 10
+          },
+          "severity": [
+            {
+              "label": "None (0–4)",
+              "count": 57,
+              "pct": 38.5
+            },
+            {
+              "label": "Mild (5–9)",
+              "count": 49,
+              "pct": 33.1
+            },
+            {
+              "label": "Moderate (10–14)",
+              "count": 28,
+              "pct": 18.9
+            },
+            {
+              "label": "Mod. severe (15–19)",
+              "count": 10,
+              "pct": 6.8
+            },
+            {
+              "label": "Severe (20–27)",
+              "count": 4,
+              "pct": 2.7
+            }
+          ]
+        }
+      ]
+    },
+    "anxiety": {
+      "title": "Anxiety (GAD-7)",
+      "questions": [
+        {
+          "id": "gad7_1",
+          "text": "Feeling nervous, anxious, or on edge",
+          "kind": "ordinal",
+          "answered": 142,
+          "options": [
+            {
+              "label": "Not at all",
+              "count": 16,
+              "pct": 11.3
+            },
+            {
+              "label": "Several days",
+              "count": 69,
+              "pct": 48.6
+            },
+            {
+              "label": "More than half the days",
+              "count": 35,
+              "pct": 24.6
+            },
+            {
+              "label": "Nearly every day",
+              "count": 22,
+              "pct": 15.5
+            }
+          ],
+          "stats": {
+            "median": 1,
+            "mean": 1.4,
+            "min": 0,
+            "max": 3,
+            "p25": 1,
+            "p75": 2
+          }
+        },
+        {
+          "id": "gad7_2",
+          "text": "Not being able to stop or control worrying",
+          "kind": "ordinal",
+          "answered": 141,
+          "options": [
+            {
+              "label": "Not at all",
+              "count": 55,
+              "pct": 39
+            },
+            {
+              "label": "Several days",
+              "count": 48,
+              "pct": 34
+            },
+            {
+              "label": "More than half the days",
+              "count": 20,
+              "pct": 14.2
+            },
+            {
+              "label": "Nearly every day",
+              "count": 18,
+              "pct": 12.8
+            }
+          ],
+          "stats": {
+            "median": 1,
+            "mean": 1,
+            "min": 0,
+            "max": 3,
+            "p25": 0,
+            "p75": 2
+          }
+        },
+        {
+          "id": "gad7_3",
+          "text": "Worrying too much about different things",
+          "kind": "ordinal",
+          "answered": 139,
+          "options": [
+            {
+              "label": "Not at all",
+              "count": 31,
+              "pct": 22.3
+            },
+            {
+              "label": "Several days",
+              "count": 58,
+              "pct": 41.7
+            },
+            {
+              "label": "More than half the days",
+              "count": 22,
+              "pct": 15.8
+            },
+            {
+              "label": "Nearly every day",
+              "count": 28,
+              "pct": 20.1
+            }
+          ],
+          "stats": {
+            "median": 1,
+            "mean": 1.3,
+            "min": 0,
+            "max": 3,
+            "p25": 1,
+            "p75": 2
+          }
+        },
+        {
+          "id": "gad7_4",
+          "text": "Trouble relaxing",
+          "kind": "ordinal",
+          "answered": 139,
+          "options": [
+            {
+              "label": "Not at all",
+              "count": 38,
+              "pct": 27.3
+            },
+            {
+              "label": "Several days",
+              "count": 50,
+              "pct": 36
+            },
+            {
+              "label": "More than half the days",
+              "count": 23,
+              "pct": 16.5
+            },
+            {
+              "label": "Nearly every day",
+              "count": 28,
+              "pct": 20.1
+            }
+          ],
+          "stats": {
+            "median": 1,
+            "mean": 1.3,
+            "min": 0,
+            "max": 3,
+            "p25": 0,
+            "p75": 2
+          }
+        },
+        {
+          "id": "gad7_5",
+          "text": "Being so restless that it is hard to sit still",
+          "kind": "ordinal",
+          "answered": 140,
+          "options": [
+            {
+              "label": "Not at all",
+              "count": 77,
+              "pct": 55
+            },
+            {
+              "label": "Several days",
+              "count": 39,
+              "pct": 27.9
+            },
+            {
+              "label": "More than half the days",
+              "count": 13,
+              "pct": 9.3
+            },
+            {
+              "label": "Nearly every day",
+              "count": 11,
+              "pct": 7.9
+            }
+          ],
+          "stats": {
+            "median": 0,
+            "mean": 0.7,
+            "min": 0,
+            "max": 3,
+            "p25": 0,
+            "p75": 1
+          }
+        },
+        {
+          "id": "gad7_6",
+          "text": "Becoming easily annoyed or irritable",
+          "kind": "ordinal",
+          "answered": 137,
+          "options": [
+            {
+              "label": "Not at all",
+              "count": 43,
+              "pct": 31.4
+            },
+            {
+              "label": "Several days",
+              "count": 58,
+              "pct": 42.3
+            },
+            {
+              "label": "More than half the days",
+              "count": 26,
+              "pct": 19
+            },
+            {
+              "label": "Nearly every day",
+              "count": 10,
+              "pct": 7.3
+            }
+          ],
+          "stats": {
+            "median": 1,
+            "mean": 1,
+            "min": 0,
+            "max": 3,
+            "p25": 0,
+            "p75": 2
+          }
+        },
+        {
+          "id": "gad7_7",
+          "text": "Feeling afraid as if something awful might happen",
+          "kind": "ordinal",
+          "answered": 139,
+          "options": [
+            {
+              "label": "Not at all",
+              "count": 71,
+              "pct": 51.1
+            },
+            {
+              "label": "Several days",
+              "count": 40,
+              "pct": 28.8
+            },
+            {
+              "label": "More than half the days",
+              "count": 13,
+              "pct": 9.4
+            },
+            {
+              "label": "Nearly every day",
+              "count": 15,
+              "pct": 10.8
+            }
+          ],
+          "stats": {
+            "median": 0,
+            "mean": 0.8,
+            "min": 0,
+            "max": 3,
+            "p25": 0,
+            "p75": 1
+          }
+        }
+      ],
+      "composites": [
+        {
+          "id": "gad_7_total",
+          "label": "GAD-7 Total",
+          "description": "Sum of 7 items (0–3 each)",
+          "range": [
+            0,
+            21
+          ],
+          "answered": 140,
+          "stats": {
+            "median": 6,
+            "mean": 7.6,
+            "min": 0,
+            "max": 21,
+            "p25": 3,
+            "p75": 11
+          },
+          "severity": [
+            {
+              "label": "Minimal (0–4)",
+              "count": 55,
+              "pct": 39.3
+            },
+            {
+              "label": "Mild (5–9)",
+              "count": 34,
+              "pct": 24.3
+            },
+            {
+              "label": "Moderate (10–14)",
+              "count": 35,
+              "pct": 25
+            },
+            {
+              "label": "Severe (15–21)",
+              "count": 16,
+              "pct": 11.4
+            }
+          ]
+        }
+      ]
+    },
+    "burnout": {
+      "title": "Burnout (MBI-GS)",
+      "questions": [
+        {
+          "id": "mbi_exhaust_1",
+          "text": "I feel emotionally drained from my work.",
+          "kind": "ordinal",
+          "answered": 139,
+          "options": [
+            {
+              "label": "Never",
+              "count": 2,
+              "pct": 1.4
+            },
+            {
+              "label": "A few times a year",
+              "count": 14,
+              "pct": 10.1
+            },
+            {
+              "label": "Once a month or less",
+              "count": 15,
+              "pct": 10.8
+            },
+            {
+              "label": "A few times a month",
+              "count": 35,
+              "pct": 25.2
+            },
+            {
+              "label": "Once a week",
+              "count": 19,
+              "pct": 13.7
+            },
+            {
+              "label": "A few times a week",
+              "count": 40,
+              "pct": 28.8
+            },
+            {
+              "label": "Every day",
+              "count": 14,
+              "pct": 10.1
+            }
+          ],
+          "stats": {
+            "median": 4,
+            "mean": 3.7,
+            "min": 0,
+            "max": 6,
+            "p25": 3,
+            "p75": 5
+          }
+        },
+        {
+          "id": "mbi_exhaust_2",
+          "text": "I feel used up at the end of a workday.",
+          "kind": "ordinal",
+          "answered": 139,
+          "options": [
+            {
+              "label": "Never",
+              "count": 4,
+              "pct": 2.9
+            },
+            {
+              "label": "A few times a year",
+              "count": 7,
+              "pct": 5
+            },
+            {
+              "label": "Once a month or less",
+              "count": 10,
+              "pct": 7.2
+            },
+            {
+              "label": "A few times a month",
+              "count": 16,
+              "pct": 11.5
+            },
+            {
+              "label": "Once a week",
+              "count": 28,
+              "pct": 20.1
+            },
+            {
+              "label": "A few times a week",
+              "count": 48,
+              "pct": 34.5
+            },
+            {
+              "label": "Every day",
+              "count": 26,
+              "pct": 18.7
+            }
+          ],
+          "stats": {
+            "median": 5,
+            "mean": 4.2,
+            "min": 0,
+            "max": 6,
+            "p25": 3,
+            "p75": 5
+          }
+        },
+        {
+          "id": "mbi_exhaust_3",
+          "text": "I feel tired when I get up in the morning and have to face another day on the job.",
+          "kind": "ordinal",
+          "answered": 138,
+          "options": [
+            {
+              "label": "Never",
+              "count": 17,
+              "pct": 12.3
+            },
+            {
+              "label": "A few times a year",
+              "count": 15,
+              "pct": 10.9
+            },
+            {
+              "label": "Once a month or less",
+              "count": 15,
+              "pct": 10.9
+            },
+            {
+              "label": "A few times a month",
+              "count": 19,
+              "pct": 13.8
+            },
+            {
+              "label": "Once a week",
+              "count": 20,
+              "pct": 14.5
+            },
+            {
+              "label": "A few times a week",
+              "count": 37,
+              "pct": 26.8
+            },
+            {
+              "label": "Every day",
+              "count": 15,
+              "pct": 10.9
+            }
+          ],
+          "stats": {
+            "median": 4,
+            "mean": 3.3,
+            "min": 0,
+            "max": 6,
+            "p25": 2,
+            "p75": 5
+          }
+        },
+        {
+          "id": "mbi_cynicism_1",
+          "text": "I have become less interested in my work since I started this job.",
+          "kind": "ordinal",
+          "answered": 139,
+          "options": [
+            {
+              "label": "Never",
+              "count": 38,
+              "pct": 27.3
+            },
+            {
+              "label": "A few times a year",
+              "count": 21,
+              "pct": 15.1
+            },
+            {
+              "label": "Once a month or less",
+              "count": 11,
+              "pct": 7.9
+            },
+            {
+              "label": "A few times a month",
+              "count": 20,
+              "pct": 14.4
+            },
+            {
+              "label": "Once a week",
+              "count": 13,
+              "pct": 9.4
+            },
+            {
+              "label": "A few times a week",
+              "count": 20,
+              "pct": 14.4
+            },
+            {
+              "label": "Every day",
+              "count": 16,
+              "pct": 11.5
+            }
+          ],
+          "stats": {
+            "median": 2,
+            "mean": 2.5,
+            "min": 0,
+            "max": 6,
+            "p25": 0,
+            "p75": 5
+          }
+        },
+        {
+          "id": "mbi_cynicism_2",
+          "text": "I have become less enthusiastic about my work.",
+          "kind": "ordinal",
+          "answered": 138,
+          "options": [
+            {
+              "label": "Never",
+              "count": 28,
+              "pct": 20.3
+            },
+            {
+              "label": "A few times a year",
+              "count": 24,
+              "pct": 17.4
+            },
+            {
+              "label": "Once a month or less",
+              "count": 15,
+              "pct": 10.9
+            },
+            {
+              "label": "A few times a month",
+              "count": 20,
+              "pct": 14.5
+            },
+            {
+              "label": "Once a week",
+              "count": 10,
+              "pct": 7.2
+            },
+            {
+              "label": "A few times a week",
+              "count": 29,
+              "pct": 21
+            },
+            {
+              "label": "Every day",
+              "count": 12,
+              "pct": 8.7
+            }
+          ],
+          "stats": {
+            "median": 3,
+            "mean": 2.7,
+            "min": 0,
+            "max": 6,
+            "p25": 1,
+            "p75": 5
+          }
+        },
+        {
+          "id": "mbi_cynicism_3",
+          "text": "I have become more cynical about whether my work contributes anything.",
+          "kind": "ordinal",
+          "answered": 138,
+          "options": [
+            {
+              "label": "Never",
+              "count": 40,
+              "pct": 29
+            },
+            {
+              "label": "A few times a year",
+              "count": 14,
+              "pct": 10.1
+            },
+            {
+              "label": "Once a month or less",
+              "count": 10,
+              "pct": 7.2
+            },
+            {
+              "label": "A few times a month",
+              "count": 31,
+              "pct": 22.5
+            },
+            {
+              "label": "Once a week",
+              "count": 17,
+              "pct": 12.3
+            },
+            {
+              "label": "A few times a week",
+              "count": 16,
+              "pct": 11.6
+            },
+            {
+              "label": "Every day",
+              "count": 10,
+              "pct": 7.2
+            }
+          ],
+          "stats": {
+            "median": 3,
+            "mean": 2.4,
+            "min": 0,
+            "max": 6,
+            "p25": 0,
+            "p75": 4
+          }
+        },
+        {
+          "id": "mbi_efficacy_1",
+          "text": "In my opinion, I am good at my job.",
+          "kind": "ordinal",
+          "answered": 138,
+          "options": [
+            {
+              "label": "A few times a year",
+              "count": 2,
+              "pct": 1.4
+            },
+            {
+              "label": "Once a month or less",
+              "count": 3,
+              "pct": 2.2
+            },
+            {
+              "label": "A few times a month",
+              "count": 18,
+              "pct": 13
+            },
+            {
+              "label": "Once a week",
+              "count": 28,
+              "pct": 20.3
+            },
+            {
+              "label": "A few times a week",
+              "count": 55,
+              "pct": 39.9
+            },
+            {
+              "label": "Every day",
+              "count": 32,
+              "pct": 23.2
+            }
+          ],
+          "stats": {
+            "median": 5,
+            "mean": 4.6,
+            "min": 1,
+            "max": 6,
+            "p25": 4,
+            "p75": 5
+          }
+        },
+        {
+          "id": "mbi_efficacy_2",
+          "text": "I feel exhilarated when I accomplish something at work.",
+          "kind": "ordinal",
+          "answered": 137,
+          "options": [
+            {
+              "label": "Never",
+              "count": 1,
+              "pct": 0.7
+            },
+            {
+              "label": "A few times a year",
+              "count": 1,
+              "pct": 0.7
+            },
+            {
+              "label": "Once a month or less",
+              "count": 7,
+              "pct": 5.1
+            },
+            {
+              "label": "A few times a month",
+              "count": 32,
+              "pct": 23.4
+            },
+            {
+              "label": "Once a week",
+              "count": 24,
+              "pct": 17.5
+            },
+            {
+              "label": "A few times a week",
+              "count": 51,
+              "pct": 37.2
+            },
+            {
+              "label": "Every day",
+              "count": 21,
+              "pct": 15.3
+            }
+          ],
+          "stats": {
+            "median": 5,
+            "mean": 4.3,
+            "min": 0,
+            "max": 6,
+            "p25": 3,
+            "p75": 5
+          }
+        },
+        {
+          "id": "mbi_efficacy_3",
+          "text": "I have accomplished many worthwhile things in this job.",
+          "kind": "ordinal",
+          "answered": 137,
+          "options": [
+            {
+              "label": "Never",
+              "count": 2,
+              "pct": 1.5
+            },
+            {
+              "label": "A few times a year",
+              "count": 9,
+              "pct": 6.6
+            },
+            {
+              "label": "Once a month or less",
+              "count": 17,
+              "pct": 12.4
+            },
+            {
+              "label": "A few times a month",
+              "count": 22,
+              "pct": 16.1
+            },
+            {
+              "label": "Once a week",
+              "count": 22,
+              "pct": 16.1
+            },
+            {
+              "label": "A few times a week",
+              "count": 41,
+              "pct": 29.9
+            },
+            {
+              "label": "Every day",
+              "count": 24,
+              "pct": 17.5
+            }
+          ],
+          "stats": {
+            "median": 4,
+            "mean": 4,
+            "min": 0,
+            "max": 6,
+            "p25": 3,
+            "p75": 5
+          }
+        }
+      ],
+      "composites": [
+        {
+          "id": "exhaustion",
+          "label": "Exhaustion",
+          "description": "Mean of 3 items (0–6 frequency scale)",
+          "range": [
+            0,
+            6
+          ],
+          "answered": 138,
+          "stats": {
+            "median": 3.7,
+            "mean": 3.7,
+            "min": 0,
+            "max": 6,
+            "p25": 2.7,
+            "p75": 5
+          }
+        },
+        {
+          "id": "cynicism",
+          "label": "Cynicism",
+          "description": "Mean of 3 items (0–6 frequency scale)",
+          "range": [
+            0,
+            6
+          ],
+          "answered": 138,
+          "stats": {
+            "median": 2.3,
+            "mean": 2.6,
+            "min": 0,
+            "max": 6,
+            "p25": 0.7,
+            "p75": 4.3
+          }
+        },
+        {
+          "id": "professional_efficacy",
+          "label": "Professional Efficacy",
+          "description": "Mean of 3 items (0–6, higher = more efficacy)",
+          "range": [
+            0,
+            6
+          ],
+          "answered": 137,
+          "stats": {
+            "median": 4.3,
+            "mean": 4.3,
+            "min": 0.7,
+            "max": 6,
+            "p25": 3.7,
+            "p75": 5
+          }
+        }
+      ]
+    },
+    "adhd": {
+      "title": "Focus & Attention (ASRS-6)",
+      "questions": [
+        {
+          "id": "asrs_1",
+          "text": "How often do you have trouble wrapping up the final details of a project, once the challenging parts have been done?",
+          "kind": "ordinal",
+          "answered": 132,
+          "options": [
+            {
+              "label": "Never",
+              "count": 7,
+              "pct": 5.3
+            },
+            {
+              "label": "Rarely",
+              "count": 30,
+              "pct": 22.7
+            },
+            {
+              "label": "Sometimes",
+              "count": 35,
+              "pct": 26.5
+            },
+            {
+              "label": "Often",
+              "count": 38,
+              "pct": 28.8
+            },
+            {
+              "label": "Very often",
+              "count": 22,
+              "pct": 16.7
+            }
+          ],
+          "stats": {
+            "median": 2,
+            "mean": 2.3,
+            "min": 0,
+            "max": 4,
+            "p25": 1,
+            "p75": 3
+          }
+        },
+        {
+          "id": "asrs_2",
+          "text": "How often do you have difficulty getting things in order when you have to do a task that requires organization?",
+          "kind": "ordinal",
+          "answered": 129,
+          "options": [
+            {
+              "label": "Never",
+              "count": 14,
+              "pct": 10.9
+            },
+            {
+              "label": "Rarely",
+              "count": 35,
+              "pct": 27.1
+            },
+            {
+              "label": "Sometimes",
+              "count": 39,
+              "pct": 30.2
+            },
+            {
+              "label": "Often",
+              "count": 28,
+              "pct": 21.7
+            },
+            {
+              "label": "Very often",
+              "count": 13,
+              "pct": 10.1
+            }
+          ],
+          "stats": {
+            "median": 2,
+            "mean": 1.9,
+            "min": 0,
+            "max": 4,
+            "p25": 1,
+            "p75": 3
+          }
+        },
+        {
+          "id": "asrs_3",
+          "text": "How often do you have problems remembering appointments or obligations?",
+          "kind": "ordinal",
+          "answered": 130,
+          "options": [
+            {
+              "label": "Never",
+              "count": 23,
+              "pct": 17.7
+            },
+            {
+              "label": "Rarely",
+              "count": 46,
+              "pct": 35.4
+            },
+            {
+              "label": "Sometimes",
+              "count": 37,
+              "pct": 28.5
+            },
+            {
+              "label": "Often",
+              "count": 16,
+              "pct": 12.3
+            },
+            {
+              "label": "Very often",
+              "count": 8,
+              "pct": 6.2
+            }
+          ],
+          "stats": {
+            "median": 1,
+            "mean": 1.5,
+            "min": 0,
+            "max": 4,
+            "p25": 1,
+            "p75": 2
+          }
+        },
+        {
+          "id": "asrs_4",
+          "text": "When you have a task that requires a lot of thought, how often do you avoid or delay getting started?",
+          "kind": "ordinal",
+          "answered": 130,
+          "options": [
+            {
+              "label": "Never",
+              "count": 5,
+              "pct": 3.8
+            },
+            {
+              "label": "Rarely",
+              "count": 31,
+              "pct": 23.8
+            },
+            {
+              "label": "Sometimes",
+              "count": 39,
+              "pct": 30
+            },
+            {
+              "label": "Often",
+              "count": 35,
+              "pct": 26.9
+            },
+            {
+              "label": "Very often",
+              "count": 20,
+              "pct": 15.4
+            }
+          ],
+          "stats": {
+            "median": 2,
+            "mean": 2.3,
+            "min": 0,
+            "max": 4,
+            "p25": 1,
+            "p75": 3
+          }
+        },
+        {
+          "id": "asrs_5",
+          "text": "How often do you fidget or squirm with your hands or feet when you have to sit down for a long time?",
+          "kind": "ordinal",
+          "answered": 129,
+          "options": [
+            {
+              "label": "Never",
+              "count": 15,
+              "pct": 11.6
+            },
+            {
+              "label": "Rarely",
+              "count": 24,
+              "pct": 18.6
+            },
+            {
+              "label": "Sometimes",
+              "count": 39,
+              "pct": 30.2
+            },
+            {
+              "label": "Often",
+              "count": 23,
+              "pct": 17.8
+            },
+            {
+              "label": "Very often",
+              "count": 28,
+              "pct": 21.7
+            }
+          ],
+          "stats": {
+            "median": 2,
+            "mean": 2.2,
+            "min": 0,
+            "max": 4,
+            "p25": 1,
+            "p75": 3
+          }
+        },
+        {
+          "id": "asrs_6",
+          "text": "How often do you feel overly active and compelled to do things, like you were driven by a motor?",
+          "kind": "ordinal",
+          "answered": 130,
+          "options": [
+            {
+              "label": "Never",
+              "count": 14,
+              "pct": 10.8
+            },
+            {
+              "label": "Rarely",
+              "count": 38,
+              "pct": 29.2
+            },
+            {
+              "label": "Sometimes",
+              "count": 27,
+              "pct": 20.8
+            },
+            {
+              "label": "Often",
+              "count": 33,
+              "pct": 25.4
+            },
+            {
+              "label": "Very often",
+              "count": 18,
+              "pct": 13.8
+            }
+          ],
+          "stats": {
+            "median": 2,
+            "mean": 2,
+            "min": 0,
+            "max": 4,
+            "p25": 1,
+            "p75": 3
+          }
+        }
+      ],
+      "composites": [
+        {
+          "id": "asrs_6_total",
+          "label": "ASRS-6 Total",
+          "description": "Sum of 6 items (0–4 each)",
+          "range": [
+            0,
+            24
+          ],
+          "answered": 130,
+          "stats": {
+            "median": 12,
+            "mean": 12.2,
+            "min": 3,
+            "max": 24,
+            "p25": 9,
+            "p75": 15
+          },
+          "severity": [
+            {
+              "label": "Low (0–9)",
+              "count": 40,
+              "pct": 30.8
+            },
+            {
+              "label": "Moderate (10–13)",
+              "count": 44,
+              "pct": 33.8
+            },
+            {
+              "label": "High (14–24)",
+              "count": 46,
+              "pct": 35.4
+            }
+          ]
+        }
+      ]
+    },
+    "autism": {
+      "title": "Perception & Social Processing (AQ-10)",
+      "questions": [
+        {
+          "id": "aq_1",
+          "text": "I often notice small sounds when others do not.",
+          "kind": "ordinal",
+          "answered": 130,
+          "options": [
+            {
+              "label": "Definitely agree",
+              "count": 33,
+              "pct": 25.4
+            },
+            {
+              "label": "Slightly agree",
+              "count": 43,
+              "pct": 33.1
+            },
+            {
+              "label": "Slightly disagree",
+              "count": 17,
+              "pct": 13.1
+            },
+            {
+              "label": "Definitely disagree",
+              "count": 37,
+              "pct": 28.5
+            }
+          ],
+          "stats": {
+            "median": 1,
+            "mean": 1.4,
+            "min": 0,
+            "max": 3,
+            "p25": 0,
+            "p75": 3
+          }
+        },
+        {
+          "id": "aq_2",
+          "text": "I usually concentrate more on the whole picture, rather than small details.",
+          "kind": "ordinal",
+          "answered": 129,
+          "options": [
+            {
+              "label": "Definitely agree",
+              "count": 37,
+              "pct": 28.7
+            },
+            {
+              "label": "Slightly agree",
+              "count": 46,
+              "pct": 35.7
+            },
+            {
+              "label": "Slightly disagree",
+              "count": 38,
+              "pct": 29.5
+            },
+            {
+              "label": "Definitely disagree",
+              "count": 8,
+              "pct": 6.2
+            }
+          ],
+          "stats": {
+            "median": 1,
+            "mean": 1.1,
+            "min": 0,
+            "max": 3,
+            "p25": 0,
+            "p75": 2
+          }
+        },
+        {
+          "id": "aq_3",
+          "text": "I find it easy to do more than one thing at once.",
+          "kind": "ordinal",
+          "answered": 129,
+          "options": [
+            {
+              "label": "Definitely agree",
+              "count": 28,
+              "pct": 21.7
+            },
+            {
+              "label": "Slightly agree",
+              "count": 52,
+              "pct": 40.3
+            },
+            {
+              "label": "Slightly disagree",
+              "count": 32,
+              "pct": 24.8
+            },
+            {
+              "label": "Definitely disagree",
+              "count": 17,
+              "pct": 13.2
+            }
+          ],
+          "stats": {
+            "median": 1,
+            "mean": 1.3,
+            "min": 0,
+            "max": 3,
+            "p25": 1,
+            "p75": 2
+          }
+        },
+        {
+          "id": "aq_4",
+          "text": "If there is an interruption, I can switch back to what I was doing very quickly.",
+          "kind": "ordinal",
+          "answered": 129,
+          "options": [
+            {
+              "label": "Definitely agree",
+              "count": 20,
+              "pct": 15.5
+            },
+            {
+              "label": "Slightly agree",
+              "count": 46,
+              "pct": 35.7
+            },
+            {
+              "label": "Slightly disagree",
+              "count": 41,
+              "pct": 31.8
+            },
+            {
+              "label": "Definitely disagree",
+              "count": 22,
+              "pct": 17.1
+            }
+          ],
+          "stats": {
+            "median": 1,
+            "mean": 1.5,
+            "min": 0,
+            "max": 3,
+            "p25": 1,
+            "p75": 2
+          }
+        },
+        {
+          "id": "aq_5",
+          "text": "I find it easy to 'read between the lines' when someone is talking to me.",
+          "kind": "ordinal",
+          "answered": 129,
+          "options": [
+            {
+              "label": "Definitely agree",
+              "count": 65,
+              "pct": 50.4
+            },
+            {
+              "label": "Slightly agree",
+              "count": 40,
+              "pct": 31
+            },
+            {
+              "label": "Slightly disagree",
+              "count": 20,
+              "pct": 15.5
+            },
+            {
+              "label": "Definitely disagree",
+              "count": 4,
+              "pct": 3.1
+            }
+          ],
+          "stats": {
+            "median": 0,
+            "mean": 0.7,
+            "min": 0,
+            "max": 3,
+            "p25": 0,
+            "p75": 1
+          }
+        },
+        {
+          "id": "aq_6",
+          "text": "I know how to tell if someone listening to me is getting bored.",
+          "kind": "ordinal",
+          "answered": 129,
+          "options": [
+            {
+              "label": "Definitely agree",
+              "count": 76,
+              "pct": 58.9
+            },
+            {
+              "label": "Slightly agree",
+              "count": 41,
+              "pct": 31.8
+            },
+            {
+              "label": "Slightly disagree",
+              "count": 9,
+              "pct": 7
+            },
+            {
+              "label": "Definitely disagree",
+              "count": 3,
+              "pct": 2.3
+            }
+          ],
+          "stats": {
+            "median": 0,
+            "mean": 0.5,
+            "min": 0,
+            "max": 3,
+            "p25": 0,
+            "p75": 1
+          }
+        },
+        {
+          "id": "aq_7",
+          "text": "When I'm reading a story, I find it difficult to work out the characters' intentions.",
+          "kind": "ordinal",
+          "answered": 128,
+          "options": [
+            {
+              "label": "Definitely agree",
+              "count": 5,
+              "pct": 3.9
+            },
+            {
+              "label": "Slightly agree",
+              "count": 11,
+              "pct": 8.6
+            },
+            {
+              "label": "Slightly disagree",
+              "count": 39,
+              "pct": 30.5
+            },
+            {
+              "label": "Definitely disagree",
+              "count": 73,
+              "pct": 57
+            }
+          ],
+          "stats": {
+            "median": 3,
+            "mean": 2.4,
+            "min": 0,
+            "max": 3,
+            "p25": 2,
+            "p75": 3
+          }
+        },
+        {
+          "id": "aq_8",
+          "text": "I like to collect information about categories of things (e.g., types of car, types of bird, types of train, types of plant).",
+          "kind": "ordinal",
+          "answered": 129,
+          "options": [
+            {
+              "label": "Definitely agree",
+              "count": 29,
+              "pct": 22.5
+            },
+            {
+              "label": "Slightly agree",
+              "count": 23,
+              "pct": 17.8
+            },
+            {
+              "label": "Slightly disagree",
+              "count": 32,
+              "pct": 24.8
+            },
+            {
+              "label": "Definitely disagree",
+              "count": 45,
+              "pct": 34.9
+            }
+          ],
+          "stats": {
+            "median": 2,
+            "mean": 1.7,
+            "min": 0,
+            "max": 3,
+            "p25": 1,
+            "p75": 3
+          }
+        },
+        {
+          "id": "aq_9",
+          "text": "I find it easy to work out what someone is thinking or feeling just by looking at their face.",
+          "kind": "ordinal",
+          "answered": 129,
+          "options": [
+            {
+              "label": "Definitely agree",
+              "count": 53,
+              "pct": 41.1
+            },
+            {
+              "label": "Slightly agree",
+              "count": 49,
+              "pct": 38
+            },
+            {
+              "label": "Slightly disagree",
+              "count": 16,
+              "pct": 12.4
+            },
+            {
+              "label": "Definitely disagree",
+              "count": 11,
+              "pct": 8.5
+            }
+          ],
+          "stats": {
+            "median": 1,
+            "mean": 0.9,
+            "min": 0,
+            "max": 3,
+            "p25": 0,
+            "p75": 1
+          }
+        },
+        {
+          "id": "aq_10",
+          "text": "I find it difficult to work out people's intentions.",
+          "kind": "ordinal",
+          "answered": 129,
+          "options": [
+            {
+              "label": "Definitely agree",
+              "count": 6,
+              "pct": 4.7
+            },
+            {
+              "label": "Slightly agree",
+              "count": 18,
+              "pct": 14
+            },
+            {
+              "label": "Slightly disagree",
+              "count": 53,
+              "pct": 41.1
+            },
+            {
+              "label": "Definitely disagree",
+              "count": 52,
+              "pct": 40.3
+            }
+          ],
+          "stats": {
+            "median": 2,
+            "mean": 2.2,
+            "min": 0,
+            "max": 3,
+            "p25": 2,
+            "p75": 3
+          }
+        },
+        {
+          "id": "nd_adhd_diagnosis",
+          "text": "Have you ever been formally diagnosed with ADHD?",
+          "kind": "categorical",
+          "answered": 128,
+          "options": [
+            {
+              "label": "Yes",
+              "count": 20,
+              "pct": 15.6
+            },
+            {
+              "label": "No",
+              "count": 78,
+              "pct": 60.9
+            },
+            {
+              "label": "Suspected but not diagnosed",
+              "count": 28,
+              "pct": 21.9
+            },
+            {
+              "label": "Prefer not to say",
+              "count": 2,
+              "pct": 1.6
+            }
+          ]
+        },
+        {
+          "id": "nd_autism_diagnosis",
+          "text": "Have you ever been formally diagnosed with autism or Asperger's?",
+          "kind": "categorical",
+          "answered": 129,
+          "options": [
+            {
+              "label": "Yes",
+              "count": 2,
+              "pct": 1.6
+            },
+            {
+              "label": "No",
+              "count": 111,
+              "pct": 86
+            },
+            {
+              "label": "Suspected but not diagnosed",
+              "count": 16,
+              "pct": 12.4
+            }
+          ]
+        },
+        {
+          "id": "nd_other_diagnosis",
+          "text": "Have you ever been formally diagnosed with any other neurodivergent condition (e.g., dyslexia, dyscalculia, Tourette's)?",
+          "kind": "categorical",
+          "answered": 129,
+          "options": [
+            {
+              "label": "Yes",
+              "count": 5,
+              "pct": 3.9
+            },
+            {
+              "label": "No",
+              "count": 122,
+              "pct": 94.6
+            },
+            {
+              "label": "Prefer not to say",
+              "count": 2,
+              "pct": 1.6
+            }
+          ]
+        }
+      ]
+    },
+    "dark_triad": {
+      "title": "Personality (Dirty Dozen)",
+      "questions": [
+        {
+          "id": "dd_m_1",
+          "text": "I have used deceit or lied to get my way.",
+          "kind": "ordinal",
+          "answered": 129,
+          "options": [
+            {
+              "label": "Strongly disagree",
+              "count": 36,
+              "pct": 27.9
+            },
+            {
+              "label": "Disagree",
+              "count": 37,
+              "pct": 28.7
+            },
+            {
+              "label": "Neither agree nor disagree",
+              "count": 17,
+              "pct": 13.2
+            },
+            {
+              "label": "Agree",
+              "count": 33,
+              "pct": 25.6
+            },
+            {
+              "label": "Strongly agree",
+              "count": 6,
+              "pct": 4.7
+            }
+          ],
+          "stats": {
+            "median": 1,
+            "mean": 1.5,
+            "min": 0,
+            "max": 4,
+            "p25": 0,
+            "p75": 3
+          }
+        },
+        {
+          "id": "dd_m_2",
+          "text": "I have used flattery to get my way.",
+          "kind": "ordinal",
+          "answered": 129,
+          "options": [
+            {
+              "label": "Strongly disagree",
+              "count": 17,
+              "pct": 13.2
+            },
+            {
+              "label": "Disagree",
+              "count": 22,
+              "pct": 17.1
+            },
+            {
+              "label": "Neither agree nor disagree",
+              "count": 19,
+              "pct": 14.7
+            },
+            {
+              "label": "Agree",
+              "count": 58,
+              "pct": 45
+            },
+            {
+              "label": "Strongly agree",
+              "count": 13,
+              "pct": 10.1
+            }
+          ],
+          "stats": {
+            "median": 3,
+            "mean": 2.2,
+            "min": 0,
+            "max": 4,
+            "p25": 1,
+            "p75": 3
+          }
+        },
+        {
+          "id": "dd_m_3",
+          "text": "I tend to manipulate others to get my way.",
+          "kind": "ordinal",
+          "answered": 129,
+          "options": [
+            {
+              "label": "Strongly disagree",
+              "count": 30,
+              "pct": 23.3
+            },
+            {
+              "label": "Disagree",
+              "count": 55,
+              "pct": 42.6
+            },
+            {
+              "label": "Neither agree nor disagree",
+              "count": 23,
+              "pct": 17.8
+            },
+            {
+              "label": "Agree",
+              "count": 19,
+              "pct": 14.7
+            },
+            {
+              "label": "Strongly agree",
+              "count": 2,
+              "pct": 1.6
+            }
+          ],
+          "stats": {
+            "median": 1,
+            "mean": 1.3,
+            "min": 0,
+            "max": 4,
+            "p25": 1,
+            "p75": 2
+          }
+        },
+        {
+          "id": "dd_m_4",
+          "text": "I tend to exploit others towards my own end.",
+          "kind": "ordinal",
+          "answered": 129,
+          "options": [
+            {
+              "label": "Strongly disagree",
+              "count": 60,
+              "pct": 46.5
+            },
+            {
+              "label": "Disagree",
+              "count": 45,
+              "pct": 34.9
+            },
+            {
+              "label": "Neither agree nor disagree",
+              "count": 14,
+              "pct": 10.9
+            },
+            {
+              "label": "Agree",
+              "count": 8,
+              "pct": 6.2
+            },
+            {
+              "label": "Strongly agree",
+              "count": 2,
+              "pct": 1.6
+            }
+          ],
+          "stats": {
+            "median": 1,
+            "mean": 0.8,
+            "min": 0,
+            "max": 4,
+            "p25": 0,
+            "p75": 1
+          }
+        },
+        {
+          "id": "dd_p_1",
+          "text": "I tend to lack remorse.",
+          "kind": "ordinal",
+          "answered": 129,
+          "options": [
+            {
+              "label": "Strongly disagree",
+              "count": 78,
+              "pct": 60.5
+            },
+            {
+              "label": "Disagree",
+              "count": 31,
+              "pct": 24
+            },
+            {
+              "label": "Neither agree nor disagree",
+              "count": 11,
+              "pct": 8.5
+            },
+            {
+              "label": "Agree",
+              "count": 8,
+              "pct": 6.2
+            },
+            {
+              "label": "Strongly agree",
+              "count": 1,
+              "pct": 0.8
+            }
+          ],
+          "stats": {
+            "median": 0,
+            "mean": 0.6,
+            "min": 0,
+            "max": 4,
+            "p25": 0,
+            "p75": 1
+          }
+        },
+        {
+          "id": "dd_p_2",
+          "text": "I tend to be unconcerned with the morality of my actions.",
+          "kind": "ordinal",
+          "answered": 129,
+          "options": [
+            {
+              "label": "Strongly disagree",
+              "count": 95,
+              "pct": 73.6
+            },
+            {
+              "label": "Disagree",
+              "count": 23,
+              "pct": 17.8
+            },
+            {
+              "label": "Neither agree nor disagree",
+              "count": 4,
+              "pct": 3.1
+            },
+            {
+              "label": "Agree",
+              "count": 5,
+              "pct": 3.9
+            },
+            {
+              "label": "Strongly agree",
+              "count": 2,
+              "pct": 1.6
+            }
+          ],
+          "stats": {
+            "median": 0,
+            "mean": 0.4,
+            "min": 0,
+            "max": 4,
+            "p25": 0,
+            "p75": 1
+          }
+        },
+        {
+          "id": "dd_p_3",
+          "text": "I tend to be callous or insensitive.",
+          "kind": "ordinal",
+          "answered": 129,
+          "options": [
+            {
+              "label": "Strongly disagree",
+              "count": 49,
+              "pct": 38
+            },
+            {
+              "label": "Disagree",
+              "count": 40,
+              "pct": 31
+            },
+            {
+              "label": "Neither agree nor disagree",
+              "count": 21,
+              "pct": 16.3
+            },
+            {
+              "label": "Agree",
+              "count": 18,
+              "pct": 14
+            },
+            {
+              "label": "Strongly agree",
+              "count": 1,
+              "pct": 0.8
+            }
+          ],
+          "stats": {
+            "median": 1,
+            "mean": 1.1,
+            "min": 0,
+            "max": 4,
+            "p25": 0,
+            "p75": 2
+          }
+        },
+        {
+          "id": "dd_p_4",
+          "text": "I tend to be cynical.",
+          "kind": "ordinal",
+          "answered": 129,
+          "options": [
+            {
+              "label": "Strongly disagree",
+              "count": 29,
+              "pct": 22.5
+            },
+            {
+              "label": "Disagree",
+              "count": 31,
+              "pct": 24
+            },
+            {
+              "label": "Neither agree nor disagree",
+              "count": 28,
+              "pct": 21.7
+            },
+            {
+              "label": "Agree",
+              "count": 33,
+              "pct": 25.6
+            },
+            {
+              "label": "Strongly agree",
+              "count": 8,
+              "pct": 6.2
+            }
+          ],
+          "stats": {
+            "median": 2,
+            "mean": 1.7,
+            "min": 0,
+            "max": 4,
+            "p25": 1,
+            "p75": 3
+          }
+        },
+        {
+          "id": "dd_n_1",
+          "text": "I tend to want others to admire me.",
+          "kind": "ordinal",
+          "answered": 129,
+          "options": [
+            {
+              "label": "Strongly disagree",
+              "count": 12,
+              "pct": 9.3
+            },
+            {
+              "label": "Disagree",
+              "count": 23,
+              "pct": 17.8
+            },
+            {
+              "label": "Neither agree nor disagree",
+              "count": 24,
+              "pct": 18.6
+            },
+            {
+              "label": "Agree",
+              "count": 51,
+              "pct": 39.5
+            },
+            {
+              "label": "Strongly agree",
+              "count": 19,
+              "pct": 14.7
+            }
+          ],
+          "stats": {
+            "median": 3,
+            "mean": 2.3,
+            "min": 0,
+            "max": 4,
+            "p25": 1,
+            "p75": 3
+          }
+        },
+        {
+          "id": "dd_n_2",
+          "text": "I tend to want others to pay attention to me.",
+          "kind": "ordinal",
+          "answered": 129,
+          "options": [
+            {
+              "label": "Strongly disagree",
+              "count": 16,
+              "pct": 12.4
+            },
+            {
+              "label": "Disagree",
+              "count": 32,
+              "pct": 24.8
+            },
+            {
+              "label": "Neither agree nor disagree",
+              "count": 23,
+              "pct": 17.8
+            },
+            {
+              "label": "Agree",
+              "count": 48,
+              "pct": 37.2
+            },
+            {
+              "label": "Strongly agree",
+              "count": 10,
+              "pct": 7.8
+            }
+          ],
+          "stats": {
+            "median": 2,
+            "mean": 2,
+            "min": 0,
+            "max": 4,
+            "p25": 1,
+            "p75": 3
+          }
+        },
+        {
+          "id": "dd_n_3",
+          "text": "I tend to seek prestige or status.",
+          "kind": "ordinal",
+          "answered": 129,
+          "options": [
+            {
+              "label": "Strongly disagree",
+              "count": 21,
+              "pct": 16.3
+            },
+            {
+              "label": "Disagree",
+              "count": 20,
+              "pct": 15.5
+            },
+            {
+              "label": "Neither agree nor disagree",
+              "count": 29,
+              "pct": 22.5
+            },
+            {
+              "label": "Agree",
+              "count": 42,
+              "pct": 32.6
+            },
+            {
+              "label": "Strongly agree",
+              "count": 17,
+              "pct": 13.2
+            }
+          ],
+          "stats": {
+            "median": 2,
+            "mean": 2.1,
+            "min": 0,
+            "max": 4,
+            "p25": 1,
+            "p75": 3
+          }
+        },
+        {
+          "id": "dd_n_4",
+          "text": "I tend to expect special favors from others.",
+          "kind": "ordinal",
+          "answered": 129,
+          "options": [
+            {
+              "label": "Strongly disagree",
+              "count": 51,
+              "pct": 39.5
+            },
+            {
+              "label": "Disagree",
+              "count": 38,
+              "pct": 29.5
+            },
+            {
+              "label": "Neither agree nor disagree",
+              "count": 24,
+              "pct": 18.6
+            },
+            {
+              "label": "Agree",
+              "count": 14,
+              "pct": 10.9
+            },
+            {
+              "label": "Strongly agree",
+              "count": 2,
+              "pct": 1.6
+            }
+          ],
+          "stats": {
+            "median": 1,
+            "mean": 1.1,
+            "min": 0,
+            "max": 4,
+            "p25": 0,
+            "p75": 2
+          }
+        }
+      ],
+      "composites": [
+        {
+          "id": "machiavellianism",
+          "label": "Machiavellianism",
+          "description": "Mean of 4 items (0–4 agree scale)",
+          "range": [
+            0,
+            4
+          ],
+          "answered": 129,
+          "stats": {
+            "median": 1.5,
+            "mean": 1.5,
+            "min": 0,
+            "max": 4,
+            "p25": 0.8,
+            "p75": 2
+          }
+        },
+        {
+          "id": "psychopathy",
+          "label": "Psychopathy",
+          "description": "Mean of 4 items (0–4 agree scale)",
+          "range": [
+            0,
+            4
+          ],
+          "answered": 129,
+          "stats": {
+            "median": 1,
+            "mean": 1,
+            "min": 0,
+            "max": 3.8,
+            "p25": 0.5,
+            "p75": 1.3
+          }
+        },
+        {
+          "id": "narcissism",
+          "label": "Narcissism",
+          "description": "Mean of 4 items (0–4 agree scale)",
+          "range": [
+            0,
+            4
+          ],
+          "answered": 129,
+          "stats": {
+            "median": 2,
+            "mean": 1.9,
+            "min": 0,
+            "max": 3.8,
+            "p25": 1.3,
+            "p75": 2.5
+          }
+        }
+      ]
+    },
+    "social_support": {
+      "title": "Social Support & Connection",
+      "questions": [
+        {
+          "id": "ss_could_confide_work",
+          "text": "How many people outside your company could you confide in about work struggles?",
+          "kind": "numeric",
+          "answered": 129,
+          "stats": {
+            "median": 4,
+            "mean": 5.6,
+            "min": 0,
+            "max": 50,
+            "p25": 2,
+            "p75": 6
+          }
+        },
+        {
+          "id": "ss_could_confide_personal",
+          "text": "How many people outside your company could you confide in about personal struggles?",
+          "kind": "numeric",
+          "answered": 128,
+          "stats": {
+            "median": 3,
+            "mean": 5.4,
+            "min": 0,
+            "max": 50,
+            "p25": 2,
+            "p75": 6
+          }
+        },
+        {
+          "id": "ss_confide_work_freq",
+          "text": "In the past month, how many times did you confide in someone outside your company about work struggles?",
+          "kind": "numeric",
+          "answered": 127,
+          "stats": {
+            "median": 3,
+            "mean": 4.4,
+            "min": 0,
+            "max": 30,
+            "p25": 1,
+            "p75": 5
+          }
+        },
+        {
+          "id": "ss_confide_personal_freq",
+          "text": "In the past month, how many times did you confide in someone outside your company about personal struggles?",
+          "kind": "numeric",
+          "answered": 128,
+          "stats": {
+            "median": 2,
+            "mean": 3.4,
+            "min": 0,
+            "max": 30,
+            "p25": 1,
+            "p75": 4
+          }
+        }
+      ]
+    },
+    "help_seeking": {
+      "title": "Help-Seeking & Mental Health Support",
+      "questions": [
+        {
+          "id": "hs_therapy_ever",
+          "text": "Have you ever worked with a therapist or counselor?",
+          "kind": "ordinal",
+          "answered": 127,
+          "options": [
+            {
+              "label": "Yes",
+              "count": 77,
+              "pct": 60.6
+            },
+            {
+              "label": "No",
+              "count": 50,
+              "pct": 39.4
+            }
+          ],
+          "stats": {
+            "median": 0,
+            "mean": 0.4,
+            "min": 0,
+            "max": 1,
+            "p25": 0,
+            "p75": 1
+          }
+        },
+        {
+          "id": "hs_therapy_current",
+          "text": "Are you currently in therapy?",
+          "kind": "ordinal",
+          "answered": 77,
+          "options": [
+            {
+              "label": "Yes",
+              "count": 21,
+              "pct": 27.3
+            },
+            {
+              "label": "No",
+              "count": 56,
+              "pct": 72.7
+            }
+          ],
+          "stats": {
+            "median": 1,
+            "mean": 0.7,
+            "min": 0,
+            "max": 1,
+            "p25": 0,
+            "p75": 1
+          }
+        },
+        {
+          "id": "hs_therapy_duration",
+          "text": "How long have you been with your current therapist?",
+          "kind": "categorical",
+          "answered": 21,
+          "options": [
+            {
+              "label": "Under 3 months",
+              "count": 5,
+              "pct": 23.8
+            },
+            {
+              "label": "3-12 months",
+              "count": 5,
+              "pct": 23.8
+            },
+            {
+              "label": "1-3 years",
+              "count": 5,
+              "pct": 23.8
+            },
+            {
+              "label": "3+ years",
+              "count": 6,
+              "pct": 28.6
+            }
+          ]
+        },
+        {
+          "id": "hs_coach_ever",
+          "text": "Have you ever worked with an executive, leadership, or other professional coach?",
+          "kind": "ordinal",
+          "answered": 124,
+          "options": [
+            {
+              "label": "Yes",
+              "count": 47,
+              "pct": 37.9
+            },
+            {
+              "label": "No",
+              "count": 77,
+              "pct": 62.1
+            }
+          ],
+          "stats": {
+            "median": 1,
+            "mean": 0.6,
+            "min": 0,
+            "max": 1,
+            "p25": 0,
+            "p75": 1
+          }
+        },
+        {
+          "id": "hs_coach_current",
+          "text": "Are you currently working with a coach?",
+          "kind": "ordinal",
+          "answered": 48,
+          "options": [
+            {
+              "label": "Yes",
+              "count": 20,
+              "pct": 41.7
+            },
+            {
+              "label": "No",
+              "count": 28,
+              "pct": 58.3
+            }
+          ],
+          "stats": {
+            "median": 1,
+            "mean": 0.6,
+            "min": 0,
+            "max": 1,
+            "p25": 0,
+            "p75": 1
+          }
+        },
+        {
+          "id": "hs_coach_type",
+          "text": "What kind of coach?",
+          "kind": "categorical",
+          "answered": 19,
+          "options": [
+            {
+              "label": "Executive / leadership",
+              "count": 14,
+              "pct": 73.7
+            },
+            {
+              "label": "Life",
+              "count": 4,
+              "pct": 21.1
+            },
+            {
+              "label": "Performance",
+              "count": 1,
+              "pct": 5.3
+            }
+          ]
+        },
+        {
+          "id": "hs_considered_no_go",
+          "text": "In the last 12 months, have you considered seeking mental health support but didn't?",
+          "kind": "ordinal",
+          "answered": 127,
+          "options": [
+            {
+              "label": "Yes",
+              "count": 37,
+              "pct": 29.1
+            },
+            {
+              "label": "No",
+              "count": 90,
+              "pct": 70.9
+            }
+          ],
+          "stats": {
+            "median": 1,
+            "mean": 0.7,
+            "min": 0,
+            "max": 1,
+            "p25": 0,
+            "p75": 1
+          }
+        },
+        {
+          "id": "hs_leave",
+          "text": "In the last 12 months, have you taken a mental health leave or extended break from work?",
+          "kind": "ordinal",
+          "answered": 128,
+          "options": [
+            {
+              "label": "Yes",
+              "count": 15,
+              "pct": 11.7
+            },
+            {
+              "label": "No",
+              "count": 113,
+              "pct": 88.3
+            }
+          ],
+          "stats": {
+            "median": 1,
+            "mean": 0.9,
+            "min": 0,
+            "max": 1,
+            "p25": 1,
+            "p75": 1
+          }
+        },
+        {
+          "id": "hs_therapy_impact",
+          "text": "How would you rate the overall impact of therapy on your life?",
+          "kind": "scale",
+          "answered": 77,
+          "stats": {
+            "median": 6,
+            "mean": 6.3,
+            "min": 0,
+            "max": 10,
+            "p25": 5,
+            "p75": 8
+          },
+          "options": [
+            {
+              "label": "0",
+              "count": 3,
+              "pct": 3.9
+            },
+            {
+              "label": "1",
+              "count": 2,
+              "pct": 2.6
+            },
+            {
+              "label": "2",
+              "count": 1,
+              "pct": 1.3
+            },
+            {
+              "label": "3",
+              "count": 6,
+              "pct": 7.8
+            },
+            {
+              "label": "4",
+              "count": 3,
+              "pct": 3.9
+            },
+            {
+              "label": "5",
+              "count": 15,
+              "pct": 19.5
+            },
+            {
+              "label": "6",
+              "count": 9,
+              "pct": 11.7
+            },
+            {
+              "label": "7",
+              "count": 11,
+              "pct": 14.3
+            },
+            {
+              "label": "8",
+              "count": 10,
+              "pct": 13
+            },
+            {
+              "label": "9",
+              "count": 6,
+              "pct": 7.8
+            },
+            {
+              "label": "10",
+              "count": 11,
+              "pct": 14.3
+            }
+          ]
+        },
+        {
+          "id": "hs_coach_impact",
+          "text": "How would you rate the overall impact of coaching on your life?",
+          "kind": "scale",
+          "answered": 45,
+          "stats": {
+            "median": 7,
+            "mean": 6.5,
+            "min": 0,
+            "max": 10,
+            "p25": 5,
+            "p75": 9
+          },
+          "options": [
+            {
+              "label": "0",
+              "count": 2,
+              "pct": 4.4
+            },
+            {
+              "label": "1",
+              "count": 1,
+              "pct": 2.2
+            },
+            {
+              "label": "2",
+              "count": 2,
+              "pct": 4.4
+            },
+            {
+              "label": "4",
+              "count": 3,
+              "pct": 6.7
+            },
+            {
+              "label": "5",
+              "count": 7,
+              "pct": 15.6
+            },
+            {
+              "label": "6",
+              "count": 6,
+              "pct": 13.3
+            },
+            {
+              "label": "7",
+              "count": 8,
+              "pct": 17.8
+            },
+            {
+              "label": "8",
+              "count": 4,
+              "pct": 8.9
+            },
+            {
+              "label": "9",
+              "count": 5,
+              "pct": 11.1
+            },
+            {
+              "label": "10",
+              "count": 7,
+              "pct": 15.6
+            }
+          ]
+        },
+        {
+          "id": "hs_barriers",
+          "text": "What got in the way? (select all that apply)",
+          "kind": "categorical",
+          "answered": 37,
+          "options": [
+            {
+              "label": "Time",
+              "count": 23,
+              "pct": 62.2
+            },
+            {
+              "label": "Cost",
+              "count": 14,
+              "pct": 37.8
+            },
+            {
+              "label": "Didn't know where to start",
+              "count": 14,
+              "pct": 37.8
+            },
+            {
+              "label": "Didn't think my issues were serious enough",
+              "count": 13,
+              "pct": 35.1
+            },
+            {
+              "label": "Couldn't find someone who understood founders",
+              "count": 11,
+              "pct": 29.7
+            },
+            {
+              "label": "Other",
+              "count": 5,
+              "pct": 13.5
+            },
+            {
+              "label": "Concerned about stigma or what investors/employees would think",
+              "count": 3,
+              "pct": 8.1
+            },
+            {
+              "label": "Previous bad experience with mental health care",
+              "count": 3,
+              "pct": 8.1
+            }
+          ]
+        }
+      ]
+    },
+    "medication": {
+      "title": "Medication",
+      "questions": [
+        {
+          "id": "med_current",
+          "text": "Are you currently taking any of the following? Select all that apply. Responses are anonymous.",
+          "kind": "categorical",
+          "answered": 126,
+          "options": [
+            {
+              "label": "None of the above",
+              "count": 90,
+              "pct": 71.4
+            },
+            {
+              "label": "SSRI or SNRI antidepressant (e.g., Lexapro, Zoloft, Prozac, Wellbutrin, Effexor)",
+              "count": 15,
+              "pct": 11.9
+            },
+            {
+              "label": "Stimulant for ADHD (e.g., Adderall, Vyvanse, Concerta, Ritalin)",
+              "count": 15,
+              "pct": 11.9
+            },
+            {
+              "label": "Benzodiazepine (e.g., Xanax, Ativan, Klonopin)",
+              "count": 7,
+              "pct": 5.6
+            },
+            {
+              "label": "Other psychiatric medication",
+              "count": 6,
+              "pct": 4.8
+            },
+            {
+              "label": "Prescription sleep medication (e.g., Ambien, Lunesta, trazodone)",
+              "count": 3,
+              "pct": 2.4
+            },
+            {
+              "label": "Prefer not to say",
+              "count": 2,
+              "pct": 1.6
+            },
+            {
+              "label": "Beta blocker for performance or anxiety (e.g., propranolol)",
+              "count": 1,
+              "pct": 0.8
+            },
+            {
+              "label": "Mood stabilizer or antipsychotic (e.g., lithium, lamotrigine, quetiapine)",
+              "count": 1,
+              "pct": 0.8
+            }
+          ]
+        }
+      ]
+    },
+    "substance_use": {
+      "title": "Substance Use",
+      "questions": [
+        {
+          "id": "sub_alcohol",
+          "text": "Alcohol",
+          "kind": "ordinal",
+          "answered": 130,
+          "options": [
+            {
+              "label": "Never",
+              "count": 24,
+              "pct": 18.5
+            },
+            {
+              "label": "Once or twice",
+              "count": 29,
+              "pct": 22.3
+            },
+            {
+              "label": "Monthly",
+              "count": 38,
+              "pct": 29.2
+            },
+            {
+              "label": "Weekly",
+              "count": 21,
+              "pct": 16.2
+            },
+            {
+              "label": "2-3 times per week",
+              "count": 14,
+              "pct": 10.8
+            },
+            {
+              "label": "Daily or near-daily",
+              "count": 4,
+              "pct": 3.1
+            }
+          ],
+          "stats": {
+            "median": 2,
+            "mean": 1.9,
+            "min": 0,
+            "max": 5,
+            "p25": 1,
+            "p75": 3
+          }
+        },
+        {
+          "id": "sub_cannabis",
+          "text": "Cannabis / marijuana",
+          "kind": "ordinal",
+          "answered": 130,
+          "options": [
+            {
+              "label": "Never",
+              "count": 72,
+              "pct": 55.4
+            },
+            {
+              "label": "Once or twice",
+              "count": 36,
+              "pct": 27.7
+            },
+            {
+              "label": "Monthly",
+              "count": 9,
+              "pct": 6.9
+            },
+            {
+              "label": "Weekly",
+              "count": 2,
+              "pct": 1.5
+            },
+            {
+              "label": "2-3 times per week",
+              "count": 2,
+              "pct": 1.5
+            },
+            {
+              "label": "Daily or near-daily",
+              "count": 9,
+              "pct": 6.9
+            }
+          ],
+          "stats": {
+            "median": 0,
+            "mean": 0.9,
+            "min": 0,
+            "max": 5,
+            "p25": 0,
+            "p75": 1
+          }
+        },
+        {
+          "id": "sub_nicotine",
+          "text": "Nicotine (cigarettes, vapes, pouches)",
+          "kind": "ordinal",
+          "answered": 129,
+          "options": [
+            {
+              "label": "Never",
+              "count": 104,
+              "pct": 80.6
+            },
+            {
+              "label": "Once or twice",
+              "count": 13,
+              "pct": 10.1
+            },
+            {
+              "label": "Monthly",
+              "count": 4,
+              "pct": 3.1
+            },
+            {
+              "label": "Weekly",
+              "count": 1,
+              "pct": 0.8
+            },
+            {
+              "label": "2-3 times per week",
+              "count": 1,
+              "pct": 0.8
+            },
+            {
+              "label": "Daily or near-daily",
+              "count": 6,
+              "pct": 4.7
+            }
+          ],
+          "stats": {
+            "median": 0,
+            "mean": 0.4,
+            "min": 0,
+            "max": 5,
+            "p25": 0,
+            "p75": 0
+          }
+        },
+        {
+          "id": "sub_stimulants_no_rx",
+          "text": "Stimulants obtained without a prescription (e.g., Adderall, cocaine)",
+          "kind": "ordinal",
+          "answered": 129,
+          "options": [
+            {
+              "label": "Never",
+              "count": 117,
+              "pct": 90.7
+            },
+            {
+              "label": "Once or twice",
+              "count": 9,
+              "pct": 7
+            },
+            {
+              "label": "Monthly",
+              "count": 2,
+              "pct": 1.6
+            },
+            {
+              "label": "Weekly",
+              "count": 1,
+              "pct": 0.8
+            }
+          ],
+          "stats": {
+            "median": 0,
+            "mean": 0.1,
+            "min": 0,
+            "max": 3,
+            "p25": 0,
+            "p75": 0
+          }
+        },
+        {
+          "id": "sub_mdma",
+          "text": "MDMA",
+          "kind": "ordinal",
+          "answered": 129,
+          "options": [
+            {
+              "label": "Never",
+              "count": 114,
+              "pct": 88.4
+            },
+            {
+              "label": "Once or twice",
+              "count": 15,
+              "pct": 11.6
+            }
+          ],
+          "stats": {
+            "median": 0,
+            "mean": 0.1,
+            "min": 0,
+            "max": 1,
+            "p25": 0,
+            "p75": 0
+          }
+        },
+        {
+          "id": "sub_psilocybin",
+          "text": "Psilocybin (\"magic mushrooms\")",
+          "kind": "ordinal",
+          "answered": 128,
+          "options": [
+            {
+              "label": "Never",
+              "count": 99,
+              "pct": 77.3
+            },
+            {
+              "label": "Once or twice",
+              "count": 29,
+              "pct": 22.7
+            }
+          ],
+          "stats": {
+            "median": 0,
+            "mean": 0.2,
+            "min": 0,
+            "max": 1,
+            "p25": 0,
+            "p75": 0
+          }
+        },
+        {
+          "id": "sub_ayahuasca",
+          "text": "Ayahuasca or DMT",
+          "kind": "ordinal",
+          "answered": 128,
+          "options": [
+            {
+              "label": "Never",
+              "count": 125,
+              "pct": 97.7
+            },
+            {
+              "label": "Once or twice",
+              "count": 3,
+              "pct": 2.3
+            }
+          ],
+          "stats": {
+            "median": 0,
+            "mean": 0,
+            "min": 0,
+            "max": 1,
+            "p25": 0,
+            "p75": 0
+          }
+        },
+        {
+          "id": "sub_lsd",
+          "text": "LSD or other psychedelics",
+          "kind": "ordinal",
+          "answered": 128,
+          "options": [
+            {
+              "label": "Never",
+              "count": 115,
+              "pct": 89.8
+            },
+            {
+              "label": "Once or twice",
+              "count": 11,
+              "pct": 8.6
+            },
+            {
+              "label": "Monthly",
+              "count": 2,
+              "pct": 1.6
+            }
+          ],
+          "stats": {
+            "median": 0,
+            "mean": 0.1,
+            "min": 0,
+            "max": 2,
+            "p25": 0,
+            "p75": 0
+          }
+        },
+        {
+          "id": "sub_ketamine",
+          "text": "Ketamine (recreational, not prescribed)",
+          "kind": "ordinal",
+          "answered": 129,
+          "options": [
+            {
+              "label": "Never",
+              "count": 118,
+              "pct": 91.5
+            },
+            {
+              "label": "Once or twice",
+              "count": 9,
+              "pct": 7
+            },
+            {
+              "label": "Monthly",
+              "count": 1,
+              "pct": 0.8
+            },
+            {
+              "label": "Weekly",
+              "count": 1,
+              "pct": 0.8
+            }
+          ],
+          "stats": {
+            "median": 0,
+            "mean": 0.1,
+            "min": 0,
+            "max": 3,
+            "p25": 0,
+            "p75": 0
+          }
         }
       ]
     }
