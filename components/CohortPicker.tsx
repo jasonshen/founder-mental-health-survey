@@ -22,8 +22,7 @@ function Arrow() {
 }
 
 /**
- * About-page CTA. The survey is closed, so the former "Begin the survey"
- * cohort picker now points to the published 2026 results instead.
+ * About-page CTA. Results are the primary action; taking the survey is secondary.
  */
 export default function CohortPicker() {
   return (
@@ -32,7 +31,12 @@ export default function CohortPicker() {
         See the 2026 results
         <Arrow />
       </Link>
-      <span className="btn-meta">Survey closed · aggregate results, updated over time</span>
+      <span className="btn-meta">
+        266 founders and counting ·{" "}
+        <Link href="/survey" style={{ color: "var(--orange)", textDecoration: "underline" }}>
+          Take the survey
+        </Link>
+      </span>
     </div>
   );
 }

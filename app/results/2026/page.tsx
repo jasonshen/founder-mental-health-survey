@@ -387,10 +387,13 @@ export default function Results2026Page() {
         2026 Results<span className="accent">.</span>
       </h1>
       <p className="fmhs-deck">
-        {totals.responses} founders took the survey before it closed May 31. Below
+        {totals.responses} founders have taken the survey so far. Below
         is the full picture — who they are, what they&apos;re building, and how
         they&apos;re doing across validated clinical screeners and
-        founder-specific dimensions.
+        founder-specific dimensions.{" "}
+        <Link href="/survey" style={{ color: "var(--orange)" }}>
+          Add your voice&nbsp;→
+        </Link>
       </p>
 
       {/* ─── Stat band ─────────────────────────────────────────────── */}
@@ -1000,7 +1003,8 @@ export default function Results2026Page() {
           only — no individual responses are shared. Open-ended quotes are
           curated for representativeness; no identifying information is
           included. All respondents consented to anonymous data collection;
-          the survey was open April 27 – May 31, 2026.
+          the survey has been open since April 27, 2026 and results are
+          updated periodically.
         </p>
       </section>
 
