@@ -52,15 +52,14 @@ const TOC = [
   { id: "depression", num: "06", label: "Depression (PHQ-9)" },
   { id: "anxiety", num: "07", label: "Anxiety (GAD-7)" },
   { id: "burnout", num: "08", label: "Burnout (MBI-GS)" },
-  { id: "adhd", num: "09", label: "ADHD (ASRS-6)" },
-  { id: "ambition", num: "10", label: "Ambition & Motivation" },
-  { id: "social-support", num: "11", label: "Social Support" },
-  { id: "help-seeking", num: "12", label: "Help-Seeking" },
-  { id: "medication", num: "13", label: "Medication" },
-  { id: "substance-use", num: "14", label: "Substance Use" },
-  { id: "personality", num: "15", label: "Personality" },
-  { id: "neurodivergence", num: "16", label: "Neurodivergence" },
-  { id: "voices", num: "17", label: "In Their Own Words" },
+  { id: "ambition", num: "09", label: "Ambition & Motivation" },
+  { id: "social-support", num: "10", label: "Social Support" },
+  { id: "help-seeking", num: "11", label: "Help-Seeking" },
+  { id: "medication", num: "12", label: "Medication" },
+  { id: "substance-use", num: "13", label: "Substance Use" },
+  { id: "personality", num: "14", label: "Personality" },
+  { id: "neurodivergence", num: "15", label: "Neurodivergence" },
+  { id: "voices", num: "16", label: "In Their Own Words" },
 ];
 
 /* ─── Shared chart components ──────────────────────────────────────── */
@@ -623,28 +622,9 @@ export default function Results2026Page() {
         </p>
       </AccSection>
 
-      {/* ═══ §09 ADHD (ASRS-6) ════════════════════════════════════════ */}
+      {/* ═══ §09 Ambition & Motivation ═════════════════════════════════ */}
 
-      <AccSection id="adhd" num="09" title="Focus & Attention (ASRS-6)">
-        <p>
-          The ASRS-6 is a screening tool for adult ADHD. Items are rated
-          0–4 (never to very often); higher total scores suggest more
-          ADHD-related traits.
-        </p>
-        <p className="section-insight">
-          <strong>{asrsHigh}%</strong> of founders score in the high range
-          (14+) on the ASRS-6, and another{" "}
-          {asrs?.severity?.[1]?.pct ?? 0}% in the moderate range.
-          {sec("autism")?.questions.find((aq) => aq.id === "nd_adhd_diagnosis")?.options?.[0]?.pct
-            ? ` Among respondents, ${sec("autism").questions.find((aq) => aq.id === "nd_adhd_diagnosis")!.options![0].pct}% report a formal ADHD diagnosis.`
-            : ""}
-        </p>
-        {asrs && <SeverityChart composite={asrs} />}
-      </AccSection>
-
-      {/* ═══ §10 Ambition & Motivation ═════════════════════════════════ */}
-
-      <AccSection id="ambition" num="10" title="Ambition & Motivation">
+      <AccSection id="ambition" num="09" title="Ambition & Motivation">
         <p>
           What drives founders — how ambitious, what kind of success matters, and
           the deeper motivational regulation behind the work. All items use a
@@ -679,9 +659,9 @@ export default function Results2026Page() {
         )}
       </AccSection>
 
-      {/* ═══ §11 Social Support ════════════════════════════════════════ */}
+      {/* ═══ §10 Social Support ════════════════════════════════════════ */}
 
-      <AccSection id="social-support" num="11" title="Social Support & Connection">
+      <AccSection id="social-support" num="10" title="Social Support & Connection">
         <p>
           How many people founders can confide in, and how often they do.
         </p>
@@ -717,9 +697,9 @@ export default function Results2026Page() {
         </div>
       </AccSection>
 
-      {/* ═══ §12 Help-Seeking ══════════════════════════════════════════ */}
+      {/* ═══ §11 Help-Seeking ══════════════════════════════════════════ */}
 
-      <AccSection id="help-seeking" num="12" title="Help-Seeking & Support">
+      <AccSection id="help-seeking" num="11" title="Help-Seeking & Support">
         <p>
           Founders&apos; experience with therapy, coaching, and barriers to
           seeking help.
@@ -767,9 +747,9 @@ export default function Results2026Page() {
         })()}
       </AccSection>
 
-      {/* ═══ §13 Medication ════════════════════════════════════════════ */}
+      {/* ═══ §12 Medication ════════════════════════════════════════════ */}
 
-      <AccSection id="medication" num="13" title="Medication">
+      <AccSection id="medication" num="12" title="Medication">
         <p>
           What psychiatric medications founders are currently taking. Respondents
           could select multiple options.
@@ -779,9 +759,9 @@ export default function Results2026Page() {
         ))}
       </AccSection>
 
-      {/* ═══ §14 Substance Use ═════════════════════════════════════════ */}
+      {/* ═══ §13 Substance Use ═════════════════════════════════════════ */}
 
-      <AccSection id="substance-use" num="14" title="Substance Use">
+      <AccSection id="substance-use" num="13" title="Substance Use">
         <p>
           Founders reported how often they used each substance in the past
           12 months. Two key metrics: <strong>any use</strong> (tried it at
@@ -874,9 +854,9 @@ export default function Results2026Page() {
         </p>
       </AccSection>
 
-      {/* ═══ §15 Personality ═══════════════════════════════════════════ */}
+      {/* ═══ §14 Personality ═══════════════════════════════════════════ */}
 
-      <AccSection id="personality" num="15" title="Personality (Dirty Dozen)">
+      <AccSection id="personality" num="14" title="Personality (Dirty Dozen)">
         <p>
           The Dirty Dozen measures three personality traits on a 0–4
           agreement scale. The shaded region shows the middle 50% (P25–P75);
@@ -935,35 +915,49 @@ export default function Results2026Page() {
         </p>
       </AccSection>
 
-      {/* ═══ §16 Neurodivergence ═══════════════════════════════════════ */}
+      {/* ═══ §15 Neurodivergence ═══════════════════════════════════════ */}
 
-      <AccSection id="neurodivergence" num="16" title="Neurodivergence">
+      <AccSection id="neurodivergence" num="15" title="Neurodivergence">
         <p>
-          The AQ-10 is a brief screener for autistic traits. Each item is
-          scored 0 or 1 (binary clinical scoring); a total of 6+ out of 10
-          suggests referral for further assessment.
+          Screening tools and self-reported diagnoses for ADHD and autism —
+          two conditions with outsized prevalence among founders.
         </p>
         {(() => {
-          const aq10 = sec("autism")?.composites?.[0];
-          const aboveThreshold = aq10?.severity?.[1]?.pct ?? 0;
           const adhdDx = sec("autism")?.questions.find((x) => x.id === "nd_adhd_diagnosis");
           const autismDx = sec("autism")?.questions.find((x) => x.id === "nd_autism_diagnosis");
           const adhdYes = adhdDx?.options?.find((o) => o.label === "Yes")?.pct ?? 0;
           const adhdSuspected = adhdDx?.options?.find((o) => o.label === "Suspected but not diagnosed")?.pct ?? 0;
           const autismYes = autismDx?.options?.find((o) => o.label === "Yes")?.pct ?? 0;
           const autismSuspected = autismDx?.options?.find((o) => o.label === "Suspected but not diagnosed")?.pct ?? 0;
+          const aq10 = sec("autism")?.composites?.[0];
+          const aboveThreshold = aq10?.severity?.[1]?.pct ?? 0;
           return (
             <>
               <p className="section-insight">
-                <strong>{aboveThreshold}%</strong> of founders score at or
-                above the AQ-10 referral threshold (6+). The median score
-                is {aq10?.stats.median}/10, well below the clinical cutoff.
-                Separately, <strong>{adhdYes}%</strong> report a formal ADHD
-                diagnosis ({adhdSuspected}% suspected), and{" "}
-                <strong>{autismYes}%</strong> report a formal autism
-                diagnosis ({autismSuspected}% suspected).
+                <strong>{adhdYes}%</strong> of founders report a formal ADHD
+                diagnosis and another <strong>{adhdSuspected}%</strong>{" "}
+                suspect they have it. On the ASRS-6 screener,{" "}
+                <strong>{asrsHigh}%</strong> score in the high range (14+).
+                For autism, <strong>{autismYes}%</strong> have a formal
+                diagnosis ({autismSuspected}% suspected) and{" "}
+                <strong>{aboveThreshold}%</strong> score at or above the
+                AQ-10 referral threshold (6+).
+              </p>
+
+              <div className="subsection-label">ADHD — ASRS-6 Screener</div>
+              <p style={{ fontSize: 13, color: "var(--muted)", margin: "4px 0 10px" }}>
+                Items rated 0–4 (never to very often); higher total scores
+                suggest more ADHD-related traits. Range 0–24.
+              </p>
+              {asrs && <SeverityChart composite={asrs} />}
+
+              <div className="subsection-label">Autism — AQ-10 Screener</div>
+              <p style={{ fontSize: 13, color: "var(--muted)", margin: "4px 0 10px" }}>
+                Binary clinical scoring (0 or 1 per item); 6+ out of 10
+                suggests referral for further assessment.
               </p>
               {aq10 && <SeverityChart composite={aq10} colors={["#2d9d4e", "#d96136"]} />}
+
               <div className="subsection-label">Self-reported diagnoses</div>
             </>
           );
@@ -973,9 +967,9 @@ export default function Results2026Page() {
           .map((aq) => <Distribution key={aq.id} q={aq} />)}
       </AccSection>
 
-      {/* ═══ §17 In Their Own Words ════════════════════════════════════ */}
+      {/* ═══ §16 In Their Own Words ════════════════════════════════════ */}
 
-      <AccSection id="voices" num="17" title="In Their Own Words">
+      <AccSection id="voices" num="16" title="In Their Own Words">
         <p>
           A curated selection of anonymous open-ended responses to
           &ldquo;Is there anything else about your mental health, wellbeing, or
